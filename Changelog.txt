@@ -1,3 +1,33 @@
+2006-06-26 (REL_0_7) Christian Walter <wolti@sil.at>
+
+ Notes: Changed the WIN32 serial port to better fit into the design.
+
+ Detailed notes:
+   - OTHER: Design of the WIN32 serial port changed. The polling function
+       for the serial device are now called from the event loop.
+   - OTHER: Debugging uses the same interface as the WIN32/TCP port.
+
+2006-06-25 Christian Walter <wolti@sil.at>
+
+ Notes: Initial work on a Modbus/TCP port is available. The port includes
+   an example for a Win32 port which uses the Winsock API.
+
+ Detailed notes:
+   - FEATURES: added required functions to core protocol stack to support
+       a Modbus/TCP implementation.
+   - FEATURES: added a Win32 port for the Modbus/TCP core. The port is
+       currently limited to one concurrent client.
+   - OTHER: The implementation of eMBClose to shutdown the protocol stack
+       was changed to unify it with the new Modbus/TCP code.
+
+2006-06-18 Christian Walter <wolti@sil.at>
+
+ Detailed notes:
+   - OTHER: while working on the Win32 port some line feeds got
+       wrong. Also some source files used tabs instead of spaces.
+   - OTHER: prototypes for xMBUtilSetBits and xMBUtilGetBits fixed.
+       usNBits should be ucNBits by convention.
+
 2006-06-17 (REL_0_6_1) Christian Walter <wolti@sil.at>
 
  Notes: Fixed various bugs with the Win32 port
@@ -37,7 +67,7 @@
 
  Detailed notes:
   - FEATURES: the t1.5 timeout has been removed. Therefore only
-     one timer is required.
+     one timer is required. 
   - BUG: the ARM demo project missed some files in the project
      workspace and did not compile cleanly
 
@@ -47,7 +77,7 @@
    (write multiple coils, read discrete input)
 
  Detailed notes:
-  - BUG: some function used the wrong data types
+  - BUG: some function used the wrong datatypes
   - FEATURES: added support for write multiple coils function.
   - FEATURES: added support for read discrete input.
   - OTHER: some code cleanups with lint tool.
@@ -55,8 +85,8 @@
 2006-02-28 (REL_0_3_1) Christian Walter <wolti@sil.at>
 
  Notes: The new version 0.31 adds support for reading and writing the
-   coil registers and add some bug fixes.
-
+   coil registers and add some bugfixes.
+   
  Detailed notes:
   - BUG: fixed bug with to small modbus requests being ignored.
   - FEATURES: added support for write single coil function.
