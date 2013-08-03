@@ -36,6 +36,7 @@
 #include "port.h"
 
 /* ----------------------- Modbus includes ----------------------------------*/
+
 #include "mb.h"
 #include "mbconfig.h"
 #include "mbframe.h"
