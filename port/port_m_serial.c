@@ -32,7 +32,7 @@ static void     prvvUARTRxISR( void );
 /* ----------------------- Start implementation -----------------------------*/
 
 void
-vMBPortMasterSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
+vMBMasterPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 {
     if( xRxEnable )
     {
@@ -55,7 +55,7 @@ vMBPortMasterSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 }
 
 void
-vMBPortMasterClose( void )
+vMBMasterPortClose( void )
 {
     USART_ITConfig( USART2, USART_IT_TXE | USART_IT_RXNE, DISABLE );
     USART_Cmd( USART2, DISABLE );
@@ -63,7 +63,7 @@ vMBPortMasterClose( void )
 
 //蘇珨跺植儂 揹諳2 疏杻薹褫扢离  髒潰桄褫扢离
 BOOL
-xMBPortMasterSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
+xMBMasterPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
@@ -134,14 +134,14 @@ xMBPortMasterSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBPa
 }
 
 BOOL
-xMBPortMasterSerialPutByte( CHAR ucByte )
+xMBMasterPortSerialPutByte( CHAR ucByte )
 {
     USART_SendData( USART2, ucByte );
     return TRUE;
 }
 
 BOOL
-xMBPortMasterSerialGetByte( CHAR *pucByte )
+xMBMasterPortSerialGetByte( CHAR *pucByte )
 {
     *pucByte = USART_ReceiveData( USART2 );
     return TRUE;
@@ -157,7 +157,7 @@ xMBPortMasterSerialGetByte( CHAR *pucByte )
 void
 prvvUARTTxReadyISR( void )
 {
-    pxMBFrameCBTransmitterEmpty(  );
+    pxMBMasterFrameCBTransmitterEmpty(  );
 }
 
 /*
@@ -169,7 +169,7 @@ prvvUARTTxReadyISR( void )
 void
 prvvUARTRxISR( void )
 {
-    pxMBFrameCBByteReceived(  );
+    pxMBMasterFrameCBByteReceived(  );
 }
 
 /*******************************************************************************

@@ -31,7 +31,7 @@ static void     prvvTIMERExpiredISR( void );
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
-xMBPortMasterTimersInit( USHORT usTim1Timerout50us )
+xMBMasterPortTimersInit( USHORT usTim1Timerout50us )
 {
 
     uint16_t        PrescalerValue = 0;
@@ -75,7 +75,7 @@ xMBPortMasterTimersInit( USHORT usTim1Timerout50us )
 }
 
 void
-vMBPortMasterTimersEnable(  )
+vMBMasterPortTimersEnable(  )
 {
     TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
     TIM_ITConfig( TIM2, TIM_IT_Update, ENABLE );
@@ -84,7 +84,7 @@ vMBPortMasterTimersEnable(  )
 }
 
 void
-vMBPortMasterTimersDisable(  )
+vMBMasterPortTimersDisable(  )
 {
     TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
     TIM_ITConfig( TIM2, TIM_IT_Update, DISABLE );
@@ -95,8 +95,7 @@ vMBPortMasterTimersDisable(  )
 void
 prvvTIMERExpiredISR( void )
 {
-    //TODO  党蜊眕巠磁翋儂
-    ( void )pxMBPortCBTimerExpired(  );
+    ( void )pxMBMasterPortCBTimerExpired(  );
 }
 
 void
