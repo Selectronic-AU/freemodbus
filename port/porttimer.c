@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * File: $Id: port_m_timer.c add Master Functions,v 1.1 2013/08/13 15:07:05 Armink Exp $
+ * File: $Id: porttimer.c,v 1.60 2013/08/13 15:07:05 Armink add Master Functions $
  */
 
 /* ----------------------- Platform includes --------------------------------*/
@@ -31,7 +31,7 @@ static void     prvvTIMERExpiredISR( void );
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
-xMBMasterPortTimersInit( USHORT usTim1Timerout50us )
+xMBPortTimersInit( USHORT usTim1Timerout50us )
 {
 
     uint16_t        PrescalerValue = 0;
@@ -39,13 +39,13 @@ xMBMasterPortTimersInit( USHORT usTim1Timerout50us )
     NVIC_InitTypeDef NVIC_InitStructure;
 
     //====================================奀笘場宎趙===========================
-    //妏夔隅奀2奀笘
-    RCC_APB1PeriphClockCmd( RCC_APB1Periph_TIM2, ENABLE );
+    //妏夔隅奀3奀笘
+    RCC_APB1PeriphClockCmd( RCC_APB1Periph_TIM3, ENABLE );
     //====================================隅奀場宎趙===========================
     //隅奀奀潔價饜离佽隴
     //HCLK峈72MHzㄛAPB1冪徹2煦峈36MHz
-    //TIM2腔奀笘捷綴峈72MHzㄗ茞璃赻雄捷,湛善郔湮ㄘ
-    //TIM2腔煦炵杅峈3599ㄛ奀潔價薹峈72 / (1 + Prescaler) = 20KHz,價袧峈50us
+    //TIM3腔奀笘捷綴峈72MHzㄗ茞璃赻雄捷,湛善郔湮ㄘ
+    //TIM3腔煦炵杅峈3599ㄛ奀潔價薹峈72 / (1 + Prescaler) = 20KHz,價袧峈50us
     //TIM郔湮數杅硉峈usTim1Timerout50u
 
     PrescalerValue = ( uint16_t ) ( SystemCoreClock / 20000 ) - 1;
@@ -54,59 +54,59 @@ xMBMasterPortTimersInit( USHORT usTim1Timerout50us )
     TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
     TIM_TimeBaseStructure.TIM_ClockDivision = 0;
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseInit( TIM2, &TIM_TimeBaseStructure );
+    TIM_TimeBaseInit( TIM3, &TIM_TimeBaseStructure );
     //啎蚾婥妏夔
-    TIM_ARRPreloadConfig( TIM2, ENABLE );
+    TIM_ARRPreloadConfig( TIM3, ENABLE );
     //====================================笢剿場宎趙===========================
     //扢离NVIC蚥珂撰煦郪峈Group2ㄩ0-3梩宒蚥珂撰ㄛ0-3腔砒茼宒蚥珂撰
     NVIC_PriorityGroupConfig( NVIC_PriorityGroup_2 );
-    NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init( &NVIC_InitStructure );
     //壺祛堤笢剿梓祩弇
-    TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
+    TIM_ClearITPendingBit( TIM3, TIM_IT_Update );
     //隅奀3祛堤笢剿壽敕
-    TIM_ITConfig( TIM2, TIM_IT_Update, DISABLE );
+    TIM_ITConfig( TIM3, TIM_IT_Update, DISABLE );
     //隅奀3輦夔
-    TIM_Cmd( TIM2, DISABLE );
+    TIM_Cmd( TIM3, DISABLE );
     return TRUE;
 }
 
 void
-vMBMasterPortTimersEnable(  )
+vMBPortTimersEnable(  )
 {
-    TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
-    TIM_ITConfig( TIM2, TIM_IT_Update, ENABLE );
-    TIM_SetCounter( TIM2, 0 );
-    TIM_Cmd( TIM2, ENABLE );
+    TIM_ClearITPendingBit( TIM3, TIM_IT_Update );
+    TIM_ITConfig( TIM3, TIM_IT_Update, ENABLE );
+    TIM_SetCounter( TIM3, 0 );
+    TIM_Cmd( TIM3, ENABLE );
 }
 
 void
-vMBMasterPortTimersDisable(  )
+vMBPortTimersDisable(  )
 {
-    TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
-    TIM_ITConfig( TIM2, TIM_IT_Update, DISABLE );
-    TIM_SetCounter( TIM2, 0 );
-    TIM_Cmd( TIM2, DISABLE );
+    TIM_ClearITPendingBit( TIM3, TIM_IT_Update );
+    TIM_ITConfig( TIM3, TIM_IT_Update, DISABLE );
+    TIM_SetCounter( TIM3, 0 );
+    TIM_Cmd( TIM3, DISABLE );
 }
 
 void
 prvvTIMERExpiredISR( void )
 {
-    ( void )pxMBMasterPortCBTimerExpired(  );
+    ( void )pxMBPortCBTimerExpired(  );
 }
 
 void
-TIM2_IRQHandler( void )
+TIM3_IRQHandler( void )
 {
     rt_interrupt_enter(  );
-    if( TIM_GetITStatus( TIM2, TIM_IT_Update ) != RESET )
+    if( TIM_GetITStatus( TIM3, TIM_IT_Update ) != RESET )
     {
 
-        TIM_ClearFlag( TIM2, TIM_FLAG_Update ); //笢剿梓暮
-        TIM_ClearITPendingBit( TIM2, TIM_IT_Update );   //壺隅奀TIM2祛堤笢剿梓祩弇
+        TIM_ClearFlag( TIM3, TIM_FLAG_Update ); //笢剿梓暮
+        TIM_ClearITPendingBit( TIM3, TIM_IT_Update );   //壺隅奀T3祛堤笢剿梓祩弇
         prvvTIMERExpiredISR(  );
     }
     rt_interrupt_leave(  );
