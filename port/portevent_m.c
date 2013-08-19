@@ -23,8 +23,10 @@
 #include "mb.h"
 #include "mbport.h"
 
+#if MB_MASTER_RTU_ENABLED > 0
+
 /* ----------------------- Variables ----------------------------------------*/
-static eMBEventType eMasterQueuedEvent;
+static eMBMasterEventType eMasterQueuedEvent;
 static BOOL     xMasterEventInQueue;
 
 /* ----------------------- Start implementation -----------------------------*/
@@ -36,7 +38,7 @@ xMBMasterPortEventInit( void )
 }
 
 BOOL
-xMBMasterPortEventPost( eMBEventType eEvent )
+xMBMasterPortEventPost( eMBMasterEventType eEvent )
 {
     xMasterEventInQueue = TRUE;
     eMasterQueuedEvent = eEvent;
@@ -44,7 +46,7 @@ xMBMasterPortEventPost( eMBEventType eEvent )
 }
 
 BOOL
-xMBMasterPortEventGet( eMBEventType *eEvent )
+xMBMasterPortEventGet( eMBMasterEventType *eEvent )
 {
     BOOL            xEventHappened = FALSE;
 
@@ -56,3 +58,5 @@ xMBMasterPortEventGet( eMBEventType *eEvent )
     }
     return xEventHappened;
 }
+
+#endif

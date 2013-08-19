@@ -47,6 +47,15 @@ typedef enum
     EV_FRAME_SENT               /*!< Frame sent. */
 } eMBEventType;
 
+typedef enum
+{
+    EV_MASTER_READY,            /*!< Startup finished. */
+    EV_MASTER_FRAME_RECEIVED,   /*!< Frame received. */
+    EV_MASTER_EXECUTE,          /*!< Execute function. */
+    EV_MASTER_FRAME_SENT,       /*!< Frame sent. */
+    EV_MASTER_ERROR_PROCESS     /*!< Frame error process */
+} eMBMasterEventType;
+
 /*! \ingroup modbus
  * \brief Parity used for characters in serial mode.
  *
@@ -70,9 +79,9 @@ BOOL            xMBPortEventGet(  /*@out@ */ eMBEventType * eEvent );
 
 BOOL            xMBMasterPortEventInit( void );
 
-BOOL            xMBMasterPortEventPost( eMBEventType eEvent );
+BOOL            xMBMasterPortEventPost( eMBMasterEventType eEvent );
 
-BOOL            xMBMasterPortEventGet(  /*@out@ */ eMBEventType * eEvent );
+BOOL            xMBMasterPortEventGet(  /*@out@ */ eMBMasterEventType * eEvent );
 
 /* ----------------------- Serial port functions ----------------------------*/
 
@@ -99,7 +108,7 @@ void            vMBMasterPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 
 INLINE BOOL     xMBMasterPortSerialGetByte( CHAR * pucByte );
 
-INLINE BOOL     xMBPortSerialPutByte( CHAR ucByte );
+INLINE BOOL     xMBMasterPortSerialPutByte( CHAR ucByte );
 
 /* ----------------------- Timers functions ---------------------------------*/
 BOOL            xMBPortTimersInit( USHORT usTimeOut50us );
@@ -114,7 +123,11 @@ BOOL            xMBMasterPortTimersInit( USHORT usTimeOut50us );
 
 void            xMBMasterPortTimersClose( void );
 
-INLINE void     vMBMasterPortTimersEnable( void );
+INLINE void     vMBMasterPortTimersT35Enable( void );
+
+INLINE void     vMBMasterPortTimersConvertDelayEnable( void );
+
+INLINE void     vMBMasterPortTimersRespondTimeoutEnable( void );
 
 INLINE void     vMBMasterPortTimersDisable( void );
 

@@ -25,6 +25,8 @@
 #include "mb.h"
 #include "mbport.h"
 
+#if MB_MASTER_RTU_ENABLED > 0
+
 /* ----------------------- static functions ---------------------------------*/
 static void     prvvUARTTxReadyISR( void );
 static void     prvvUARTRxISR( void );
@@ -197,3 +199,5 @@ USART2_IRQHandler( void )
     }
     rt_interrupt_leave(  );
 }
+
+#endif
