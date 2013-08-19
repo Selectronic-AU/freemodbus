@@ -63,13 +63,13 @@ PR_BEGIN_EXTERN_C
 #define MB_MASTER_TCP_ENABLED                   (  0 )
 
 /*! \brief If Modbus Slaver ASCII support is enabled. */
-#define MB_SLAVER_ASCII_ENABLED                 (  0 )
+#define MB_SLAVE_ASCII_ENABLED                  (  0 )
 
 /*! \brief If Modbus Slaver RTU support is enabled. */
-#define MB_SLAVER_RTU_ENABLED                   (  1 )
+#define MB_SLAVE_RTU_ENABLED                    (  1 )
 
 /*! \brief If Modbus Slaver TCP support is enabled. */
-#define MB_SLAVER_TCP_ENABLED                   (  0 )
+#define MB_SLAVE_TCP_ENABLED                    (  0 )
 
 /*! \brief The character timeout value for Modbus ASCII.
  *
@@ -127,6 +127,19 @@ PR_BEGIN_EXTERN_C
 
 /*! \brief If the <em>Read/Write Multiple Registers</em> function should be enabled. */
 #define MB_FUNC_READWRITE_HOLDING_ENABLED       (  1 )
+
+#if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
+
+/*! \brief If master send a broadcast frame,the master will wait time of convert to delay,
+ * then master can send other frame */
+#define MB_MASTER_DELAY_MS_CONVERT              (200 )
+
+/*! \brief If master send a frame which is not broadcast,the master will wait sometime for slaver.
+ * And if slaver is not respond in this time,the master will process this timeout error.
+ * Then master can send other frame */
+#define MB_MASTER_TIMEOUT_MS_RESPOND            (2000)
+
+#endif
 
 /*! @} */
 
