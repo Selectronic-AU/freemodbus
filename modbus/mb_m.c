@@ -62,7 +62,8 @@
 
 /* ----------------------- Static variables ---------------------------------*/
 
-static UCHAR    ucMBMasterSendAddress;
+volatile UCHAR  ucMBMasterSendAddress;
+volatile BOOL   bMBRunInMasterMode = FALSE;
 static eMBMode  eMBCurrentMode;
 static UCHAR    ucMasterRTUBuf[MB_PDU_SIZE_MAX];
 static UCHAR   *pucMasterPUDBuf = ucMasterRTUBuf + 1;
@@ -301,7 +302,9 @@ eMBMasterPoll( void )
                 }
                 else if( xMasterFuncHandlers[i].ucFunctionCode == ucFunctionCode )
                 {
+                    bMBRunInMasterMode = TRUE;
                     eException = xMasterFuncHandlers[i].pxHandler( pucMasterPUDBuf, &usLength );
+                    bMBRunInMasterMode = FALSE;
                     break;
                 }
             }
