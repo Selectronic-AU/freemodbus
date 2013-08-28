@@ -65,8 +65,17 @@ eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
         iRegIndex = ( int )( usAddress - usRegInStart );
         while( usNRegs > 0 )
         {
-            *pucRegBuffer++ = ( unsigned char )( pusRegInputBuf[iRegIndex] >> 8 );
-            *pucRegBuffer++ = ( unsigned char )( pusRegInputBuf[iRegIndex] & 0xFF );
+            //Determine the master or slave
+            if( bMBRunInMasterMode )
+            {
+                pusRegInputBuf[iRegIndex] = *pucRegBuffer++ << 8;
+                pusRegInputBuf[iRegIndex] |= *pucRegBuffer++;
+            }
+            else
+            {
+                *pucRegBuffer++ = ( unsigned char )( pusRegInputBuf[iRegIndex] >> 8 );
+                *pucRegBuffer++ = ( unsigned char )( pusRegInputBuf[iRegIndex] & 0xFF );
+            }
             iRegIndex++;
             usNRegs--;
         }
@@ -96,7 +105,7 @@ eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegis
 {
     eMBErrorCode    eStatus = MB_ENOERR;
     int             iRegIndex;
-    USHORT         *usRegHoldingBuf;
+    USHORT         *pusRegHoldingBuf;
     UCHAR           REG_HOLDING_START;
     UCHAR           REG_HOLDING_NREGS;
     UCHAR           usRegHoldStart;
@@ -104,14 +113,16 @@ eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegis
     //Determine the master or slave
     if( bMBRunInMasterMode )
     {
-        usRegHoldingBuf = usMRegHoldBuf[ucMBMasterSendAddress];
+        pusRegHoldingBuf = usMRegHoldBuf[ucMBMasterSendAddress];
         REG_HOLDING_START = M_REG_HOLDING_START;
         REG_HOLDING_NREGS = M_REG_HOLDING_NREGS;
         usRegHoldStart = usMRegHoldStart;
+        //If mode is read,the master will wirte the received date to bufffer.
+        eMode = MB_REG_WRITE;
     }
     else
     {
-        usRegHoldingBuf = usSRegInBuf;
+        pusRegHoldingBuf = usSRegInBuf;
         REG_HOLDING_START = S_REG_INPUT_START;
         REG_HOLDING_NREGS = S_REG_INPUT_NREGS;
         usRegHoldStart = usSRegInStart;
@@ -126,8 +137,8 @@ eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegis
         case MB_REG_READ:
             while( usNRegs > 0 )
             {
-                *pucRegBuffer++ = ( unsigned char )( usRegHoldingBuf[iRegIndex] >> 8 );
-                *pucRegBuffer++ = ( unsigned char )( usRegHoldingBuf[iRegIndex] & 0xFF );
+                *pucRegBuffer++ = ( unsigned char )( pusRegHoldingBuf[iRegIndex] >> 8 );
+                *pucRegBuffer++ = ( unsigned char )( pusRegHoldingBuf[iRegIndex] & 0xFF );
                 iRegIndex++;
                 usNRegs--;
             }
@@ -138,8 +149,8 @@ eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegis
         case MB_REG_WRITE:
             while( usNRegs > 0 )
             {
-                usRegHoldingBuf[iRegIndex] = *pucRegBuffer++ << 8;
-                usRegHoldingBuf[iRegIndex] |= *pucRegBuffer++;
+                pusRegHoldingBuf[iRegIndex] = *pucRegBuffer++ << 8;
+                pusRegHoldingBuf[iRegIndex] |= *pucRegBuffer++;
                 iRegIndex++;
                 usNRegs--;
             }
@@ -172,7 +183,7 @@ eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegist
     int             iRegIndex, iRegBitIndex, iNReg;
 
     iNReg = usNCoils / 8 + 1;   //梩蚚敵湔杅講
-    UCHAR          *ucCoilBuf;
+    UCHAR          *pucCoilBuf;
     UCHAR           COIL_START;
     UCHAR           COIL_NCOILS;
     UCHAR           usCoilStart;
@@ -180,14 +191,16 @@ eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegist
     //Determine the master or slave
     if( bMBRunInMasterMode )
     {
-        ucCoilBuf = ucMCoilBuf[ucMBMasterSendAddress];
+        pucCoilBuf = ucMCoilBuf[ucMBMasterSendAddress];
         COIL_START = M_COIL_START;
         COIL_NCOILS = M_COIL_NCOILS;
         usCoilStart = usMCoilStart;
+        //If mode is read,the master will wirte the received date to bufffer.
+        eMode = MB_REG_WRITE;
     }
     else
     {
-        ucCoilBuf = ucSCoilBuf;
+        pucCoilBuf = ucSCoilBuf;
         COIL_START = S_COIL_START;
         COIL_NCOILS = S_COIL_NCOILS;
         usCoilStart = usSCoilStart;
@@ -203,7 +216,7 @@ eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegist
         case MB_REG_READ:
             while( iNReg > 0 )
             {
-                *pucRegBuffer++ = xMBUtilGetBits( &ucCoilBuf[iRegIndex++], iRegBitIndex, 8 );
+                *pucRegBuffer++ = xMBUtilGetBits( &pucCoilBuf[iRegIndex++], iRegBitIndex, 8 );
                 iNReg--;
             }
             pucRegBuffer--;
@@ -217,11 +230,11 @@ eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegist
         case MB_REG_WRITE:
             while( iNReg > 1 )  //郔綴醱豻狟懂腔杅等黃呾
             {
-                xMBUtilSetBits( &ucCoilBuf[iRegIndex++], iRegBitIndex, 8, *pucRegBuffer++ );
+                xMBUtilSetBits( &pucCoilBuf[iRegIndex++], iRegBitIndex, 8, *pucRegBuffer++ );
                 iNReg--;
             }
             usNCoils = usNCoils % 8;    //豻狟腔盄杅
-            xMBUtilSetBits( &ucCoilBuf[iRegIndex++], iRegBitIndex, usNCoils, *pucRegBuffer++ );
+            xMBUtilSetBits( &pucCoilBuf[iRegIndex++], iRegBitIndex, usNCoils, *pucRegBuffer++ );
             break;
         }
     }
@@ -249,7 +262,7 @@ eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
     int             iRegIndex, iRegBitIndex, iNReg;
 
     iNReg = usNDiscrete / 8 + 1;        //梩蚚敵湔杅講
-    UCHAR          *ucDiscreteInputBuf;
+    UCHAR          *pucDiscreteInputBuf;
     UCHAR           DISCRETE_INPUT_START;
     UCHAR           DISCRETE_INPUT_NDISCRETES;
     UCHAR           usDiscreteInputStart;
@@ -257,14 +270,14 @@ eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
     //Determine the master or slave
     if( bMBRunInMasterMode )
     {
-        ucDiscreteInputBuf = ucMDiscInBuf[ucMBMasterSendAddress];
+        pucDiscreteInputBuf = ucMDiscInBuf[ucMBMasterSendAddress];
         DISCRETE_INPUT_START = M_DISCRETE_INPUT_START;
         DISCRETE_INPUT_NDISCRETES = M_DISCRETE_INPUT_NDISCRETES;
         usDiscreteInputStart = usMDiscInStart;
     }
     else
     {
-        ucDiscreteInputBuf = ucSDiscInBuf;
+        pucDiscreteInputBuf = ucSDiscInBuf;
         DISCRETE_INPUT_START = S_DISCRETE_INPUT_START;
         DISCRETE_INPUT_NDISCRETES = S_DISCRETE_INPUT_NDISCRETES;
         usDiscreteInputStart = usSDiscInStart;
@@ -275,15 +288,32 @@ eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
     {
         iRegIndex = ( int )( usAddress - usDiscreteInputStart ) / 8;    //藩跺敵湔湔8跺
         iRegBitIndex = ( int )( usAddress - usDiscreteInputStart ) % 8; //眈勤衾敵湔囀窒腔弇華硊
-        while( iNReg > 0 )
+
+        //Determine the master or slave
+        if( bMBRunInMasterMode )
         {
-            *pucRegBuffer++ = xMBUtilGetBits( &ucDiscreteInputBuf[iRegIndex++], iRegBitIndex, 8 );
-            iNReg--;
+            /* Update current coil values with new values from the
+             * protocol stack. */
+            while( iNReg > 1 )  //郔綴醱豻狟懂腔杅等黃呾
+            {
+                xMBUtilSetBits( &pucDiscreteInputBuf[iRegIndex++], iRegBitIndex, 8, *pucRegBuffer++ );
+                iNReg--;
+            }
+            usNDiscrete = usNDiscrete % 8;      //豻狟腔盄杅
+            xMBUtilSetBits( &pucDiscreteInputBuf[iRegIndex++], iRegBitIndex, usNDiscrete, *pucRegBuffer++ );
         }
-        pucRegBuffer--;
-        usNDiscrete = usNDiscrete % 8;  //豻狟腔盄杅
-        *pucRegBuffer = *pucRegBuffer << ( 8 - usNDiscrete );   //詢弇硃錨
-        *pucRegBuffer = *pucRegBuffer >> ( 8 - usNDiscrete );
+        else
+        {
+            while( iNReg > 0 )
+            {
+                *pucRegBuffer++ = xMBUtilGetBits( &pucDiscreteInputBuf[iRegIndex++], iRegBitIndex, 8 );
+                iNReg--;
+            }
+            pucRegBuffer--;
+            usNDiscrete = usNDiscrete % 8;      //豻狟腔盄杅
+            *pucRegBuffer = *pucRegBuffer << ( 8 - usNDiscrete );       //詢弇硃錨
+            *pucRegBuffer = *pucRegBuffer >> ( 8 - usNDiscrete );
+        }
     }
     else
     {
