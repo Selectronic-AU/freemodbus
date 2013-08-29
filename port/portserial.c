@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * File: $Id: portserial.c,v 1.60 2013/08/13 15:07:05 Armink add Master Functions$
+ * File: $Id: portserial.c,v 1.60 2013/08/13 15:07:05 Armink $
  */
 
 #include "port.h"
@@ -110,7 +110,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-    if( ucPORT > 1 )
+    if( ucPORT != 1 )
         return FALSE;
 
     ENTER_CRITICAL_SECTION(  ); //壽擁笢剿

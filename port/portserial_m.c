@@ -63,7 +63,7 @@ vMBMasterPortClose( void )
     USART_Cmd( USART2, DISABLE );
 }
 
-//蘇珨跺植儂 揹諳2 疏杻薹褫扢离  髒潰桄褫扢离
+//蘇珨跺翋儂 揹諳2 疏杻薹褫扢离  髒潰桄褫扢离
 BOOL
 xMBMasterPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
@@ -72,7 +72,8 @@ xMBMasterPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBPa
     NVIC_InitTypeDef NVIC_InitStructure;
 
     //======================奀笘場宎趙=======================================
-    RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB1Periph_USART2, ENABLE );
+    RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB, ENABLE );
+    RCC_APB1PeriphClockCmd( RCC_APB1Periph_USART2, ENABLE );
     //======================IO場宎趙=======================================
     //USART2_TX
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -112,7 +113,7 @@ xMBMasterPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBPa
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-    if( ucPORT > 1 )
+    if( ucPORT != 2 )
         return FALSE;
 
     ENTER_CRITICAL_SECTION(  ); //壽擁笢剿
