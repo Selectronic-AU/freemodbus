@@ -30,6 +30,7 @@
 
 /* ----------------------- Variables ----------------------------------------*/
 static USHORT   usT35TimeOut50us;
+static USHORT   usPrescalerValue = 0;
 
 /* ----------------------- static functions ---------------------------------*/
 static void     prvvTIMERExpiredISR( void );
@@ -38,9 +39,6 @@ static void     prvvTIMERExpiredISR( void );
 BOOL
 xMBMasterPortTimersInit( USHORT usTimeOut50us )
 {
-
-    uint16_t        PrescalerValue = 0;
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
     //====================================奀笘場宎趙===========================
@@ -52,15 +50,10 @@ xMBMasterPortTimersInit( USHORT usTimeOut50us )
     //TIM2腔奀笘捷綴峈72MHzㄗ茞璃赻雄捷,湛善郔湮ㄘ
     //TIM2腔煦炵杅峈3599ㄛ奀潔價薹峈72 / (1 + Prescaler) = 20KHz,價袧峈50us
     //TIM郔湮數杅硉峈usTim1Timerout50u
+    usPrescalerValue = ( uint16_t ) ( SystemCoreClock / 20000 ) - 1;
+    //悵湔T35隅奀數杅硉
+    usT35TimeOut50us = usTimeOut50us;
 
-    PrescalerValue = ( uint16_t ) ( SystemCoreClock / 20000 ) - 1;
-    //隅奀1場宎趙
-    usT35TimeOut50us = usTimeOut50us;   //悵湔T35隅奀數杅硉
-
-    TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
-    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseInit( TIM2, &TIM_TimeBaseStructure );
     //啎蚾婥妏夔
     TIM_ARRPreloadConfig( TIM2, ENABLE );
     //====================================笢剿場宎趙===========================
@@ -83,9 +76,11 @@ xMBMasterPortTimersInit( USHORT usTimeOut50us )
 void
 vMBMasterPortTimersT35Enable(  )
 {
-    //蚾婥數杅硉     價袧50us
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
+    TIM_TimeBaseStructure.TIM_Prescaler = usPrescalerValue;
+    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseStructure.TIM_Period = ( uint16_t ) usT35TimeOut50us;
     TIM_TimeBaseInit( TIM2, &TIM_TimeBaseStructure );
 
@@ -98,9 +93,11 @@ vMBMasterPortTimersT35Enable(  )
 void
 vMBMasterPortTimersConvertDelayEnable(  )
 {
-    //蚾婥數杅硉     價袧50us
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
+    TIM_TimeBaseStructure.TIM_Prescaler = usPrescalerValue;
+    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseStructure.TIM_Period = ( uint16_t ) ( MB_MASTER_DELAY_MS_CONVERT * 1000 / 50 );
     TIM_TimeBaseInit( TIM2, &TIM_TimeBaseStructure );
 
@@ -113,9 +110,11 @@ vMBMasterPortTimersConvertDelayEnable(  )
 void
 vMBMasterPortTimersRespondTimeoutEnable(  )
 {
-    //蚾婥數杅硉     價袧50us
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
+    TIM_TimeBaseStructure.TIM_Prescaler = usPrescalerValue;
+    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
     TIM_TimeBaseStructure.TIM_Period = ( uint16_t ) ( MB_MASTER_TIMEOUT_MS_RESPOND * 1000 / 50 );
     TIM_TimeBaseInit( TIM2, &TIM_TimeBaseStructure );
 
