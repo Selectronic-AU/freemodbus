@@ -325,9 +325,6 @@ eMBErrorCode    eMBRegisterCB( UCHAR ucFunctionCode, pxMBFunctionHandler pxHandl
  */
 eMBErrorCode    eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs );
 
-/*  This callback function will be use in Modbus Master mode.*/
-eMBErrorCode    eMBRegMasterInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs );
-
 /*! \ingroup modbus_registers
  * \brief Callback function used if a <em>Holding Register</em> value is
  *   read or written by the protocol stack. The starting register address
@@ -361,9 +358,6 @@ eMBErrorCode    eMBRegMasterInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USH
  *       a <b>SLAVE DEVICE FAILURE</b> exception is sent as a response.
  */
 eMBErrorCode    eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode );
-
-/*  This callback function will be use in Modbus Master mode.*/
-eMBErrorCode    eMBMasterRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode );
 
 /*! \ingroup modbus_registers
  * \brief Callback function used if a <em>Coil Register</em> value is
@@ -399,9 +393,6 @@ eMBErrorCode    eMBMasterRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, U
  */
 eMBErrorCode    eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode );
 
-/*  This callback function will be use in Modbus Master mode.*/
-eMBErrorCode    eMBMasterRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode );
-
 /*! \ingroup modbus_registers
  * \brief Callback function used if a <em>Input Discrete Register</em> value is
  *   read by the protocol stack.
@@ -429,9 +420,6 @@ eMBErrorCode    eMBMasterRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USH
  *       a <b>SLAVE DEVICE FAILURE</b> exception is sent as a response.
  */
 eMBErrorCode    eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete );
-
-/*  This callback function will be use in Modbus Master mode.*/
-eMBErrorCode    eMBMasterRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete );
 
 #ifdef __cplusplus
 /* *INDENT-OFF* */
