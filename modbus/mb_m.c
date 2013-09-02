@@ -65,6 +65,7 @@
 volatile UCHAR  ucMBMasterSndAddress;
 volatile BOOL   bMBRunInMasterMode = FALSE;
 UCHAR           ucMasterRTUSndBuf[MB_PDU_SIZE_MAX];
+BOOL            bMasterIsBusy = FALSE;
 static UCHAR   *pucMasterPUDSndBuf = ucMasterRTUSndBuf + 1;
 static UCHAR    ucMasterSendPDULength;
 
@@ -150,7 +151,7 @@ eMBMasterInit( eMBMode eMode, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity 
         pvMBMasterFrameCloseCur = MB_PORT_HAS_CLOSE ? vMBMasterPortClose : NULL;
         pxMBMasterFrameCBByteReceived = xMBMasterRTUReceiveFSM;
         pxMBMasterFrameCBTransmitterEmpty = xMBMasterRTUTransmitFSM;
-        pxMBMasterPortCBTimerExpired = xMBMasterRTUTimerT35Expired;
+        pxMBMasterPortCBTimerExpired = xMBMasterRTUTimerExpired;
 
         eStatus = eMBMasterRTUInit( ucPort, ulBaudRate, eParity );
         break;
@@ -315,6 +316,8 @@ eMBMasterPoll( void )
             break;
 
         case EV_MASTER_FRAME_SENT:
+            /* Master is busy now. */
+            bMasterIsBusy = TRUE;
             eStatus = peMBMasterFrameSendCur( ucMBMasterSndAddress, pucMasterPUDSndBuf, ucMasterSendPDULength );
             break;
 
@@ -327,6 +330,12 @@ eMBMasterPoll( void )
 
     }
     return MB_ENOERR;
+}
+
+BOOL
+bMBMasterGetIsBusy( void )
+{
+    return bMasterIsBusy;
 }
 
 //Test Modbus Master
