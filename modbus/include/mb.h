@@ -153,9 +153,6 @@ typedef enum
  */
 eMBErrorCode    eMBInit( eMBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity );
 
-/*  This callback function will be use in Modbus Master mode.*/
-eMBErrorCode    eMBMasterInit( eMBMode eMode, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity );
-
 /*! \ingroup modbus
  * \brief Initialize the Modbus protocol stack for Modbus TCP.
  *
@@ -188,9 +185,6 @@ eMBErrorCode    eMBTCPInit( USHORT usTCPPort );
  */
 eMBErrorCode    eMBClose( void );
 
-/*  This callback function will be use in Modbus Master mode.*/
-eMBErrorCode    eMBMasterClose( void );
-
 /*! \ingroup modbus
  * \brief Enable the Modbus protocol stack.
  *
@@ -203,9 +197,6 @@ eMBErrorCode    eMBMasterClose( void );
  */
 eMBErrorCode    eMBEnable( void );
 
-/*  This callback function will be use in Modbus Master mode.*/
-eMBErrorCode    eMBMasterEnable( void );
-
 /*! \ingroup modbus
  * \brief Disable the Modbus protocol stack.
  *
@@ -216,9 +207,6 @@ eMBErrorCode    eMBMasterEnable( void );
  *  eMBErrorCode::MB_EILLSTATE.
  */
 eMBErrorCode    eMBDisable( void );
-
-/*  This callback function will be use in Modbus Master mode.*/
-eMBErrorCode    eMBMasterDisable( void );
 
 /*! \ingroup modbus
  * \brief The main pooling loop of the Modbus protocol stack.
@@ -233,9 +221,6 @@ eMBErrorCode    eMBMasterDisable( void );
  *   eMBErrorCode::MB_ENOERR.
  */
 eMBErrorCode    eMBPoll( void );
-
-/*  This callback function will be use in Modbus Master mode.*/
-eMBErrorCode    eMBMasterPoll( void );
 
 /*! \ingroup modbus
  * \brief Configure the slave id of the device.

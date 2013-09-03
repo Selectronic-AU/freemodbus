@@ -3,8 +3,10 @@
 
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
-#include "mbport.h"
+#include "mb_m.h"
 #include "mbconfig.h"
+#include "mbframe.h"
+#include "mbutils.h"
 
 /* -----------------------Slave Defines -------------------------------------*/
 #define S_DISCRETE_INPUT_START        1
@@ -49,11 +51,5 @@
 
 //翋儂耀宒ㄩ婓燭汃怀笢ㄛ跪跺華硊勤茼腔髡夔隅砱
 #define          M_DI_RESERVE                     1     //悵隱
-
-
-
-/*--------------------------Extern Functions------------------------------------*/
-extern UCHAR    xMBUtilGetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucNBits );
-extern void     xMBUtilSetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucNBits, UCHAR ucValue );
 
 #endif

@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * File: $Id: mbrtu_m.c,v 1.60 2013/08/17 11:42:56 Armink Add Master Functions , $
+ * File: $Id: mbrtu_m.c,v 1.60 2013/08/17 11:42:56 Armink Add Master Functions $
  */
 
 /* ----------------------- System includes ----------------------------------*/
@@ -72,15 +72,15 @@ typedef enum
 static volatile eMBMasterSndState eSndState;
 static volatile eMBMasterRcvState eRcvState;
 
-extern BOOL     bMasterIsBusy;
-extern UCHAR    ucMasterRTUSndBuf[MB_PDU_SIZE_MAX];
-volatile UCHAR  ucMasterRTURcvBuf[MB_SER_PDU_SIZE_MAX];
+static volatile UCHAR ucMasterRTUSndBuf[MB_PDU_SIZE_MAX];
+static volatile UCHAR ucMasterRTURcvBuf[MB_SER_PDU_SIZE_MAX];
+static volatile UCHAR ucMasterSendPDULength;
 
 static volatile UCHAR *pucMasterSndBufferCur;
 static volatile USHORT usMasterSndBufferCount;
 
 static volatile USHORT usMasterRcvBufferPos;
-static volatile BOOL bFrameIsBroadcast = FALSE;
+static volatile BOOL xFrameIsBroadcast = FALSE;
 
 /* ----------------------- Start implementation -----------------------------*/
 eMBErrorCode
@@ -321,14 +321,14 @@ xMBMasterRTUTransmitFSM( void )
         }
         else
         {
-            bFrameIsBroadcast = ( ucMasterRTUSndBuf[MB_SER_PDU_ADDR_OFF] == MB_ADDRESS_BROADCAST ) ? TRUE : FALSE;
+            xFrameIsBroadcast = ( ucMasterRTUSndBuf[MB_SER_PDU_ADDR_OFF] == MB_ADDRESS_BROADCAST ) ? TRUE : FALSE;
             /* Disable transmitter. This prevents another transmit buffer
              * empty interrupt. */
             vMBMasterPortSerialEnable( TRUE, FALSE );
             eSndState = STATE_M_TX_XFWR;
             /* If the frame is broadcast ,master will enable timer of convert delay,
              * else master will enable timer of respond timeout. */
-            if( bFrameIsBroadcast == TRUE )
+            if( xFrameIsBroadcast == TRUE )
                 vMBMasterPortTimersConvertDelayEnable(  );
             else
                 vMBMasterPortTimersRespondTimeoutEnable(  );
@@ -378,7 +378,7 @@ xMBMasterRTUTimerExpired( void )
          * If the frame is broadcast,The master will idle,and if the frame is not
          * broadcast.Notify the listener process error.*/
     case STATE_M_TX_XFWR:
-        if( bFrameIsBroadcast == FALSE )
+        if( xFrameIsBroadcast == FALSE )
             xNeedPoll = xMBMasterPortEventPost( EV_MASTER_ERROR_PROCESS );
         break;
         /* Function called in an illegal state. */
@@ -390,8 +390,36 @@ xMBMasterRTUTimerExpired( void )
 
     vMBMasterPortTimersDisable(  );
     /* Master is idel now. */
-    bMasterIsBusy = FALSE;
+    vMBMasterSetIsBusy( FALSE );
 
     return xNeedPoll;
+}
+
+/* Get Modbus Master send RTU's buffer address pointer.*/
+void
+vMBMasterGetRTUSndBuf( UCHAR **pucFrame )
+{
+    *pucFrame = ( UCHAR * ) ucMasterRTUSndBuf;
+}
+
+/* Get Modbus Master send PDU's buffer address pointer.*/
+void
+vMBMasterGetPDUSndBuf( UCHAR **pucFrame )
+{
+    *pucFrame = ( UCHAR * ) ucMasterRTUSndBuf[MB_SER_PDU_PDU_OFF];
+}
+
+/* Set Modbus Master send PDU's buffer length.*/
+void
+vMBMasterSetRTUSndSndLength( UCHAR SendPDULength )
+{
+    ucMasterSendPDULength = SendPDULength;
+}
+
+/* Get Modbus Master send PDU's buffer length.*/
+UCHAR
+ucMBMasterGetPDUSndLength( void )
+{
+    return ucMasterSendPDULength;
 }
 #endif
