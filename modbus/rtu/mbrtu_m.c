@@ -37,6 +37,7 @@
 
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
+#include "mb_m.h"
 #include "mbrtu.h"
 #include "mbframe.h"
 
@@ -81,6 +82,8 @@ static volatile USHORT usMasterSndBufferCount;
 
 static volatile USHORT usMasterRcvBufferPos;
 static volatile BOOL xFrameIsBroadcast = FALSE;
+
+static volatile eMBMasterTimerMode eMasterCurTimerMode;
 
 /* ----------------------- Start implementation -----------------------------*/
 eMBErrorCode
@@ -329,9 +332,13 @@ xMBMasterRTUTransmitFSM( void )
             /* If the frame is broadcast ,master will enable timer of convert delay,
              * else master will enable timer of respond timeout. */
             if( xFrameIsBroadcast == TRUE )
+            {
                 vMBMasterPortTimersConvertDelayEnable(  );
+            }
             else
+            {
                 vMBMasterPortTimersRespondTimeoutEnable(  );
+            }
         }
         break;
 
@@ -389,8 +396,9 @@ xMBMasterRTUTimerExpired( void )
     eSndState = STATE_M_TX_IDLE;
 
     vMBMasterPortTimersDisable(  );
-    /* Master is idel now. */
-    vMBMasterSetIsBusy( FALSE );
+    /* If timer mode is convert delay ,then Master is idel now. */
+    if( eMasterCurTimerMode == MB_TMODE_CONVERT_DELAY )
+        vMBMasterSetIsBusy( FALSE );
 
     return xNeedPoll;
 }
@@ -406,12 +414,12 @@ vMBMasterGetRTUSndBuf( UCHAR **pucFrame )
 void
 vMBMasterGetPDUSndBuf( UCHAR **pucFrame )
 {
-    *pucFrame = ( UCHAR * ) ucMasterRTUSndBuf[MB_SER_PDU_PDU_OFF];
+    *pucFrame = ( UCHAR * ) & ucMasterRTUSndBuf[MB_SER_PDU_PDU_OFF];
 }
 
 /* Set Modbus Master send PDU's buffer length.*/
 void
-vMBMasterSetRTUSndSndLength( UCHAR SendPDULength )
+vMBMasterSetPDUSndLength( UCHAR SendPDULength )
 {
     ucMasterSendPDULength = SendPDULength;
 }
@@ -421,5 +429,12 @@ UCHAR
 ucMBMasterGetPDUSndLength( void )
 {
     return ucMasterSendPDULength;
+}
+
+/* Set Modbus Master current timer mode.*/
+void
+vMBMasterSetCurTimerMode( eMBMasterTimerMode eMBTimerMode )
+{
+    eMasterCurTimerMode = eMBTimerMode;
 }
 #endif
