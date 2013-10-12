@@ -197,6 +197,7 @@ eMBErrorCode    eMBMasterPoll( void );
 /*! \ingroup modbus
  *\brief These Modbus functions are called for user when Modbus run in Master Mode.
  */
+eMBMasterReqErrCode eMBMasterReqReadInputRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRegs );
 eMBMasterReqErrCode eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT * pusDataBuffer, USHORT usRegAddr );
 eMBMasterReqErrCode eMBMasterReqWriteMultipleHoldingRegister( UCHAR ucSndAddr, USHORT * pusDataBuffer, USHORT usRegAddr,
                                                               USHORT usNRegs );
