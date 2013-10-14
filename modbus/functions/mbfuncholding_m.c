@@ -87,7 +87,7 @@ eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
 #if MB_FUNC_WRITE_HOLDING_ENABLED > 0
 
 eMBMasterReqErrCode
-eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT *pusDataBuffer, USHORT usRegAddr )
+eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usRegData )
 {
     UCHAR          *ucMBFrame;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
@@ -103,8 +103,8 @@ eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT *pusDataBuffer, USHORT
         ucMBFrame[MB_PDU_FUNC_OFF] = MB_FUNC_WRITE_REGISTER;
         ucMBFrame[MB_PDU_REQ_WRITE_ADDR_OFF] = usRegAddr >> 8;
         ucMBFrame[MB_PDU_REQ_WRITE_ADDR_OFF + 1] = usRegAddr;
-        ucMBFrame[MB_PDU_REQ_WRITE_VALUE_OFF] = pusDataBuffer[0] >> 8;
-        ucMBFrame[MB_PDU_REQ_WRITE_VALUE_OFF + 1] = pusDataBuffer[0];
+        ucMBFrame[MB_PDU_REQ_WRITE_VALUE_OFF] = usRegData >> 8;
+        ucMBFrame[MB_PDU_REQ_WRITE_VALUE_OFF + 1] = usRegData;
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_WRITE_SIZE );
         ( void )xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
     }
@@ -145,7 +145,7 @@ eMBMasterFuncWriteHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
 #if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED > 0
 
 eMBMasterReqErrCode
-eMBMasterReqWriteMultipleHoldingRegister( UCHAR ucSndAddr, USHORT *pusDataBuffer, USHORT usRegAddr, USHORT usNRegs )
+eMBMasterReqWriteMultipleHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRegs, USHORT *pusDataBuffer )
 {
     UCHAR          *ucMBFrame;
     USHORT          usRegIndex = 0;
@@ -305,8 +305,8 @@ eMBMasterFuncReadHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
 #if MB_FUNC_READWRITE_HOLDING_ENABLED > 0
 
 eMBMasterReqErrCode
-eMBMasterReqReadWriteMultipleHoldingRegister( UCHAR ucSndAddr, USHORT *pusDataBuffer, USHORT usWriteRegAddr,
-                                              USHORT usNWriteRegs, USHORT usReadRegAddr, USHORT usNReadRegs )
+eMBMasterReqReadWriteMultipleHoldingRegister( UCHAR ucSndAddr, USHORT usReadRegAddr, USHORT usNReadRegs,
+                                              USHORT *pusDataBuffer, USHORT usWriteRegAddr, USHORT usNWriteRegs )
 {
     UCHAR          *ucMBFrame;
     USHORT          usRegIndex = 0;
@@ -397,5 +397,6 @@ eMBMasterFuncReadWriteMultipleHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
     }
     return eStatus;
 }
+
 #endif
 #endif
