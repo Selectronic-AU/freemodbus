@@ -209,6 +209,7 @@ eMBMasterReqErrCode eMBMasterReqReadCoils( UCHAR ucSndAddr, USHORT usCoilAddr, U
 eMBMasterReqErrCode eMBMasterReqWriteCoil( UCHAR ucSndAddr, USHORT usCoilAddr, USHORT usCoilData );
 eMBMasterReqErrCode eMBMasterReqWriteMultipleCoils( UCHAR ucSndAddr, USHORT usCoilAddr, USHORT usNCoils,
                                                     UCHAR * pucDataBuffer );
+eMBMasterReqErrCode eMBMasterReqReadDiscreteInputs( UCHAR ucSndAddr, USHORT usDiscreteAddr, USHORT usNDiscreteIn );
 
 eMBException    eMBMasterFuncReportSlaveID( UCHAR * pucFrame, USHORT * usLen );
 eMBException    eMBMasterFuncReadInputRegister( UCHAR * pucFrame, USHORT * usLen );

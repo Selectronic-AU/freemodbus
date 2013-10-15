@@ -233,7 +233,10 @@ eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegist
                 iNReg--;
             }
             usNCoils = usNCoils % 8;    //豻狟腔盄杅
-            xMBUtilSetBits( &pucCoilBuf[iRegIndex++], iRegBitIndex, usNCoils, *pucRegBuffer++ );
+            if( usNCoils != 0 ) //xMBUtilSetBits源楊 婓紱釬弇杅講峈0奀湔婓bug
+            {
+                xMBUtilSetBits( &pucCoilBuf[iRegIndex++], iRegBitIndex, usNCoils, *pucRegBuffer++ );
+            }
             break;
         }
     }
@@ -299,7 +302,10 @@ eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
                 iNReg--;
             }
             usNDiscrete = usNDiscrete % 8;      //豻狟腔盄杅
-            xMBUtilSetBits( &pucDiscreteInputBuf[iRegIndex++], iRegBitIndex, usNDiscrete, *pucRegBuffer++ );
+            if( usNDiscrete != 0 )      //xMBUtilSetBits源楊 婓紱釬弇杅講峈0奀湔婓bug
+            {
+                xMBUtilSetBits( &pucDiscreteInputBuf[iRegIndex++], iRegBitIndex, usNDiscrete, *pucRegBuffer++ );
+            }
         }
         else
         {
