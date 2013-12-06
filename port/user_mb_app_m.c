@@ -187,6 +187,7 @@ eMBMasterRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMB
 
     if( ( usAddress >= COIL_START ) && ( usAddress + usNCoils <= COIL_START + COIL_NCOILS ) )
     {
+        usAddress -= usCoilStart;       //數呾橈勤華硊
         iRegIndex = ( int )( usAddress - usCoilStart ) / 8;     //藩跺敵湔湔8跺
         iRegBitIndex = ( int )( usAddress - usCoilStart ) % 8;  //眈勤衾敵湔囀窒腔弇華硊
         switch ( eMode )
@@ -257,6 +258,7 @@ eMBMasterRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscret
     if( ( usAddress >= DISCRETE_INPUT_START )
         && ( usAddress + usNDiscrete <= DISCRETE_INPUT_START + DISCRETE_INPUT_NDISCRETES ) )
     {
+        usAddress -= usDiscreteInputStart;      //數呾橈勤華硊
         iRegIndex = ( int )( usAddress - usDiscreteInputStart ) / 8;    //藩跺敵湔湔8跺
         iRegBitIndex = ( int )( usAddress - usDiscreteInputStart ) % 8; //眈勤衾敵湔囀窒腔弇華硊
 
