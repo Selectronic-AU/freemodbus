@@ -58,7 +58,7 @@ eMBErrorCode
 eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    USHORT          iRegIndex;
     USHORT         *pusRegInputBuf;
     UCHAR           REG_INPUT_START;
     UCHAR           REG_INPUT_NREGS;
@@ -69,9 +69,10 @@ eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
     REG_INPUT_NREGS = S_REG_INPUT_NREGS;
     usRegInStart = usSRegInStart;
 
+    usAddress--;                //FreeModbus髡夔滲杅笢眒冪樓1ㄛ峈悵痐迵遣喳忑華硊珨祡ㄛ嘟熬1
     if( ( usAddress >= REG_INPUT_START ) && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegInStart );
+        iRegIndex = usAddress - usRegInStart;
         while( usNRegs > 0 )
         {
             *pucRegBuffer++ = ( unsigned char )( pusRegInputBuf[iRegIndex] >> 8 );
@@ -104,7 +105,7 @@ eMBErrorCode
 eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    USHORT          iRegIndex;
     USHORT         *pusRegHoldingBuf;
     UCHAR           REG_HOLDING_START;
     UCHAR           REG_HOLDING_NREGS;
@@ -115,9 +116,10 @@ eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegis
     REG_HOLDING_NREGS = S_REG_HOLDING_NREGS;
     usRegHoldStart = usSRegHoldStart;
 
+    usAddress--;                //FreeModbus髡夔滲杅笢眒冪樓1ㄛ峈悵痐迵遣喳忑華硊珨祡ㄛ嘟熬1
     if( ( usAddress >= REG_HOLDING_START ) && ( usAddress + usNRegs <= REG_HOLDING_START + REG_HOLDING_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegHoldStart );
+        iRegIndex = usAddress - usRegHoldStart;
         switch ( eMode )
         {
             /* Pass current register values to the protocol stack. */
@@ -167,7 +169,7 @@ eMBErrorCode
 eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex, iRegBitIndex, iNReg;
+    USHORT          iRegIndex, iRegBitIndex, iNReg;
     UCHAR          *pucCoilBuf;
     UCHAR           COIL_START;
     UCHAR           COIL_NCOILS;
@@ -180,9 +182,9 @@ eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegist
     COIL_NCOILS = S_COIL_NCOILS;
     usCoilStart = usSCoilStart;
 
+    usAddress--;                //FreeModbus髡夔滲杅笢眒冪樓1ㄛ峈悵痐迵遣喳忑華硊珨祡ㄛ嘟熬1
     if( ( usAddress >= COIL_START ) && ( usAddress + usNCoils <= COIL_START + COIL_NCOILS ) )
     {
-        usAddress -= usCoilStart;       //數呾橈勤華硊
         iRegIndex = ( int )( usAddress - usCoilStart ) / 8;     //藩跺敵湔湔8跺
         iRegBitIndex = ( int )( usAddress - usCoilStart ) % 8;  //眈勤衾敵湔囀窒腔弇華硊
         switch ( eMode )
@@ -237,7 +239,7 @@ eMBErrorCode
 eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 {
     eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex, iRegBitIndex, iNReg;
+    USHORT          iRegIndex, iRegBitIndex, iNReg;
     UCHAR          *pucDiscreteInputBuf;
     UCHAR           DISCRETE_INPUT_START;
     UCHAR           DISCRETE_INPUT_NDISCRETES;
@@ -250,10 +252,10 @@ eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
     DISCRETE_INPUT_NDISCRETES = S_DISCRETE_INPUT_NDISCRETES;
     usDiscreteInputStart = usSDiscInStart;
 
+    usAddress--;                //FreeModbus髡夔滲杅笢眒冪樓1ㄛ峈悵痐迵遣喳忑華硊珨祡ㄛ嘟熬1
     if( ( usAddress >= DISCRETE_INPUT_START )
         && ( usAddress + usNDiscrete <= DISCRETE_INPUT_START + DISCRETE_INPUT_NDISCRETES ) )
     {
-        usAddress -= usDiscreteInputStart;      //數呾橈勤華硊
         iRegIndex = ( int )( usAddress - usDiscreteInputStart ) / 8;    //藩跺敵湔湔8跺
         iRegBitIndex = ( int )( usAddress - usDiscreteInputStart ) % 8; //眈勤衾敵湔囀窒腔弇華硊
 

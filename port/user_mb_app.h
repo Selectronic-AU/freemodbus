@@ -9,13 +9,13 @@
 #include "mbutils.h"
 
 /* -----------------------Slave Defines -------------------------------------*/
-#define S_DISCRETE_INPUT_START        1
+#define S_DISCRETE_INPUT_START        0
 #define S_DISCRETE_INPUT_NDISCRETES   16
-#define S_COIL_START                  1
+#define S_COIL_START                  0
 #define S_COIL_NCOILS                 64
-#define S_REG_INPUT_START             1
+#define S_REG_INPUT_START             0
 #define S_REG_INPUT_NREGS             100
-#define S_REG_HOLDING_START           1
+#define S_REG_HOLDING_START           0
 #define S_REG_HOLDING_NREGS           100
 //植儂耀宒ㄩ婓悵厥敵湔笢ㄛ跪跺華硊勤茼腔髡夔隅砱
 #define          S_HD_RESERVE                     0     //悵隱
@@ -32,13 +32,13 @@
 #define          S_DI_RESERVE                     1     //悵隱
 
 /* -----------------------Master Defines -------------------------------------*/
-#define M_DISCRETE_INPUT_START        1
+#define M_DISCRETE_INPUT_START        0
 #define M_DISCRETE_INPUT_NDISCRETES   16
-#define M_COIL_START                  1
+#define M_COIL_START                  0
 #define M_COIL_NCOILS                 64
-#define M_REG_INPUT_START             1
+#define M_REG_INPUT_START             0
 #define M_REG_INPUT_NREGS             100
-#define M_REG_HOLDING_START           1
+#define M_REG_HOLDING_START           0
 #define M_REG_HOLDING_NREGS           100
 //翋儂耀宒ㄩ婓悵厥敵湔笢ㄛ跪跺華硊勤茼腔髡夔隅砱
 #define          M_HD_RESERVE                     0     //悵隱
