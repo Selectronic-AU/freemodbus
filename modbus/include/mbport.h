@@ -38,6 +38,16 @@ PR_BEGIN_EXTERN_C
 /* *INDENT-ON* */
 #endif
 
+/* ----------------------- Defines ------------------------------------------*/
+
+/*! \ingroup modbus
+ * \brief used for master mode.
+ *
+ * the mxMBasterRunMutexLock() parameter definitions
+ */
+#define MB_WAITING_FOREVER              -1      /*!< Block forever until get resource. */
+#define MB_WAITING_NO                   0       /*!< Non-block. */
+
 /* ----------------------- Type definitions ---------------------------------*/
 typedef enum
 {
@@ -83,6 +93,12 @@ BOOL            xMBMasterPortEventPost( eMBMasterEventType eEvent );
 
 BOOL            xMBMasterPortEventGet(  /*@out@ */ eMBMasterEventType * eEvent );
 
+void            vMBasterRunMutexInit( void );
+
+BOOL            xMBasterRunMutexLock( int32_t time );
+
+void            vMBasterRunMutexUnlock( void );
+
 /* ----------------------- Serial port functions ----------------------------*/
 
 BOOL            xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity );
@@ -96,7 +112,6 @@ void            vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 INLINE BOOL     xMBPortSerialGetByte( CHAR * pucByte );
 
 INLINE BOOL     xMBPortSerialPutByte( CHAR ucByte );
-
 
 BOOL            xMBMasterPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity );
 
