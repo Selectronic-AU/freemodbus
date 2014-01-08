@@ -92,7 +92,7 @@ eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usRe
     UCHAR          *ucMBFrame;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBasterRunMutexLock( lTimeOut ) == FALSE )
+    if( xMBasterRunResTake( lTimeOut ) == FALSE )
         eErrStatus = MB_MRE_MASTER_BUSY;
     else if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;
@@ -152,7 +152,7 @@ eMBMasterReqWriteMultipleHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USH
     USHORT          usRegIndex = 0;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBasterRunMutexLock( lTimeOut ) == FALSE )
+    if( xMBasterRunResTake( lTimeOut ) == FALSE )
         eErrStatus = MB_MRE_MASTER_BUSY;
     else if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;
@@ -236,7 +236,7 @@ eMBMasterReqReadHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRe
     UCHAR          *ucMBFrame;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBasterRunMutexLock( lTimeOut ) == FALSE )
+    if( xMBasterRunResTake( lTimeOut ) == FALSE )
         eErrStatus = MB_MRE_MASTER_BUSY;
     else if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;
@@ -315,7 +315,7 @@ eMBMasterReqReadWriteMultipleHoldingRegister( UCHAR ucSndAddr, USHORT usReadRegA
     USHORT          usRegIndex = 0;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBasterRunMutexLock( lTimeOut ) == FALSE )
+    if( xMBasterRunResTake( lTimeOut ) == FALSE )
         eErrStatus = MB_MRE_MASTER_BUSY;
     else if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;

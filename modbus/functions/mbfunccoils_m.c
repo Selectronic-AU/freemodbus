@@ -80,7 +80,7 @@ eMBMasterReqReadCoils( UCHAR ucSndAddr, USHORT usCoilAddr, USHORT usNCoils, LONG
     UCHAR          *ucMBFrame;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBasterRunMutexLock( lTimeOut ) == FALSE )
+    if( xMBasterRunResTake( lTimeOut ) == FALSE )
         eErrStatus = MB_MRE_MASTER_BUSY;
     else if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;
@@ -169,7 +169,7 @@ eMBMasterReqWriteCoil( UCHAR ucSndAddr, USHORT usCoilAddr, USHORT usCoilData, LO
     UCHAR          *ucMBFrame;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBasterRunMutexLock( lTimeOut ) == FALSE )
+    if( xMBasterRunResTake( lTimeOut ) == FALSE )
         eErrStatus = MB_MRE_MASTER_BUSY;
     else if( usCoilAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;
@@ -253,7 +253,7 @@ eMBMasterReqWriteMultipleCoils( UCHAR ucSndAddr, USHORT usCoilAddr, USHORT usNCo
     UCHAR           ucByteCount;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBasterRunMutexLock( lTimeOut ) == FALSE )
+    if( xMBasterRunResTake( lTimeOut ) == FALSE )
         eErrStatus = MB_MRE_MASTER_BUSY;
     else if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;
