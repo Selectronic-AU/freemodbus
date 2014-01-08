@@ -398,7 +398,7 @@ xMBMasterRTUTimerExpired( void )
     vMBMasterPortTimersDisable(  );
     /* If timer mode is convert delay ,then Master is idel now. */
     if( eMasterCurTimerMode == MB_TMODE_CONVERT_DELAY )
-        vMBasterRunResRelease(  );
+        vMBMasterRunResRelease(  );
 
     return xNeedPoll;
 }
