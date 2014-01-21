@@ -75,7 +75,7 @@ static volatile eMBMasterRcvState eRcvState;
 
 static volatile UCHAR ucMasterRTUSndBuf[MB_PDU_SIZE_MAX];
 static volatile UCHAR ucMasterRTURcvBuf[MB_SER_PDU_SIZE_MAX];
-static volatile UCHAR ucMasterSendPDULength;
+static volatile USHORT usMasterSendPDULength;
 
 static volatile UCHAR *pucMasterSndBufferCur;
 static volatile USHORT usMasterSndBufferCount;
@@ -386,7 +386,10 @@ xMBMasterRTUTimerExpired( void )
          * broadcast.Notify the listener process error.*/
     case STATE_M_TX_XFWR:
         if( xFrameIsBroadcast == FALSE )
+        {
+            vMBMasterSetErrorType( EV_ERROR_RESPOND_TIMEOUT );
             xNeedPoll = xMBMasterPortEventPost( EV_MASTER_ERROR_PROCESS );
+        }
         break;
         /* Function called in an illegal state. */
     default:
@@ -419,16 +422,16 @@ vMBMasterGetPDUSndBuf( UCHAR **pucFrame )
 
 /* Set Modbus Master send PDU's buffer length.*/
 void
-vMBMasterSetPDUSndLength( UCHAR SendPDULength )
+vMBMasterSetPDUSndLength( USHORT SendPDULength )
 {
-    ucMasterSendPDULength = SendPDULength;
+    usMasterSendPDULength = SendPDULength;
 }
 
 /* Get Modbus Master send PDU's buffer length.*/
-UCHAR
-ucMBMasterGetPDUSndLength( void )
+USHORT
+usMBMasterGetPDUSndLength( void )
 {
-    return ucMasterSendPDULength;
+    return usMasterSendPDULength;
 }
 
 /* Set Modbus Master current timer mode.*/
