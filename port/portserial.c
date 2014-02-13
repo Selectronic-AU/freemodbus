@@ -187,6 +187,11 @@ void
 USART1_IRQHandler( void )
 {
     rt_interrupt_enter(  );
+    //祛堤渣昫
+    if( USART_GetFlagStatus( USART1, USART_FLAG_ORE ) == SET )
+    {
+        prvvUARTRxISR(  );
+    }
     //諉彶笢剿
     if( USART_GetITStatus( USART1, USART_IT_RXNE ) == SET )
     {
