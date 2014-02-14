@@ -90,10 +90,10 @@ eMBMasterReqReadCoils( UCHAR ucSndAddr, USHORT usCoilAddr, USHORT usNCoils, LONG
     UCHAR          *ucMBFrame;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBMasterRunResTake( lTimeOut ) == FALSE )
-        eErrStatus = MB_MRE_MASTER_BUSY;
-    else if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
+    if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;
+    else if( xMBMasterRunResTake( lTimeOut ) == FALSE )
+        eErrStatus = MB_MRE_MASTER_BUSY;
     else
     {
         vMBMasterGetPDUSndBuf( &ucMBFrame );
@@ -191,12 +191,12 @@ eMBMasterReqWriteCoil( UCHAR ucSndAddr, USHORT usCoilAddr, USHORT usCoilData, LO
     UCHAR          *ucMBFrame;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBMasterRunResTake( lTimeOut ) == FALSE )
-        eErrStatus = MB_MRE_MASTER_BUSY;
-    else if( usCoilAddr > MB_MASTER_TOTAL_SLAVE_NUM )
+    if( usCoilAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;
     else if( ( usCoilData != 0xFF00 ) && ( usCoilData != 0x0000 ) )
         eErrStatus = MB_MRE_ILL_ARG;
+    else if( xMBMasterRunResTake( lTimeOut ) == FALSE )
+        eErrStatus = MB_MRE_MASTER_BUSY;
     else
     {
         vMBMasterGetPDUSndBuf( &ucMBFrame );
@@ -288,12 +288,12 @@ eMBMasterReqWriteMultipleCoils( UCHAR ucSndAddr, USHORT usCoilAddr, USHORT usNCo
     UCHAR           ucByteCount;
     eMBMasterReqErrCode eErrStatus = MB_MRE_NO_ERR;
 
-    if( xMBMasterRunResTake( lTimeOut ) == FALSE )
-        eErrStatus = MB_MRE_MASTER_BUSY;
-    else if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
+    if( ucSndAddr > MB_MASTER_TOTAL_SLAVE_NUM )
         eErrStatus = MB_MRE_ILL_ARG;
     else if( usNCoils > MB_PDU_REQ_WRITE_MUL_COILCNT_MAX )
         eErrStatus = MB_MRE_ILL_ARG;
+    else if( xMBMasterRunResTake( lTimeOut ) == FALSE )
+        eErrStatus = MB_MRE_MASTER_BUSY;
     else
     {
         vMBMasterGetPDUSndBuf( &ucMBFrame );
