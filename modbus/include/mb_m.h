@@ -372,6 +372,7 @@ void            vMBMasterSetCBRunInMasterMode( BOOL IsMasterMode );
 USHORT          usMBMasterGetPDUSndLength( void );
 void            vMBMasterSetPDUSndLength( USHORT SendPDULength );
 void            vMBMasterSetCurTimerMode( eMBMasterTimerMode eMBTimerMode );
+BOOL            xMBMasterRequestIsBroadcast( void );
 eMBMasterErrorEventType eMBMasterGetErrorType( void );
 void            vMBMasterSetErrorType( eMBMasterErrorEventType errorType );
 eMBMasterReqErrCode vMBMasterWaitRequestFinish( void );
