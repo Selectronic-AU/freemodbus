@@ -117,7 +117,7 @@ eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usRe
         ucMBFrame[MB_PDU_REQ_WRITE_VALUE_OFF + 1] = usRegData;
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_WRITE_SIZE );
         ( void )xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
-        eErrStatus = vMBMasterWaitRequestFinish(  );
+        eErrStatus = eMBMasterWaitRequestFinish(  );
     }
     return eErrStatus;
 }
@@ -196,7 +196,7 @@ eMBMasterReqWriteMultipleHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USH
         }
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_WRITE_MUL_SIZE_MIN + 2 * usNRegs );
         ( void )xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
-        eErrStatus = vMBMasterWaitRequestFinish(  );
+        eErrStatus = eMBMasterWaitRequestFinish(  );
     }
     return eErrStatus;
 }
@@ -285,7 +285,7 @@ eMBMasterReqReadHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRe
         ucMBFrame[MB_PDU_REQ_READ_REGCNT_OFF + 1] = usNRegs;
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_READ_SIZE );
         ( void )xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
-        eErrStatus = vMBMasterWaitRequestFinish(  );
+        eErrStatus = eMBMasterWaitRequestFinish(  );
     }
     return eErrStatus;
 }
@@ -394,7 +394,7 @@ eMBMasterReqReadWriteMultipleHoldingRegister( UCHAR ucSndAddr, USHORT usReadRegA
         }
         vMBMasterSetPDUSndLength( MB_PDU_SIZE_MIN + MB_PDU_REQ_READWRITE_SIZE_MIN + 2 * usNWriteRegs );
         ( void )xMBMasterPortEventPost( EV_MASTER_FRAME_SENT );
-        eErrStatus = vMBMasterWaitRequestFinish(  );
+        eErrStatus = eMBMasterWaitRequestFinish(  );
     }
     return eErrStatus;
 }
