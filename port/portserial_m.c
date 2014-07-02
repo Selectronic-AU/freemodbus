@@ -38,10 +38,8 @@ vMBMasterPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 {
     if( xRxEnable )
     {
-        /* 485籵陓奀ㄛ脹渾揹諳痄弇敵湔笢腔杅擂楷冞俇傖綴ㄛ婬妏夔485腔諉彶﹜囮夔485腔楷冞
-         * 蜆晊奀奀潔褫眕賦磁CPU翋摯揹諳疏杻薹酕巠絞覃淕
-         * */
-        vMBDelay( 1000 );
+        /* 485籵陓奀ㄛ脹渾揹諳痄弇敵湔笢腔杅擂楷冞俇傖綴ㄛ婬妏夔485腔諉彶﹜囮夔485腔楷冞 */
+        while( !USART_GetFlagStatus( USART2, USART_FLAG_TC ) );
         MASTER_RS485_RECEIVE_MODE;
         USART_ITConfig( USART2, USART_IT_RXNE, ENABLE );
     }
