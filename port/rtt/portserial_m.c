@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * File: $Id: portserial.c,v 1.60 2013/08/13 15:07:05 Armink $
+ * File: $Id: portserial_m.c,v 1.60 2013/08/13 15:07:05 Armink add Master Functions $
  */
 
 #include "port.h"
@@ -25,6 +25,8 @@
 #include "mb.h"
 #include "mbport.h"
 
+#if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
+
 /* ----------------------- static functions ---------------------------------*/
 static void     prvvUARTTxReadyISR( void );
 static void     prvvUARTRxISR( void );
@@ -32,56 +34,57 @@ static void     prvvUARTRxISR( void );
 /* ----------------------- Start implementation -----------------------------*/
 
 void
-vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
+vMBMasterPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 {
     if( xRxEnable )
     {
         /* 485籵陓奀ㄛ脹渾揹諳痄弇敵湔笢腔杅擂楷冞俇傖綴ㄛ婬妏夔485腔諉彶﹜囮夔485腔楷冞 */
-        while( !USART_GetFlagStatus( USART1, USART_FLAG_TC ) );
-        SLAVE_RS485_RECEIVE_MODE;
-        USART_ITConfig( USART1, USART_IT_RXNE, ENABLE );
+        while( !USART_GetFlagStatus( USART2, USART_FLAG_TC ) );
+        MASTER_RS485_RECEIVE_MODE;
+        USART_ITConfig( USART2, USART_IT_RXNE, ENABLE );
     }
     else
     {
-        SLAVE_RS485_SEND_MODE;
-        USART_ITConfig( USART1, USART_IT_RXNE, DISABLE );
+        MASTER_RS485_TRANS_MODE;
+        USART_ITConfig( USART2, USART_IT_RXNE, DISABLE );
     }
     if( xTxEnable )
     {
-        USART_ITConfig( USART1, USART_IT_TXE, ENABLE );
+        USART_ITConfig( USART2, USART_IT_TXE, ENABLE );
     }
     else
     {
-        USART_ITConfig( USART1, USART_IT_TXE, DISABLE );
+        USART_ITConfig( USART2, USART_IT_TXE, DISABLE );
     }
 }
 
 void
-vMBPortClose( void )
+vMBMasterPortClose( void )
 {
-    USART_ITConfig( USART1, USART_IT_TXE | USART_IT_RXNE, DISABLE );
-    USART_Cmd( USART1, DISABLE );
+    USART_ITConfig( USART2, USART_IT_TXE | USART_IT_RXNE, DISABLE );
+    USART_Cmd( USART2, DISABLE );
 }
 
-//蘇珨跺植儂 揹諳1 疏杻薹褫扢离  髒潰桄褫扢离
+//蘇珨跺翋儂 揹諳2 疏杻薹褫扢离  髒潰桄褫扢离
 BOOL
-xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
+xMBMasterPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
     //======================奀笘場宎趙=======================================
-    RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_USART1, ENABLE );
+    RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB, ENABLE );
+    RCC_APB1PeriphClockCmd( RCC_APB1Periph_USART2, ENABLE );
     //======================IO場宎趙=======================================
-    //USART1_TX
+    //USART2_TX
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
     GPIO_Init( GPIOA, &GPIO_InitStructure );
-    //USART1_RX
+    //USART2_RX
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
     GPIO_Init( GPIOA, &GPIO_InitStructure );
     //饜离485楷冞睿諉彶耀宒
 //    TODO   婃奀珂迡B13 脹眳綴郪厙聆彸奀婬党蜊
@@ -112,21 +115,21 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-    if( ucPORT != 1 )
+    if( ucPORT != 2 )
         return FALSE;
 
     ENTER_CRITICAL_SECTION(  ); //壽擁笢剿
 
-    USART_Init( USART1, &USART_InitStructure );
-    USART_ITConfig( USART1, USART_IT_RXNE, ENABLE );
-    USART_Cmd( USART1, ENABLE );
+    USART_Init( USART2, &USART_InitStructure );
+    USART_ITConfig( USART2, USART_IT_RXNE, ENABLE );
+    USART_Cmd( USART2, ENABLE );
 
     //=====================笢剿場宎趙======================================
     //扢离NVIC蚥珂撰煦郪峈Group2ㄩ0-3梩宒蚥珂撰ㄛ0-3腔砒茼宒蚥珂撰
     NVIC_PriorityGroupConfig( NVIC_PriorityGroup_2 );
-    NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init( &NVIC_InitStructure );
 
@@ -136,16 +139,16 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
 }
 
 BOOL
-xMBPortSerialPutByte( CHAR ucByte )
+xMBMasterPortSerialPutByte( CHAR ucByte )
 {
-    USART_SendData( USART1, ucByte );
+    USART_SendData( USART2, ucByte );
     return TRUE;
 }
 
 BOOL
-xMBPortSerialGetByte( CHAR *pucByte )
+xMBMasterPortSerialGetByte( CHAR *pucByte )
 {
-    *pucByte = USART_ReceiveData( USART1 );
+    *pucByte = USART_ReceiveData( USART2 );
     return TRUE;
 }
 
@@ -159,7 +162,7 @@ xMBPortSerialGetByte( CHAR *pucByte )
 void
 prvvUARTTxReadyISR( void )
 {
-    pxMBFrameCBTransmitterEmpty(  );
+    pxMBMasterFrameCBTransmitterEmpty(  );
 }
 
 /*
@@ -171,35 +174,37 @@ prvvUARTTxReadyISR( void )
 void
 prvvUARTRxISR( void )
 {
-    pxMBFrameCBByteReceived(  );
+    pxMBMasterFrameCBByteReceived(  );
 }
 
 /*******************************************************************************
- * Function Name  : USART1_IRQHandler
- * Description    : This function handles USART1 global interrupt request.
+ * Function Name  : USART2_IRQHandler
+ * Description    : This function handles USART2 global interrupt request.
  * Input          : None
  * Output         : None
  * Return         : None
  *******************************************************************************/
 void
-USART1_IRQHandler( void )
+USART2_IRQHandler( void )
 {
     rt_interrupt_enter(  );
     //祛堤渣昫
-    if( USART_GetFlagStatus( USART1, USART_FLAG_ORE ) == SET )
+    if( USART_GetFlagStatus( USART2, USART_FLAG_ORE ) == SET )
     {
         prvvUARTRxISR(  );
     }
     //諉彶笢剿
-    if( USART_GetITStatus( USART1, USART_IT_RXNE ) == SET )
+    if( USART_GetITStatus( USART2, USART_IT_RXNE ) == SET )
     {
-        USART_ClearITPendingBit( USART1, USART_IT_RXNE );
+        USART_ClearITPendingBit( USART2, USART_IT_RXNE );
         prvvUARTRxISR(  );
     }
     //楷冞笢剿
-    if( USART_GetITStatus( USART1, USART_IT_TXE ) == SET )
+    if( USART_GetITStatus( USART2, USART_IT_TXE ) == SET )
     {
         prvvUARTTxReadyISR(  );
     }
     rt_interrupt_leave(  );
 }
+
+#endif
