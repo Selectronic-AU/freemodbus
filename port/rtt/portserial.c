@@ -139,8 +139,6 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     rt_thread_startup( &thread_serial_soft_trans_irq );
     rt_event_init( &event_serial, "slave event", RT_IPC_FLAG_PRIO );
 
-
-
     return TRUE;
 }
 

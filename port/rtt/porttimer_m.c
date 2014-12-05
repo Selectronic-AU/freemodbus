@@ -31,7 +31,9 @@
 
 /* ----------------------- Variables ----------------------------------------*/
 static USHORT   usT35TimeOut50us;
-static USHORT   usPrescalerValue = 0;
+static struct rt_timer timer;
+static void     prvvTIMERExpiredISR( void );
+static void     timer_timeout_ind( void *parameter );
 
 /* ----------------------- static functions ---------------------------------*/
 static void     prvvTIMERExpiredISR( void );
@@ -40,107 +42,58 @@ static void     prvvTIMERExpiredISR( void );
 BOOL
 xMBMasterPortTimersInit( USHORT usTimeOut50us )
 {
-    NVIC_InitTypeDef NVIC_InitStructure;
-
-    //====================================奀笘場宎趙===========================
-    //妏夔隅奀2奀笘
-    RCC_APB1PeriphClockCmd( RCC_APB1Periph_TIM2, ENABLE );
-    //====================================隅奀場宎趙===========================
-    //隅奀奀潔價饜离佽隴
-    //HCLK峈72MHzㄛAPB1冪徹2煦峈36MHz
-    //TIM2腔奀笘捷綴峈72MHzㄗ茞璃赻雄捷,湛善郔湮ㄘ
-    //TIM2腔煦炵杅峈3599ㄛ奀潔價薹峈72 / (1 + Prescaler) = 20KHz,價袧峈50us
-    //TIM郔湮數杅硉峈usTim1Timerout50u
-    usPrescalerValue = ( uint16_t ) ( SystemCoreClock / 20000 ) - 1;
-    //悵湔T35隅奀數杅硉
+    /* backup T35 ticks */
     usT35TimeOut50us = usTimeOut50us;
 
-    //啎蚾婥妏夔
-    TIM_ARRPreloadConfig( TIM2, ENABLE );
-    //====================================笢剿場宎趙===========================
-    //扢离NVIC蚥珂撰煦郪峈Group2ㄩ0-3梩宒蚥珂撰ㄛ0-3腔砒茼宒蚥珂撰
-    NVIC_PriorityGroupConfig( NVIC_PriorityGroup_2 );
-    NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init( &NVIC_InitStructure );
-    //壺祛堤笢剿梓祩弇
-    TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
-    //隅奀3祛堤笢剿壽敕
-    TIM_ITConfig( TIM2, TIM_IT_Update, DISABLE );
-    //隅奀3輦夔
-    TIM_Cmd( TIM2, DISABLE );
+    rt_timer_init( &timer, "plc_recv_timer", timer_timeout_ind, /* bind timeout callback function */
+                   RT_NULL, ( 50 * usT35TimeOut50us ) / ( 1000 * 1000 / RT_TICK_PER_SECOND ), RT_TIMER_FLAG_ONE_SHOT ); /* one shot */
+
     return TRUE;
 }
 
 void
 vMBMasterPortTimersT35Enable(  )
 {
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+    rt_tick_t       timer_tick = ( 50 * usT35TimeOut50us ) / ( 1000 * 1000 / RT_TICK_PER_SECOND );
 
     /* Set current timer mode,don't change it. */
     vMBMasterSetCurTimerMode( MB_TMODE_T35 );
 
-    TIM_TimeBaseStructure.TIM_Prescaler = usPrescalerValue;
-    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseStructure.TIM_Period = ( uint16_t ) usT35TimeOut50us;
-    TIM_TimeBaseInit( TIM2, &TIM_TimeBaseStructure );
+    rt_timer_control( &timer, RT_TIMER_CTRL_SET_TIME, &timer_tick );
 
-    TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
-    TIM_ITConfig( TIM2, TIM_IT_Update, ENABLE );
-    TIM_SetCounter( TIM2, 0 );
-    TIM_Cmd( TIM2, ENABLE );
+    rt_timer_start( &timer );
 }
 
 void
 vMBMasterPortTimersConvertDelayEnable(  )
 {
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+    rt_tick_t       timer_tick = MB_MASTER_DELAY_MS_CONVERT * RT_TICK_PER_SECOND / 1000;
 
     /* Set current timer mode,don't change it. */
     vMBMasterSetCurTimerMode( MB_TMODE_CONVERT_DELAY );
 
-    TIM_TimeBaseStructure.TIM_Prescaler = usPrescalerValue;
-    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseStructure.TIM_Period = ( uint16_t ) ( MB_MASTER_DELAY_MS_CONVERT * 1000 / 50 );
-    TIM_TimeBaseInit( TIM2, &TIM_TimeBaseStructure );
+    rt_timer_control( &timer, RT_TIMER_CTRL_SET_TIME, &timer_tick );
 
-    TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
-    TIM_ITConfig( TIM2, TIM_IT_Update, ENABLE );
-    TIM_SetCounter( TIM2, 0 );
-    TIM_Cmd( TIM2, ENABLE );
+    rt_timer_start( &timer );
 }
 
 void
 vMBMasterPortTimersRespondTimeoutEnable(  )
 {
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+    rt_tick_t       timer_tick = MB_MASTER_TIMEOUT_MS_RESPOND * RT_TICK_PER_SECOND / 1000;
 
     /* Set current timer mode,don't change it. */
     vMBMasterSetCurTimerMode( MB_TMODE_RESPOND_TIMEOUT );
 
-    TIM_TimeBaseStructure.TIM_Prescaler = usPrescalerValue;
-    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseStructure.TIM_Period = ( uint16_t ) ( MB_MASTER_TIMEOUT_MS_RESPOND * 1000 / 50 );
-    TIM_TimeBaseInit( TIM2, &TIM_TimeBaseStructure );
+    rt_timer_control( &timer, RT_TIMER_CTRL_SET_TIME, &timer_tick );
 
-    TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
-    TIM_ITConfig( TIM2, TIM_IT_Update, ENABLE );
-    TIM_SetCounter( TIM2, 0 );
-    TIM_Cmd( TIM2, ENABLE );
+    rt_timer_start( &timer );
 }
 
 void
 vMBMasterPortTimersDisable(  )
 {
-    TIM_ClearITPendingBit( TIM2, TIM_IT_Update );
-    TIM_ITConfig( TIM2, TIM_IT_Update, DISABLE );
-    TIM_SetCounter( TIM2, 0 );
-    TIM_Cmd( TIM2, DISABLE );
+    rt_timer_stop( &timer );
 }
 
 void
@@ -149,18 +102,15 @@ prvvTIMERExpiredISR( void )
     ( void )pxMBMasterPortCBTimerExpired(  );
 }
 
-void
-TIM2_IRQHandler( void )
+/**
+ * This function is PLC uart receive timer callback function
+ *
+ * @param parameter null
+ */
+static void
+timer_timeout_ind( void *parameter )
 {
-    rt_interrupt_enter(  );
-    if( TIM_GetITStatus( TIM2, TIM_IT_Update ) != RESET )
-    {
-
-        TIM_ClearFlag( TIM2, TIM_FLAG_Update ); //笢剿梓暮
-        TIM_ClearITPendingBit( TIM2, TIM_IT_Update );   //壺隅奀TIM2祛堤笢剿梓祩弇
-        prvvTIMERExpiredISR(  );
-    }
-    rt_interrupt_leave(  );
+    prvvTIMERExpiredISR(  );
 }
 
 #endif
