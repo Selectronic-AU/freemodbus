@@ -1,5 +1,5 @@
 /*
- * FreeModbus Library: STM32 Port
+ * FreeModbus Library: RT-Thread Port
  * Copyright (C) 2013 Armink <armink.ztl@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * File: $Id: portevent.c,v 1.60 2013/12/28 9:18:05 Armink $
+ * File: $Id: portevent.c,v 1.60 2015/02/01 9:18:05 Armink $
  */
 
 /* ----------------------- System includes --------------------------------*/
@@ -30,19 +30,11 @@
 void
 EnterCriticalSection( void )
 {
-    //壽敕擁笢剿
-    __disable_irq(  );
+    rt_enter_critical(  );
 }
 
 void
 ExitCriticalSection( void )
 {
-    //羲擁笢剿
-    __enable_irq(  );
-}
-
-void
-vMBDelay( ULONG nCount )
-{
-    for( ; nCount > 0; nCount-- );
+    rt_exit_critical(  );
 }
