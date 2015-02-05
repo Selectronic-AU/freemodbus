@@ -1,5 +1,5 @@
 /*
- * FreeModbus Library: STM32 Port
+ * FreeModbus Library: RT-Thread Port
  * Copyright (C) 2013 Armink <armink.ztl@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -58,11 +58,6 @@ prvvTIMERExpiredISR( void )
     ( void )pxMBPortCBTimerExpired(  );
 }
 
-/**
- * This function is PLC uart receive timer callback function
- *
- * @param parameter null
- */
 static void
 timer_timeout_ind( void *parameter )
 {

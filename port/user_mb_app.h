@@ -1,4 +1,4 @@
-#ifndef USER_APP
+#ifndef    USER_APP
 #define USER_APP
 
 /* ----------------------- Modbus includes ----------------------------------*/
@@ -17,19 +17,20 @@
 #define S_REG_INPUT_NREGS             100
 #define S_REG_HOLDING_START           0
 #define S_REG_HOLDING_NREGS           100
-//植儂耀宒ㄩ婓悵厥敵湔笢ㄛ跪跺華硊勤茼腔髡夔隅砱
-#define          S_HD_RESERVE                     0     //悵隱
-#define          S_HD_CPU_USAGE_MAJOR             1     //絞CPU瞳蚚薹腔淕杅弇
-#define          S_HD_CPU_USAGE_MINOR             2     //絞CPU瞳蚚薹腔苤杅弇
 
-//植儂耀宒ㄩ婓怀敵湔笢ㄛ跪跺華硊勤茼腔髡夔隅砱
-#define          S_IN_RESERVE                     0     //悵隱
+/* salve mode: holding register's all address */
+#define          S_HD_RESERVE                     0
+#define          S_HD_CPU_USAGE_MAJOR             1
+#define          S_HD_CPU_USAGE_MINOR             2
 
-//植儂耀宒ㄩ婓盄笢ㄛ跪跺華硊勤茼腔髡夔隅砱
-#define          S_CO_RESERVE                     2     //悵隱
+/* salve mode: input register's all address */
+#define          S_IN_RESERVE                     0
 
-//植儂耀宒ㄩ婓燭汃怀笢ㄛ跪跺華硊勤茼腔髡夔隅砱
-#define          S_DI_RESERVE                     1     //悵隱
+/* salve mode: coil's all address */
+#define          S_CO_RESERVE                     0
+
+/* salve mode: discrete's all address */
+#define          S_DI_RESERVE                     0
 
 /* -----------------------Master Defines -------------------------------------*/
 #define M_DISCRETE_INPUT_START        0
@@ -40,16 +41,17 @@
 #define M_REG_INPUT_NREGS             100
 #define M_REG_HOLDING_START           0
 #define M_REG_HOLDING_NREGS           100
-//翋儂耀宒ㄩ婓悵厥敵湔笢ㄛ跪跺華硊勤茼腔髡夔隅砱
-#define          M_HD_RESERVE                     0     //悵隱
 
-//翋儂耀宒ㄩ婓怀敵湔笢ㄛ跪跺華硊勤茼腔髡夔隅砱
-#define          M_IN_RESERVE                     0     //悵隱
+/* master mode: holding register's all address */
+#define          M_HD_RESERVE                     0
 
-//翋儂耀宒ㄩ婓盄笢ㄛ跪跺華硊勤茼腔髡夔隅砱
-#define          M_CO_RESERVE                     2     //悵隱
+/* master mode: input register's all address */
+#define          M_IN_RESERVE                     0
 
-//翋儂耀宒ㄩ婓燭汃怀笢ㄛ跪跺華硊勤茼腔髡夔隅砱
-#define          M_DI_RESERVE                     1     //悵隱
+/* master mode: coil's all address */
+#define          M_CO_RESERVE                     0
+
+/* master mode: discrete's all address */
+#define          M_DI_RESERVE                     0
 
 #endif

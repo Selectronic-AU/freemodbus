@@ -1,5 +1,5 @@
 /*
- * FreeModbus Library: STM32 Port
+ * FreeModbus Library: RT-Thread Port
  * Copyright (C) 2013 Armink <armink.ztl@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
