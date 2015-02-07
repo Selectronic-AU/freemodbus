@@ -261,8 +261,8 @@ eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
     if( ( usAddress >= DISCRETE_INPUT_START )
         && ( usAddress + usNDiscrete <= DISCRETE_INPUT_START + DISCRETE_INPUT_NDISCRETES ) )
     {
-        iRegIndex = ( USHORT ) ( usAddress - usDiscreteInputStart ) / 8;        //藩跺敵湔湔8跺
-        iRegBitIndex = ( USHORT ) ( usAddress - usDiscreteInputStart ) % 8;     //眈勤衾敵湔囀窒腔弇華硊
+        iRegIndex = ( USHORT ) ( usAddress - usDiscreteInputStart ) / 8;
+        iRegBitIndex = ( USHORT ) ( usAddress - usDiscreteInputStart ) % 8;
 
         while( iNReg > 0 )
         {
