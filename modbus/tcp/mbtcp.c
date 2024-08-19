@@ -25,6 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ * Copyright (c) 2024 Selectronic Australia Pty Ltd. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause AND LicenseRef-Selectronic
  */
 
 /* ----------------------- System includes ----------------------------------*/
@@ -116,19 +118,20 @@ eMBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength )
 
         if( usPID == MB_TCP_PROTOCOL_ID )
         {
-            *ppucFrame = &pucMBTCPFrame[MB_TCP_FUNC];
-            *pusLength = usLength - MB_TCP_FUNC;
-            eStatus    = MB_ENOERR;
-
-            /* Modbus TCP does not use any addresses. Fake the source address such
-             * that the processing part deals with this frame.
+            /* Modbus TCP does not use any addresses. Fake the source
+             * address such that the processing part deals with this frame.
              */
             *pucRcvAddress = MB_TCP_PSEUDO_ADDRESS;
+
+            /* Return the start of the Modbus PDU to the caller. */
+            *ppucFrame = &pucMBTCPFrame[MB_TCP_FUNC];
+
+            /* Total length of Modbus-PDU is Modbus-TCP-ADU minus the size
+             * of the Modbus Application Protocol (MBAP) Header.
+             */
+            *pusLength = usLength - MB_TCP_FUNC;
+            eStatus    = MB_ENOERR;
         }
-    }
-    else
-    {
-        eStatus = MB_EIO;
     }
     return eStatus;
 }

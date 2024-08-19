@@ -25,6 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ * Copyright (c) 2024 Selectronic Australia Pty Ltd. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause AND LicenseRef-Selectronic
  */
 
 /* ----------------------- System includes ----------------------------------*/
@@ -151,35 +153,34 @@ eMBRTUStop( void )
 eMBErrorCode
 eMBRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength )
 {
-    BOOL         xFrameReceived = FALSE;
-    eMBErrorCode eStatus        = MB_ENOERR;
+    eMBErrorCode eStatus = MB_EIO;
+    UCHAR *      pucMBRTUFrame;
+    USHORT       usLength;
 
-    ENTER_CRITICAL_SECTION( );
-    assert( usRcvBufferPos < MB_SER_PDU_SIZE_MAX );
-
-    /* Length and CRC check */
-    if( ( usRcvBufferPos >= MB_SER_PDU_SIZE_MIN ) && ( usMBCRC16( ( UCHAR * ) ucRTUBuf, usRcvBufferPos ) == 0 ) )
+    if( xMBPortSerialGetRequest( &pucMBRTUFrame, &usLength ) != FALSE )
     {
-        /* Save the address field. All frames are passed to the upper layed
-         * and the decision if a frame is used is done there.
-         */
-        *pucRcvAddress = ucRTUBuf[MB_SER_PDU_ADDR_OFF];
+        ENTER_CRITICAL_SECTION( );
+        assert( usLength < MB_SER_PDU_SIZE_MAX );
 
-        /* Total length of Modbus-PDU is Modbus-Serial-Line-PDU minus
-         * size of address field and CRC checksum.
-         */
-        *pusLength = ( USHORT ) ( usRcvBufferPos - MB_SER_PDU_PDU_OFF - MB_SER_PDU_SIZE_CRC );
+        /* Length and CRC check */
+        if( ( usLength >= MB_SER_PDU_SIZE_MIN ) && ( usMBCRC16( pucMBRTUFrame, usLength ) == 0 ) )
+        {
+            /* Save the address field. All frames are passed to the upper layed
+             * and the decision if a frame is used is done there.
+             */
+            *pucRcvAddress = pucMBRTUFrame[MB_SER_PDU_ADDR_OFF];
 
-        /* Return the start of the Modbus PDU to the caller. */
-        *pucFrame      = ( UCHAR * ) &ucRTUBuf[MB_SER_PDU_PDU_OFF];
-        xFrameReceived = TRUE;
+            /* Return the start of the Modbus PDU to the caller. */
+            *pucFrame = &pucMBRTUFrame[MB_SER_PDU_PDU_OFF];
+
+            /* Total length of Modbus-PDU is Modbus-Serial-Line-ADU minus
+             * size of address field and CRC checksum.
+             */
+            *pusLength = usLength - MB_SER_PDU_PDU_OFF - MB_SER_PDU_SIZE_CRC;
+            eStatus    = MB_ENOERR;
+        }
+        EXIT_CRITICAL_SECTION( );
     }
-    else
-    {
-        eStatus = MB_EIO;
-    }
-
-    EXIT_CRITICAL_SECTION( );
     return eStatus;
 }
 
@@ -206,13 +207,15 @@ eMBRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength )
         usSndBufferCount += usLength;
 
         /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
-        usCRC16                      = usMBCRC16( ( UCHAR * ) pucSndBufferCur, usSndBufferCount );
-        ucRTUBuf[usSndBufferCount++] = ( UCHAR ) ( usCRC16 & 0xFF );
-        ucRTUBuf[usSndBufferCount++] = ( UCHAR ) ( usCRC16 >> 8 );
+        usCRC16                             = usMBCRC16( ( UCHAR * ) pucSndBufferCur, usSndBufferCount );
+        pucSndBufferCur[usSndBufferCount++] = ( UCHAR ) ( usCRC16 & 0xFF );
+        pucSndBufferCur[usSndBufferCount++] = ( UCHAR ) ( usCRC16 >> 8 );
 
-        /* Activate the transmitter. */
-        eSndState = STATE_TX_XMIT;
-        vMBPortSerialEnable( FALSE, TRUE );
+        /* Send the response frame. */
+        if( xMBPortSerialPutResponse( ( UCHAR * ) pucSndBufferCur, usSndBufferCount ) == FALSE )
+        {
+            eStatus = MB_EIO;
+        }
     }
     else
     {
@@ -351,4 +354,21 @@ xMBRTUTimerT35Expired( void )
     eRcvState = STATE_RX_IDLE;
 
     return xNeedPoll;
+}
+
+__weak BOOL
+xMBPortSerialGetRequest( UCHAR ** ppucMBTCPFrame, USHORT * pusTCPLength )
+{
+    *ppucMBTCPFrame = ( UCHAR * ) ucRTUBuf;
+    *pusTCPLength   = usRcvBufferPos;
+    return TRUE;
+}
+
+__weak BOOL
+xMBPortSerialPutResponse( __unused UCHAR * pucMBTCPFrame, __unused USHORT usTCPLength )
+{
+    /* Activate the transmitter. */
+    eSndState = STATE_TX_XMIT;
+    vMBPortSerialEnable( FALSE, TRUE );
+    return TRUE;
 }
