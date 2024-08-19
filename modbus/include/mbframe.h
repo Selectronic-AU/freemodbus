@@ -42,30 +42,55 @@ PR_BEGIN_EXTERN_C
  * dependent on the underlying transport.
  *
  * <code>
- * <------------------------ MODBUS SERIAL LINE PDU (1) ------------------->
- *              <----------- MODBUS PDU (1') ---------------->
+ * <--------------------- MODBUS SERIAL LINE ADU (1) ---------------------->
+ *              <------------- MODBUS PDU (1') -------------->
  *  +-----------+---------------+----------------------------+-------------+
  *  | Address   | Function Code | Data                       | CRC/LRC     |
  *  +-----------+---------------+----------------------------+-------------+
  *  |           |               |                                   |
  * (2)        (3/2')           (3')                                (4)
  *
- * (1)  ... MB_SER_PDU_SIZE_MAX = 256
- * (2)  ... MB_SER_PDU_ADDR_OFF = 0
- * (3)  ... MB_SER_PDU_PDU_OFF  = 1
- * (4)  ... MB_SER_PDU_SIZE_CRC = 2
+ * (1)  ... MB_SER_ADU_SIZE_MAX = 256
+ * (2)  ... MB_SER_ADU_ADDR_OFF = 0
+ * (3)  ... MB_SER_ADU_PDU_OFF  = 1
+ * (4)  ... MB_SER_ADU_SIZE_CRC = 2
  *
  * (1') ... MB_PDU_SIZE_MAX     = 253
  * (2') ... MB_PDU_FUNC_OFF     = 0
  * (3') ... MB_PDU_DATA_OFF     = 1
+ *
+ *  <------------------------ MODBUS TCP ADU (1") ------------------------->
+ *                            <------------- MODBUS PDU (1') -------------->
+ *  +-------------------------+---------------+----------------------------+
+ *  | MBAP Header             | Function Code | Data                       |
+ *  +-------------------------+---------------+----------------------------+
+ *  |                         |               |
+ * (2")                    (3"/2')           (3')
+ *
+ * (1") ... MB_TCP_ADU_SIZE_MAX = 260
+ * (2") ... MB_TCP_ADU_MBAP_OFF = 0
+ * (3") ... MB_TCP_ADU_PDU_OFF  = 7
+ *
  * </code>
  */
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_PDU_SIZE_MAX 253 /*!< Maximum size of a PDU. */
-#define MB_PDU_SIZE_MIN 1   /*!< Function Code */
-#define MB_PDU_FUNC_OFF 0   /*!< Offset of function code in PDU. */
-#define MB_PDU_DATA_OFF 1   /*!< Offset for response data in PDU. */
+
+#define MB_SER_ADU_SIZE_MAX 256 /*!< Maximum size of a serial ADU. */
+#define MB_SER_ADU_ADDR_OFF 0   /*!< Offset of address in serial ADU. */
+#define MB_SER_ADU_PDU_OFF  1   /*!< Offset of PDU in serial ADU. */
+#define MB_SER_ADU_SIZE_CRC 2   /*!< Size of CRC in serial ADU. */
+
+#define MB_PDU_SIZE_MAX     253 /*!< Maximum size of a PDU. */
+#define MB_PDU_SIZE_MIN     1   /*!< Minimum size of a PDU (e.g. function code). */
+#define MB_PDU_FUNC_OFF     0   /*!< Offset of function code in PDU. */
+#define MB_PDU_DATA_OFF     1   /*!< Offset for response data in PDU. */
+
+#define MB_TCP_ADU_SIZE_MAX 260 /*!< Maximum size of a TCP ADU. */
+#define MB_TCP_ADU_MBAP_OFF 0   /*!< Offset of MBAP header in TCP ADU. */
+#define MB_TCP_ADU_PDU_OFF  1   /*!< Offset of PDU in TCP ADU. */
+
+#define MB_TCP_UDP_PORT     502 /*!< MODBUS port. */
 
 /* ----------------------- Prototypes  0-------------------------------------*/
 typedef void ( *pvMBFrameStart )( void );
