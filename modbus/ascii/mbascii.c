@@ -28,8 +28,10 @@
  */
 
 /* ----------------------- System includes ----------------------------------*/
-#include "stdlib.h"
-#include "string.h"
+
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* ----------------------- Platform includes --------------------------------*/
 #include "port.h"
@@ -40,7 +42,6 @@
 #include "mbascii.h"
 #include "mbframe.h"
 
-#include "mbcrc.h"
 #include "mbport.h"
 
 #if MB_ASCII_ENABLED > 0
