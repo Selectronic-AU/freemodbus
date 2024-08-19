@@ -25,6 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ * Copyright (c) 2024 Selectronic Australia Pty Ltd. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause AND LicenseRef-Selectronic
  */
 
 #ifndef _MB_PORT_H
@@ -76,7 +78,11 @@ void vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 
 BOOL xMBPortSerialGetByte( CHAR * pucByte );
 
+BOOL xMBPortSerialGetRequest( UCHAR ** ppucMBRTUFrame, USHORT * usRTULength );
+
 BOOL xMBPortSerialPutByte( CHAR ucByte );
+
+BOOL xMBPortSerialPutResponse( UCHAR * pucMBRTUFrame, USHORT usRTULength );
 
 /* ----------------------- Timers functions ---------------------------------*/
 BOOL xMBPortTimersInit( USHORT usTimeOut50us );
