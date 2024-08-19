@@ -195,7 +195,7 @@ eMBRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength )
      * slow with processing the received frame and the master sent another
      * frame on the network. We have to abort sending the frame.
      */
-    if( eRcvState == STATE_RX_IDLE )
+    if( ( eRcvState == STATE_RX_IDLE ) && ( eSndState == STATE_TX_IDLE ) )
     {
         /* First byte before the Modbus-PDU is the slave address. */
         pucSndBufferCur  = ( UCHAR * ) pucFrame - 1;
