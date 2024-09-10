@@ -42,39 +42,39 @@ static unsigned short usRegInputStart = REG_INPUT_START;
 static unsigned short usRegInputBuf[REG_INPUT_NREGS];
 
 /* ----------------------- Static functions ---------------------------------*/
-static void     vModbusTask( void *pvParameters );
+static void vModbusTask( void * pvParameters );
 
 /* ----------------------- Start implementation -----------------------------*/
 int
 main( void )
 {
-    EIC_Init(  );
+    EIC_Init( );
     EIC_IRQConfig( ENABLE );
 
-    ( void )xTaskCreate( vModbusTask, NULL, configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+    ( void ) xTaskCreate( vModbusTask, NULL, configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
 
-    vTaskStartScheduler(  );
+    vTaskStartScheduler( );
     return 0;
 }
 
 static void
-vModbusTask( void *pvParameters )
+vModbusTask( void * pvParameters )
 {
-    portTickType    xLastWakeTime;
+    portTickType xLastWakeTime;
 
     /* Select either ASCII or RTU Mode. */
-    ( void )eMBInit( MB_RTU, 0x0A, 38400, MB_PAR_EVEN );
+    ( void ) eMBInit( MB_RTU, 0x0A, 38400, MB_PAR_EVEN );
 
     /* Enable the Modbus Protocol Stack. */
-    ( void )eMBEnable(  );
+    ( void ) eMBEnable( );
     for( ;; )
     {
         /* Call the main polling loop of the Modbus protocol stack. */
-        ( void )eMBPoll(  );
+        ( void ) eMBPoll( );
         /* Application specific actions. Count the number of poll cycles. */
         usRegInputBuf[0]++;
         /* Hold the current FreeRTOS ticks. */
-        xLastWakeTime = xTaskGetTickCount(  );
+        xLastWakeTime    = xTaskGetTickCount( );
         usRegInputBuf[1] = ( unsigned portSHORT )( xLastWakeTime >> 16UL );
         usRegInputBuf[2] = ( unsigned portSHORT )( xLastWakeTime & 0xFFFFUL );
         /* The constant value. */
@@ -83,18 +83,18 @@ vModbusTask( void *pvParameters )
 }
 
 eMBErrorCode
-eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
+eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    eMBErrorCode eStatus = MB_ENOERR;
+    int          iRegIndex;
 
     if( ( usAddress >= REG_INPUT_START ) && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegInputStart );
+        iRegIndex = ( int ) ( usAddress - usRegInputStart );
         while( usNRegs > 0 )
         {
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] >> 8 );
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] & 0xFF );
+            *pucRegBuffer++ = ( unsigned char ) ( usRegInputBuf[iRegIndex] >> 8 );
+            *pucRegBuffer++ = ( unsigned char ) ( usRegInputBuf[iRegIndex] & 0xFF );
             iRegIndex++;
             usNRegs--;
         }
@@ -108,27 +108,27 @@ eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 }
 
 eMBErrorCode
-eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
-{
-    return MB_ENOREG;
-}
-
-
-eMBErrorCode
-eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
+eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
 {
     return MB_ENOREG;
 }
 
 eMBErrorCode
-eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
+eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
+{
+    return MB_ENOREG;
+}
+
+eMBErrorCode
+eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 {
     return MB_ENOREG;
 }
 
 void
-__assert( const char *pcFile, const char *pcLine, int iLineNumber )
+__assert( const char * pcFile, const char * pcLine, int iLineNumber )
 {
-    portENTER_CRITICAL(  );
-    for( ;; );
+    portENTER_CRITICAL( );
+    for( ;; )
+        ;
 }

@@ -40,17 +40,17 @@
 #include "mbport.h"
 
 /* ----------------------- MBAP Header --------------------------------------*/
-#define MB_TCP_UID          6
-#define MB_TCP_LEN          4
-#define MB_TCP_FUNC         7
+#define MB_TCP_UID  6
+#define MB_TCP_LEN  4
+#define MB_TCP_FUNC 7
 
 /* ----------------------- Defines  -----------------------------------------*/
-#define MB_TCP_DEFAULT_PORT 502 /* TCP listening port. */
-#define MB_TCP_POOL_TIMEOUT 50  /* pool timeout for event waiting. */
-#define MB_TCP_READ_TIMEOUT 1000        /* Maximum timeout to wait for packets. */
-#define MB_TCP_READ_CYCLE   100 /* Time between checking for new data. */
+#define MB_TCP_DEFAULT_PORT 502  /* TCP listening port. */
+#define MB_TCP_POOL_TIMEOUT 50   /* pool timeout for event waiting. */
+#define MB_TCP_READ_TIMEOUT 1000 /* Maximum timeout to wait for packets. */
+#define MB_TCP_READ_CYCLE   100  /* Time between checking for new data. */
 
-#define MB_TCP_DEBUG        1   /* Set to 1 for additional debug output. */
+#define MB_TCP_DEBUG        1 /* Set to 1 for additional debug output. */
 
 #define MB_TCP_BUF_SIZE     ( 256 + 7 ) /* Must hold a complete Modbus TCP frame. */
 
@@ -59,35 +59,35 @@
 #define EV_NEVENTS          EV_CLIENT + 1
 
 /* ----------------------- Static variables ---------------------------------*/
-SOCKET          xListenSocket;
-SOCKET          xClientSocket;
-WSAEVENT        xEvents[EV_NEVENTS];
+SOCKET        xListenSocket;
+SOCKET        xClientSocket;
+WSAEVENT      xEvents[EV_NEVENTS];
 
-static UCHAR    aucTCPBuf[MB_TCP_BUF_SIZE];
-static USHORT   usTCPBufPos;
-static USHORT   usTCPFrameBytesLeft;
+static UCHAR  aucTCPBuf[MB_TCP_BUF_SIZE];
+static USHORT usTCPBufPos;
+static USHORT usTCPFrameBytesLeft;
 
 /* ----------------------- External functions -------------------------------*/
-TCHAR          *WsaError2String( DWORD dwError );
+TCHAR * WsaError2String( DWORD dwError );
 
 /* ----------------------- Static functions ---------------------------------*/
-BOOL            prvMBTCPPortAddressToString( SOCKET xSocket, LPTSTR szAddr, USHORT usBufSize );
-LPTSTR          prvMBTCPPortFrameToString( UCHAR * pucFrame, USHORT usFrameLen );
-static BOOL     prvbMBPortAcceptClient( void );
-static void     prvvMBPortReleaseClient( void );
-static BOOL     prvMBTCPGetFrame( void );
+BOOL        prvMBTCPPortAddressToString( SOCKET xSocket, LPTSTR szAddr, USHORT usBufSize );
+LPTSTR      prvMBTCPPortFrameToString( UCHAR * pucFrame, USHORT usFrameLen );
+static BOOL prvbMBPortAcceptClient( void );
+static void prvvMBPortReleaseClient( void );
+static BOOL prvMBTCPGetFrame( void );
 
 /* ----------------------- Begin implementation -----------------------------*/
 
 BOOL
 xMBTCPPortInit( USHORT usTCPPort )
 {
-    BOOL            bOkay = FALSE;
-    USHORT          usPort;
-    SOCKADDR_IN     xService;
-    WSADATA         wsaData;
+    BOOL        bOkay = FALSE;
+    USHORT      usPort;
+    SOCKADDR_IN xService;
+    WSADATA     wsaData;
 
-    int             i;
+    int         i;
 
     if( WSAStartup( MAKEWORD( 2, 2 ), &wsaData ) != 0 )
     {
@@ -103,40 +103,40 @@ xMBTCPPortInit( USHORT usTCPPort )
         usPort = ( USHORT ) usTCPPort;
     }
 
-    xService.sin_family = AF_INET;
-    xService.sin_port = htons( usPort );
+    xService.sin_family      = AF_INET;
+    xService.sin_port        = htons( usPort );
     xService.sin_addr.s_addr = INADDR_ANY;
 
-    xClientSocket = INVALID_SOCKET;
+    xClientSocket            = INVALID_SOCKET;
     for( i = 0; i < EV_NEVENTS; i++ )
     {
-        if( ( xEvents[i] = WSACreateEvent(  ) ) == WSA_INVALID_EVENT )
+        if( ( xEvents[i] = WSACreateEvent( ) ) == WSA_INVALID_EVENT )
             break;
     }
     if( i != EV_NEVENTS )
     {
         vMBPortLog( MB_LOG_ERROR, _T( "TCP-POLL" ), _T( "can't create event objects: %s\r\n" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
+                    WsaError2String( WSAGetLastError( ) ) );
     }
     else if( ( xListenSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) == INVALID_SOCKET )
     {
         vMBPortLog( MB_LOG_ERROR, _T( "TCP-POLL" ), _T( "can't create socket: %s\r\n" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
+                    WsaError2String( WSAGetLastError( ) ) );
     }
-    else if( bind( xListenSocket, ( SOCKADDR * ) & xService, sizeof( xService ) ) == SOCKET_ERROR )
+    else if( bind( xListenSocket, ( SOCKADDR * ) &xService, sizeof( xService ) ) == SOCKET_ERROR )
     {
         vMBPortLog( MB_LOG_ERROR, _T( "TCP-POLL" ), _T( "can't bind on socket: %s\r\n" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
+                    WsaError2String( WSAGetLastError( ) ) );
     }
     else if( listen( xListenSocket, 5 ) == SOCKET_ERROR )
     {
         vMBPortLog( MB_LOG_ERROR, _T( "TCP-POLL" ), _T( "can't listen on socket: %s\r\n" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
+                    WsaError2String( WSAGetLastError( ) ) );
     }
     else if( WSAEventSelect( xListenSocket, xEvents[EV_CONNECTION], FD_ACCEPT ) == SOCKET_ERROR )
     {
         vMBPortLog( MB_LOG_ERROR, _T( "TCP-POLL" ), _T( "can't enable events on socket: %s\r\n" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
+                    WsaError2String( WSAGetLastError( ) ) );
     }
     else
     {
@@ -161,9 +161,9 @@ xMBTCPPortInit( USHORT usTCPPort )
 }
 
 void
-vMBTCPPortClose(  )
+vMBTCPPortClose( )
 {
-    int             i;
+    int i;
 
     /* Release all event handlers. */
     for( i = 0; i < EV_NEVENTS; i++ )
@@ -174,14 +174,14 @@ vMBTCPPortClose(  )
     /* Close all client sockets. */
     if( xClientSocket != SOCKET_ERROR )
     {
-        prvvMBPortReleaseClient(  );
+        prvvMBPortReleaseClient( );
     }
     /* Close the listener socket. */
     if( xListenSocket != SOCKET_ERROR )
     {
         closesocket( xListenSocket );
     }
-    ( void )WSACleanup(  );
+    ( void ) WSACleanup( );
 }
 
 void
@@ -190,7 +190,7 @@ vMBTCPPortDisable( void )
     /* Close all client sockets. */
     if( xClientSocket != SOCKET_ERROR )
     {
-        prvvMBPortReleaseClient(  );
+        prvvMBPortReleaseClient( );
     }
 }
 
@@ -218,11 +218,11 @@ BOOL
 xMBPortTCPPool( void )
 {
 
-    BOOL            bOkay = TRUE;
-    DWORD           dwWaitResult;
+    BOOL             bOkay = TRUE;
+    DWORD            dwWaitResult;
     WSANETWORKEVENTS xNetworkEvents;
-    int             iEventNr;
-    int             iRes;
+    int              iEventNr;
+    int              iRes;
 
     dwWaitResult = WSAWaitForMultipleEvents( EV_NEVENTS, xEvents, FALSE, MB_TCP_POOL_TIMEOUT, FALSE );
 
@@ -234,7 +234,7 @@ xMBPortTCPPool( void )
     else if( dwWaitResult == WSA_WAIT_FAILED )
     {
         vMBPortLog( MB_LOG_ERROR, _T( "TCP-POLL" ), _T( "can't wait for network events: %s" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
+                    WsaError2String( WSAGetLastError( ) ) );
         bOkay = FALSE;
     }
     /* A event occured on one of the sockets */
@@ -258,12 +258,12 @@ xMBPortTCPPool( void )
             if( iRes == SOCKET_ERROR )
             {
                 vMBPortLog( MB_LOG_ERROR, _T( "TCP-POLL" ), _T( "can't get event list: %S\r\n" ),
-                            WsaError2String( WSAGetLastError(  ) ) );
+                            WsaError2String( WSAGetLastError( ) ) );
             }
             else if( xNetworkEvents.lNetworkEvents & FD_ACCEPT )
             {
                 /* A new connection from a client. Accept it. */
-                ( void )prvbMBPortAcceptClient(  );
+                ( void ) prvbMBPortAcceptClient( );
             }
         }
 
@@ -280,7 +280,7 @@ xMBPortTCPPool( void )
             if( iRes == SOCKET_ERROR )
             {
                 vMBPortLog( MB_LOG_ERROR, _T( "TCP-POLL" ), _T( "can't get event list: %s\r\n" ),
-                            WsaError2String( WSAGetLastError(  ) ) );
+                            WsaError2String( WSAGetLastError( ) ) );
             }
             else if( xNetworkEvents.lNetworkEvents & FD_READ )
             {
@@ -292,9 +292,9 @@ xMBPortTCPPool( void )
                 /* Process part of the Modbus TCP frame. In case of an I/O error we have to drop
                  * the client connection.
                  */
-                if( prvMBTCPGetFrame(  ) != TRUE )
+                if( prvMBTCPGetFrame( ) != TRUE )
                 {
-                    prvvMBPortReleaseClient(  );
+                    prvvMBPortReleaseClient( );
                 }
             }
             else if( xNetworkEvents.lNetworkEvents & FD_CLOSE )
@@ -304,7 +304,7 @@ xMBPortTCPPool( void )
                     vMBPortLog( MB_LOG_DEBUG, _T( "TCP-POLL" ), _T( "FD_CLOSE event\r\n" ) );
                 }
 
-                prvvMBPortReleaseClient(  );
+                prvvMBPortReleaseClient( );
             }
             else
             {
@@ -335,12 +335,12 @@ xMBPortTCPPool( void )
  *   of a communication error the function returns \c FALSE.
  */
 BOOL
-prvMBTCPGetFrame(  )
+prvMBTCPGetFrame( )
 {
-    BOOL            bOkay = TRUE;
-    USHORT          usLength;
-    int             iRes;
-    LPTSTR          szFrameAsStr;
+    BOOL   bOkay = TRUE;
+    USHORT usLength;
+    int    iRes;
+    LPTSTR szFrameAsStr;
 
     /* Make sure that we can safely process the next read request. If there
      * is an overflow drop the client.
@@ -352,12 +352,12 @@ prvMBTCPGetFrame(  )
     }
 
     iRes = recv( xClientSocket, &aucTCPBuf[usTCPBufPos], usTCPFrameBytesLeft, 0 );
-    switch ( iRes )
+    switch( iRes )
     {
     case SOCKET_ERROR:
         vMBPortLog( MB_LOG_WARN, _T( "MBTCP-RCV" ), _T( "recv failed: %s\r\n" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
-        if( WSAGetLastError(  ) != WSAEWOULDBLOCK )
+                    WsaError2String( WSAGetLastError( ) ) );
+        if( WSAGetLastError( ) != WSAEWOULDBLOCK )
         {
             bOkay = FALSE;
         }
@@ -398,7 +398,7 @@ prvMBTCPGetFrame(  )
                     free( szFrameAsStr );
                 }
             }
-            ( void )xMBPortEventPost( EV_FRAME_RECEIVED );
+            ( void ) xMBPortEventPost( EV_FRAME_RECEIVED );
         }
         /* This can not happend because we always calculate the number of bytes
          * to receive. */
@@ -411,26 +411,26 @@ prvMBTCPGetFrame(  )
 }
 
 BOOL
-xMBTCPPortGetRequest( UCHAR **ppucMBTCPFrame, USHORT *usTCPLength )
+xMBTCPPortGetRequest( UCHAR ** ppucMBTCPFrame, USHORT * usTCPLength )
 {
     *ppucMBTCPFrame = &aucTCPBuf[0];
-    *usTCPLength = usTCPBufPos;
+    *usTCPLength    = usTCPBufPos;
 
     /* Reset the buffer. */
-    usTCPBufPos = 0;
+    usTCPBufPos         = 0;
     usTCPFrameBytesLeft = MB_TCP_FUNC;
     return TRUE;
 }
 
 BOOL
-xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength )
+xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
 {
-    BOOL            bFrameSent = FALSE;
-    BOOL            bAbort = FALSE;
-    int             res;
-    int             iBytesSent = 0;
-    int             iTimeOut = MB_TCP_READ_TIMEOUT;
-    LPTSTR          szFrameAsStr;
+    BOOL   bFrameSent = FALSE;
+    BOOL   bAbort     = FALSE;
+    int    res;
+    int    iBytesSent = 0;
+    int    iTimeOut   = MB_TCP_READ_TIMEOUT;
+    LPTSTR szFrameAsStr;
 
     if( MB_TCP_DEBUG )
     {
@@ -445,10 +445,10 @@ xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength )
     do
     {
         res = send( xClientSocket, &pucMBTCPFrame[iBytesSent], usTCPLength - iBytesSent, 0 );
-        switch ( res )
+        switch( res )
         {
         case SOCKET_ERROR:
-            if( ( WSAGetLastError(  ) == WSAEWOULDBLOCK ) && ( iTimeOut > 0 ) )
+            if( ( WSAGetLastError( ) == WSAEWOULDBLOCK ) && ( iTimeOut > 0 ) )
             {
                 iTimeOut -= MB_TCP_READ_CYCLE;
                 Sleep( MB_TCP_READ_CYCLE );
@@ -459,7 +459,7 @@ xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength )
             }
             break;
         case 0:
-            prvvMBPortReleaseClient(  );
+            prvvMBPortReleaseClient( );
             bAbort = TRUE;
             break;
         default:
@@ -475,10 +475,9 @@ xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength )
 }
 
 void
-prvvMBPortReleaseClient(  )
+prvvMBPortReleaseClient( )
 {
-    TCHAR           szIPAddr[32];
-
+    TCHAR szIPAddr[32];
 
     if( prvMBTCPPortAddressToString( xClientSocket, szIPAddr, _countof( szIPAddr ) ) == TRUE )
     {
@@ -494,7 +493,7 @@ prvvMBPortReleaseClient(  )
     {
         vMBPortLog( MB_LOG_ERROR, _T( "MBTCP-CMGT" ),
                     _T( "can't disable events for disconnecting client socket: %s\r\n" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
+                    WsaError2String( WSAGetLastError( ) ) );
     }
 
     /* Reset event object in case an event was still pending. */
@@ -502,33 +501,33 @@ prvvMBPortReleaseClient(  )
     {
         vMBPortLog( MB_LOG_ERROR, _T( "MBTCP-CMGT" ),
                     _T( "can't disable events for disconnecting client socket: %s\r\n" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
+                    WsaError2String( WSAGetLastError( ) ) );
     }
 
     /* Disallow the sender side. This tells the other side that we have finished. */
     if( shutdown( xClientSocket, SD_SEND ) == SOCKET_ERROR )
     {
         vMBPortLog( MB_LOG_ERROR, _T( "MBTCP-CMGT" ), _T( "shutdown failed: %s\r\n" ),
-                    WsaError2String( WSAGetLastError(  ) ) );
+                    WsaError2String( WSAGetLastError( ) ) );
     }
 
     /* Read any unread data from the socket. Note that this is not the strictly
      * correct way to do it because our sockets are non blocking and therefore
      * some bytes could remain.
      */
-    ( void )recv( xClientSocket, &aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
+    ( void ) recv( xClientSocket, &aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
 
-    ( void )closesocket( xClientSocket );
+    ( void ) closesocket( xClientSocket );
     xClientSocket = INVALID_SOCKET;
 }
 
 BOOL
-prvbMBPortAcceptClient(  )
+prvbMBPortAcceptClient( )
 {
-    SOCKET          xNewSocket;
-    BOOL            bOkay;
+    SOCKET xNewSocket;
+    BOOL   bOkay;
 
-    TCHAR           szIPAddr[32];
+    TCHAR  szIPAddr[32];
 
     /* Check if we can handle a new connection. */
 
@@ -545,13 +544,13 @@ prvbMBPortAcceptClient(  )
     else if( WSAEventSelect( xNewSocket, xEvents[EV_CLIENT], FD_READ | FD_CLOSE ) == SOCKET_ERROR )
     {
         bOkay = FALSE;
-        ( void )closesocket( xNewSocket );
+        ( void ) closesocket( xNewSocket );
     }
     /* Everything okay - Register the client connection. */
     else
     {
-        xClientSocket = xNewSocket;
-        usTCPBufPos = 0;
+        xClientSocket       = xNewSocket;
+        usTCPBufPos         = 0;
         usTCPFrameBytesLeft = MB_TCP_FUNC;
 
         if( prvMBTCPPortAddressToString( xClientSocket, szIPAddr, _countof( szIPAddr ) ) == TRUE )
@@ -563,7 +562,6 @@ prvbMBPortAcceptClient(  )
             vMBPortLog( MB_LOG_INFO, _T( "MBTCP-CMGT" ), _T( "accepted unknown client.\r\n" ) );
         }
         bOkay = TRUE;
-
     }
     return bOkay;
 }

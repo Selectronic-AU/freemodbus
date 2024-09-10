@@ -25,18 +25,18 @@
 /* ----------------------- Modbus includes ----------------------------------*/
 
 /* ----------------------- Variables ----------------------------------------*/
-int             VIC_Temp;
+int VIC_Temp;
 
 /* ----------------------- Start implementation -----------------------------*/
 void
-EnterCriticalSection(  )
+EnterCriticalSection( )
 {
-    VIC_Temp = VICIntEnable;    /* Save VICIntEnable */
+    VIC_Temp    = VICIntEnable; /* Save VICIntEnable */
     VICIntEnClr = VIC_Temp;     /* Disable Interruptions */
 }
 
 void
-ExitCriticalSection(  )
+ExitCriticalSection( )
 {
-    VICIntEnable = VIC_Temp;    /* Restore VICIntEnable */
+    VICIntEnable = VIC_Temp; /* Restore VICIntEnable */
 }

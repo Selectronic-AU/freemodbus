@@ -41,28 +41,28 @@
 #include "mbconfig.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_PDU_FUNC_READ_ADDR_OFF           ( MB_PDU_DATA_OFF )
-#define MB_PDU_FUNC_READ_DISCCNT_OFF        ( MB_PDU_DATA_OFF + 2 )
-#define MB_PDU_FUNC_READ_SIZE               ( 4 )
-#define MB_PDU_FUNC_READ_DISCCNT_MAX        ( 0x07D0 )
+#define MB_PDU_FUNC_READ_ADDR_OFF    ( MB_PDU_DATA_OFF )
+#define MB_PDU_FUNC_READ_DISCCNT_OFF ( MB_PDU_DATA_OFF + 2 )
+#define MB_PDU_FUNC_READ_SIZE        ( 4 )
+#define MB_PDU_FUNC_READ_DISCCNT_MAX ( 0x07D0 )
 
 /* ----------------------- Static functions ---------------------------------*/
-eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
+eMBException prveMBError2Exception( eMBErrorCode eErrorCode );
 
 /* ----------------------- Start implementation -----------------------------*/
 
 #if MB_FUNC_READ_COILS_ENABLED > 0
 
 eMBException
-eMBFuncReadDiscreteInputs( UCHAR *pucFrame, USHORT *usLen )
+eMBFuncReadDiscreteInputs( UCHAR * pucFrame, USHORT * usLen )
 {
-    USHORT          usRegAddress;
-    USHORT          usDiscreteCnt;
-    UCHAR           ucNBytes;
-    UCHAR          *pucFrameCur;
+    USHORT       usRegAddress;
+    USHORT       usDiscreteCnt;
+    UCHAR        ucNBytes;
+    UCHAR *      pucFrameCur;
 
-    eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    eMBException eStatus = MB_EX_NONE;
+    eMBErrorCode eRegStatus;
 
     if( *usLen == ( MB_PDU_FUNC_READ_SIZE + MB_PDU_SIZE_MIN ) )
     {
@@ -80,7 +80,7 @@ eMBFuncReadDiscreteInputs( UCHAR *pucFrame, USHORT *usLen )
         {
             /* Set the current PDU data pointer to the beginning. */
             pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
-            *usLen = MB_PDU_FUNC_OFF;
+            *usLen      = MB_PDU_FUNC_OFF;
 
             /* First byte contains the function code. */
             *pucFrameCur++ = MB_FUNC_READ_DISCRETE_INPUTS;

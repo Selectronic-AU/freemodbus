@@ -32,18 +32,21 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define HDL_RESET( x ) do { \
-    ( x )->xQueueHdl = 0; \
-} while( 0 );
+#define HDL_RESET( x )                                                                                                 \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        ( x )->xQueueHdl = 0;                                                                                          \
+    }                                                                                                                  \
+    while( 0 );
 
 /* ----------------------- Type definitions ---------------------------------*/
 typedef struct
 {
-    xQueueHandle    xQueueHdl;
+    xQueueHandle xQueueHdl;
 } xEventInternalHandle;
 
 /* ----------------------- Static variables ---------------------------------*/
-STATIC BOOL     bIsInitialized = FALSE;
+STATIC BOOL                 bIsInitialized = FALSE;
 STATIC xEventInternalHandle arxEventHdls[1];
 
 /* ----------------------- Static functions ---------------------------------*/
@@ -53,26 +56,26 @@ STATIC xEventInternalHandle arxEventHdls[1];
 BOOL
 xMBPortEventInit( void )
 {
-    BOOL            bOkay = FALSE;
-    xQueueHandle    xQueueHdl;
+    BOOL         bOkay = FALSE;
+    xQueueHandle xQueueHdl;
 
-    ENTER_CRITICAL_SECTION(  );
+    ENTER_CRITICAL_SECTION( );
     xQueueHdl = xQueueCreate( 1, sizeof( eMBEventType ) );
     if( 0 != xQueueHdl )
     {
         arxEventHdls[0].xQueueHdl = xQueueHdl;
-        bIsInitialized = TRUE;
-        bOkay = TRUE;
+        bIsInitialized            = TRUE;
+        bOkay                     = TRUE;
     }
-    EXIT_CRITICAL_SECTION(  );
+    EXIT_CRITICAL_SECTION( );
 
     return bOkay;
 }
 
 void
-vMBPortEventClose(  )
+vMBPortEventClose( )
 {
-    ENTER_CRITICAL_SECTION(  );
+    ENTER_CRITICAL_SECTION( );
     if( bIsInitialized )
     {
         if( 0 != arxEventHdls[0].xQueueHdl )
@@ -81,36 +84,36 @@ vMBPortEventClose(  )
         }
         HDL_RESET( &arxEventHdls[0] );
     }
-    EXIT_CRITICAL_SECTION(  );
+    EXIT_CRITICAL_SECTION( );
 }
 
 BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
-    portBASE_TYPE   xEventSent = pdFALSE;
+    portBASE_TYPE xEventSent = pdFALSE;
 
-    ENTER_CRITICAL_SECTION(  );
+    ENTER_CRITICAL_SECTION( );
     if( bIsInitialized )
     {
-        if( bMBPIsWithinException(  ) )
+        if( bMBPIsWithinException( ) )
         {
-            xEventSent = xQueueSendFromISR( arxEventHdls[0].xQueueHdl, ( const void * )&eEvent, pdFALSE );
+            xEventSent = xQueueSendFromISR( arxEventHdls[0].xQueueHdl, ( const void * ) &eEvent, pdFALSE );
         }
         else
         {
-            xEventSent = xQueueSend( arxEventHdls[0].xQueueHdl, ( const void * )&eEvent, pdFALSE );
+            xEventSent = xQueueSend( arxEventHdls[0].xQueueHdl, ( const void * ) &eEvent, pdFALSE );
         }
     }
-    EXIT_CRITICAL_SECTION(  );
+    EXIT_CRITICAL_SECTION( );
     return xEventSent == pdTRUE ? TRUE : FALSE;
 }
 
 BOOL
-xMBPortEventGet( eMBEventType *peEvent )
+xMBPortEventGet( eMBEventType * peEvent )
 {
-    BOOL            bEventInQueue = FALSE;
+    BOOL bEventInQueue = FALSE;
 
-    ENTER_CRITICAL_SECTION(  );
+    ENTER_CRITICAL_SECTION( );
     if( bIsInitialized )
     {
         if( pdTRUE == xQueueReceive( arxEventHdls[0].xQueueHdl, peEvent, portTICK_RATE_MS * 50 ) )
@@ -118,6 +121,6 @@ xMBPortEventGet( eMBEventType *peEvent )
             bEventInQueue = TRUE;
         }
     }
-    EXIT_CRITICAL_SECTION(  );
+    EXIT_CRITICAL_SECTION( );
     return bEventInQueue;
 }

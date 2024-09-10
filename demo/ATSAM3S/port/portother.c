@@ -28,7 +28,6 @@
  * File: $Id$
  */
 
-
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbport.h"
@@ -37,17 +36,17 @@
 #include <intrinsics.h>
 
 /* ----------------------- Variables ----------------------------------------*/
-static ULONG    ulNesting;
+static ULONG      ulNesting;
 static __istate_t xOldState;
 
 /* ----------------------- Start implementation -----------------------------*/
 void
 vMBPortEnterCritical( void )
 {
-    __istate_t      xCurState;
+    __istate_t xCurState;
 
-    xCurState = __get_interrupt_state(  );
-    __disable_interrupt(  );
+    xCurState = __get_interrupt_state( );
+    __disable_interrupt( );
     if( ulNesting == 0 )
     {
         xOldState = xCurState;
@@ -68,9 +67,9 @@ vMBPortExitCritical( void )
 void
 vMBPortClose( void )
 {
-    extern void     vMBPortSerialClose( void );
-    extern void     vMBPortTimerClose( void );
+    extern void vMBPortSerialClose( void );
+    extern void vMBPortTimerClose( void );
 
-    vMBPortSerialClose(  );
-    vMBPortTimerClose(  );
+    vMBPortSerialClose( );
+    vMBPortTimerClose( );
 }

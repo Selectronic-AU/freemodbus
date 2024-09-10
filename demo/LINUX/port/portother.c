@@ -35,12 +35,12 @@
 #include "mbconfig.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define NELEMS( x ) ( sizeof( ( x ) )/sizeof( ( x )[0] ) )
+#define NELEMS( x ) ( sizeof( ( x ) ) / sizeof( ( x )[0] ) )
 
 /* ----------------------- Static variables ---------------------------------*/
-static FILE    *fLogFile = NULL;
+static FILE *          fLogFile  = NULL;
 static eMBPortLogLevel eLevelMax = MB_LOG_DEBUG;
-static pthread_mutex_t xLock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t xLock     = PTHREAD_MUTEX_INITIALIZER;
 
 /* ----------------------- Start implementation -----------------------------*/
 void
@@ -50,20 +50,20 @@ vMBPortLogLevel( eMBPortLogLevel eNewLevelMax )
 }
 
 void
-vMBPortLogFile( FILE *fNewLogFile )
+vMBPortLogFile( FILE * fNewLogFile )
 {
     fLogFile = fNewLogFile;
 }
 
 void
-vMBPortLog( eMBPortLogLevel eLevel, const CHAR *szModule, const CHAR *szFmt, ... )
+vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule, const CHAR * szFmt, ... )
 {
-    CHAR            szBuf[512];
-    int             i;
-    va_list         args;
-    FILE           *fOutput = fLogFile == NULL ? stderr : fLogFile;
+    CHAR                szBuf[512];
+    int                 i;
+    va_list             args;
+    FILE *              fOutput         = fLogFile == NULL ? stderr : fLogFile;
 
-    static const char *arszLevel2Str[] = { "ERROR", "WARN", "INFO", "DEBUG" };
+    static const char * arszLevel2Str[] = { "ERROR", "WARN", "INFO", "DEBUG" };
 
     i = snprintf( szBuf, NELEMS( szBuf ), "%s: %s: ", arszLevel2Str[eLevel], szModule );
 

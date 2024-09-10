@@ -32,8 +32,8 @@
 /* ----------------------- Defines ------------------------------------------*/
 
 /* ----------------------- Static variables ---------------------------------*/
-ULONG           ulTimeOut;
-BOOL            bTimeoutEnable;
+ULONG                 ulTimeOut;
+BOOL                  bTimeoutEnable;
 
 static struct timeval xTimeLast;
 
@@ -49,16 +49,16 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
 }
 
 void
-xMBPortTimersClose(  )
+xMBPortTimersClose( )
 {
     /* Does not use any hardware resources. */
 }
 
 void
-vMBPortTimerPoll(  )
+vMBPortTimerPoll( )
 {
-    ULONG           ulDeltaMS;
-    struct timeval  xTimeCur;
+    ULONG          ulDeltaMS;
+    struct timeval xTimeCur;
 
     /* Timers are called from the serial layer because we have no high
      * res timer in Win32. */
@@ -75,23 +75,23 @@ vMBPortTimerPoll(  )
             if( ulDeltaMS > ulTimeOut )
             {
                 bTimeoutEnable = FALSE;
-                ( void )pxMBPortCBTimerExpired(  );
+                ( void ) pxMBPortCBTimerExpired( );
             }
         }
     }
 }
 
 void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable( )
 {
-    int             res = gettimeofday( &xTimeLast, NULL );
+    int res = gettimeofday( &xTimeLast, NULL );
 
     assert( res == 0 );
     bTimeoutEnable = TRUE;
 }
 
 void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable( )
 {
     bTimeoutEnable = FALSE;
 }

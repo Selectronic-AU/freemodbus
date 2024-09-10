@@ -30,26 +30,26 @@
 #include "port.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_FRAME_LOG_BUFSIZE    512
+#define MB_FRAME_LOG_BUFSIZE 512
 
 /* ----------------------- Start implementation -----------------------------*/
 
 #ifdef MB_TCP_DEBUG
 void
-prvvMBTCPLogFrame( UCHAR *pucMsg, UCHAR *pucFrame, USHORT usFrameLen )
+prvvMBTCPLogFrame( UCHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen )
 {
-    int             i;
-    int             res;
-    int             iBufPos = 0;
-    size_t          iBufLeft = MB_FRAME_LOG_BUFSIZE;
-    static CHAR     arcBuffer[MB_FRAME_LOG_BUFSIZE];
+    int         i;
+    int         res;
+    int         iBufPos  = 0;
+    size_t      iBufLeft = MB_FRAME_LOG_BUFSIZE;
+    static CHAR arcBuffer[MB_FRAME_LOG_BUFSIZE];
 
     assert( pucFrame != NULL );
 
     for( i = 0; i < usFrameLen; i++ )
     {
         /* Print some additional frame information. */
-        switch ( i )
+        switch( i )
         {
         case 0:
             /* TID = Transaction Identifier. */
@@ -116,12 +116,12 @@ prvvMBTCPLogFrame( UCHAR *pucMsg, UCHAR *pucFrame, USHORT usFrameLen )
 
 #ifdef MB_TCP_DEBUG
 void
-vMBPortLog( eMBPortLogLevel eLevel, const CHAR *szModule, const CHAR *szFmt, ... )
+vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule, const CHAR * szFmt, ... )
 {
-    va_list         args;
-    static const char *arszLevel2Str[] = { "DEBUG", "INFO", "WARN", "ERROR" };
+    va_list             args;
+    static const char * arszLevel2Str[] = { "DEBUG", "INFO", "WARN", "ERROR" };
 
-    ( void )printf( "%s: %s: ", arszLevel2Str[eLevel], szModule );
+    ( void ) printf( "%s: %s: ", arszLevel2Str[eLevel], szModule );
     va_start( args, szFmt );
     vprintf( szFmt, args );
     va_end( args );

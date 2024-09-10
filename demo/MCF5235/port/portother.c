@@ -30,31 +30,35 @@
 #include "mbport.h"
 
 /* ----------------------- Static variables ---------------------------------*/
-static USHORT   usRegSR;
-static char    *heap_ptr;
+static USHORT usRegSR;
+static char * heap_ptr;
 
 /* ----------------------- Start implementation -----------------------------*/
 void
-prvvPortEnterCritical(  )
+prvvPortEnterCritical( )
 {
-    asm volatile    ( "move.w   %%sr, %%d0\n" "move.w   %%d0, %0\n" "move.w   #0x2700, %%sr":"=m" ( usRegSR )::"%%d0" );
+    asm volatile( "move.w   %%sr, %%d0\n"
+                  "move.w   %%d0, %0\n"
+                  "move.w   #0x2700, %%sr"
+                  : "=m"( usRegSR )::"%%d0" );
 }
 
 void
-prvvPortExitCritical(  )
+prvvPortExitCritical( )
 {
-    asm volatile    ( "move.w   %0, %%d0\n" "move.w   %%d0, %%sr\n"::"m" ( usRegSR ):"%%d0" );
+    asm volatile( "move.w   %0, %%d0\n"
+                  "move.w   %%d0, %%sr\n" ::"m"( usRegSR )
+                  : "%%d0" );
 }
 
-
-char           *
+char *
 sbrk( int nbytes )
 {
-    extern void     _end;
-    char           *base;
+    extern void _end;
+    char *      base;
 
     if( !heap_ptr )
-        heap_ptr = ( char * )&_end;
+        heap_ptr = ( char * ) &_end;
     base = heap_ptr;
     heap_ptr += nbytes;
     return base;

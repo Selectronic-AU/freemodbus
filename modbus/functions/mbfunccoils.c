@@ -41,39 +41,39 @@
 #include "mbconfig.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_PDU_FUNC_READ_ADDR_OFF           ( MB_PDU_DATA_OFF )
-#define MB_PDU_FUNC_READ_COILCNT_OFF        ( MB_PDU_DATA_OFF + 2 )
-#define MB_PDU_FUNC_READ_SIZE               ( 4 )
-#define MB_PDU_FUNC_READ_COILCNT_MAX        ( 0x07D0 )
+#define MB_PDU_FUNC_READ_ADDR_OFF         ( MB_PDU_DATA_OFF )
+#define MB_PDU_FUNC_READ_COILCNT_OFF      ( MB_PDU_DATA_OFF + 2 )
+#define MB_PDU_FUNC_READ_SIZE             ( 4 )
+#define MB_PDU_FUNC_READ_COILCNT_MAX      ( 0x07D0 )
 
-#define MB_PDU_FUNC_WRITE_ADDR_OFF          ( MB_PDU_DATA_OFF )
-#define MB_PDU_FUNC_WRITE_VALUE_OFF         ( MB_PDU_DATA_OFF + 2 )
-#define MB_PDU_FUNC_WRITE_SIZE              ( 4 )
+#define MB_PDU_FUNC_WRITE_ADDR_OFF        ( MB_PDU_DATA_OFF )
+#define MB_PDU_FUNC_WRITE_VALUE_OFF       ( MB_PDU_DATA_OFF + 2 )
+#define MB_PDU_FUNC_WRITE_SIZE            ( 4 )
 
-#define MB_PDU_FUNC_WRITE_MUL_ADDR_OFF      ( MB_PDU_DATA_OFF )
-#define MB_PDU_FUNC_WRITE_MUL_COILCNT_OFF   ( MB_PDU_DATA_OFF + 2 )
-#define MB_PDU_FUNC_WRITE_MUL_BYTECNT_OFF   ( MB_PDU_DATA_OFF + 4 )
-#define MB_PDU_FUNC_WRITE_MUL_VALUES_OFF    ( MB_PDU_DATA_OFF + 5 )
-#define MB_PDU_FUNC_WRITE_MUL_SIZE_MIN      ( 5 )
-#define MB_PDU_FUNC_WRITE_MUL_COILCNT_MAX   ( 0x07B0 )
+#define MB_PDU_FUNC_WRITE_MUL_ADDR_OFF    ( MB_PDU_DATA_OFF )
+#define MB_PDU_FUNC_WRITE_MUL_COILCNT_OFF ( MB_PDU_DATA_OFF + 2 )
+#define MB_PDU_FUNC_WRITE_MUL_BYTECNT_OFF ( MB_PDU_DATA_OFF + 4 )
+#define MB_PDU_FUNC_WRITE_MUL_VALUES_OFF  ( MB_PDU_DATA_OFF + 5 )
+#define MB_PDU_FUNC_WRITE_MUL_SIZE_MIN    ( 5 )
+#define MB_PDU_FUNC_WRITE_MUL_COILCNT_MAX ( 0x07B0 )
 
 /* ----------------------- Static functions ---------------------------------*/
-eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
+eMBException prveMBError2Exception( eMBErrorCode eErrorCode );
 
 /* ----------------------- Start implementation -----------------------------*/
 
 #if MB_FUNC_READ_COILS_ENABLED > 0
 
 eMBException
-eMBFuncReadCoils( UCHAR *pucFrame, USHORT *usLen )
+eMBFuncReadCoils( UCHAR * pucFrame, USHORT * usLen )
 {
-    USHORT          usRegAddress;
-    USHORT          usCoilCount;
-    UCHAR           ucNBytes;
-    UCHAR          *pucFrameCur;
+    USHORT       usRegAddress;
+    USHORT       usCoilCount;
+    UCHAR        ucNBytes;
+    UCHAR *      pucFrameCur;
 
-    eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    eMBException eStatus = MB_EX_NONE;
+    eMBErrorCode eRegStatus;
 
     if( *usLen == ( MB_PDU_FUNC_READ_SIZE + MB_PDU_SIZE_MIN ) )
     {
@@ -91,7 +91,7 @@ eMBFuncReadCoils( UCHAR *pucFrame, USHORT *usLen )
         {
             /* Set the current PDU data pointer to the beginning. */
             pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
-            *usLen = MB_PDU_FUNC_OFF;
+            *usLen      = MB_PDU_FUNC_OFF;
 
             /* First byte contains the function code. */
             *pucFrameCur++ = MB_FUNC_READ_COILS;
@@ -141,13 +141,13 @@ eMBFuncReadCoils( UCHAR *pucFrame, USHORT *usLen )
 
 #if MB_FUNC_WRITE_COIL_ENABLED > 0
 eMBException
-eMBFuncWriteCoil( UCHAR *pucFrame, USHORT *usLen )
+eMBFuncWriteCoil( UCHAR * pucFrame, USHORT * usLen )
 {
-    USHORT          usRegAddress;
-    UCHAR           ucBuf[2];
+    USHORT       usRegAddress;
+    UCHAR        ucBuf[2];
 
-    eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    eMBException eStatus = MB_EX_NONE;
+    eMBErrorCode eRegStatus;
 
     if( *usLen == ( MB_PDU_FUNC_WRITE_SIZE + MB_PDU_SIZE_MIN ) )
     {
@@ -194,15 +194,15 @@ eMBFuncWriteCoil( UCHAR *pucFrame, USHORT *usLen )
 
 #if MB_FUNC_WRITE_MULTIPLE_COILS_ENABLED > 0
 eMBException
-eMBFuncWriteMultipleCoils( UCHAR *pucFrame, USHORT *usLen )
+eMBFuncWriteMultipleCoils( UCHAR * pucFrame, USHORT * usLen )
 {
-    USHORT          usRegAddress;
-    USHORT          usCoilCnt;
-    UCHAR           ucByteCount;
-    UCHAR           ucByteCountVerify;
+    USHORT       usRegAddress;
+    USHORT       usCoilCnt;
+    UCHAR        ucByteCount;
+    UCHAR        ucByteCountVerify;
 
-    eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    eMBException eStatus = MB_EX_NONE;
+    eMBErrorCode eRegStatus;
 
     if( *usLen > ( MB_PDU_FUNC_WRITE_SIZE + MB_PDU_SIZE_MIN ) )
     {

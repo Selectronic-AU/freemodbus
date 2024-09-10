@@ -40,61 +40,53 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define USART0_ENABLED          ( 1 )
-#define USART0_IDX              ( 0 )
+#define USART0_ENABLED     ( 1 )
+#define USART0_IDX         ( 0 )
 
-#define USART1_ENABLED          ( 1 )
-#define USART1_IDX              ( USART0_IDX + USART0_ENABLED * 1 )
+#define USART1_ENABLED     ( 1 )
+#define USART1_IDX         ( USART0_IDX + USART0_ENABLED * 1 )
 
-#define USART_IDX_LAST          ( USART1_IDX )
+#define USART_IDX_LAST     ( USART1_IDX )
 
-#define USART_INVALID_PORT      ( 0xFF )
-#define USART_NOT_RE_IDX        ( 3 )
-#define USART_DE_IDX            ( 4 )
+#define USART_INVALID_PORT ( 0xFF )
+#define USART_NOT_RE_IDX   ( 3 )
+#define USART_DE_IDX       ( 4 )
 
 /* ----------------------- Static variables ---------------------------------*/
 
 #if USART1_ENABLED == 1
-const Pin       xUSART0Pins[] = {
-    PIN_USART0_TXD,
-    PIN_USART0_RXD
-};
+const Pin xUSART0Pins[] = { PIN_USART0_TXD, PIN_USART0_RXD };
 #endif
 
 #if USART1_ENABLED == 1
-const Pin       xUSART1NotREPin = { 1 << 25, PIOA, ID_PIOA, PIO_OUTPUT_0, PIO_DEFAULT };
-const Pin       xUSART1DEPin = { 1 << 24, PIOA, ID_PIOA, PIO_OUTPUT_0, PIO_DEFAULT };
+const Pin xUSART1NotREPin = { 1 << 25, PIOA, ID_PIOA, PIO_OUTPUT_0, PIO_DEFAULT };
+const Pin xUSART1DEPin    = { 1 << 24, PIOA, ID_PIOA, PIO_OUTPUT_0, PIO_DEFAULT };
 
-const Pin       xUSART1Pins[] = {
-    PIN_USART1_TXD,
-    PIN_USART1_RXD,
-    {1 << 23, PIOA, ID_PIOA, PIO_OUTPUT_1, PIO_DEFAULT}
+const Pin xUSART1Pins[]   = {
+      PIN_USART1_TXD, PIN_USART1_RXD, {1 << 23, PIOA, ID_PIOA, PIO_OUTPUT_1, PIO_DEFAULT}
 };
 #endif
 
 const struct xUSARTHWMappings_t
 {
-    Usart          *pUsart;
-    unsigned int    xUSARTID;
-    IRQn_Type       xUSARTIrq;
-    const Pin      *USARTNotREPin;
-    const Pin      *USARTDEPin;
-    const Pin      *xUSARTPins;
-    uint32_t        xUSARTPinsCnt;
-
+    Usart *      pUsart;
+    unsigned int xUSARTID;
+    IRQn_Type    xUSARTIrq;
+    const Pin *  USARTNotREPin;
+    const Pin *  USARTDEPin;
+    const Pin *  xUSARTPins;
+    uint32_t     xUSARTPinsCnt;
 
 } xUSARTHWMappings[] = {
 #if USART0_ENABLED == 1
-    {
-     USART0, ID_USART0, USART0_IRQn, NULL, NULL, &xUSART0Pins[0], PIO_LISTSIZE( xUSART0Pins )},
+    {USART0, ID_USART0, USART0_IRQn,             NULL,          NULL, &xUSART0Pins[0], PIO_LISTSIZE( xUSART0Pins )},
 #endif
 #if USART1_ENABLED == 1
-    {
-     USART1, ID_USART1, USART1_IRQn, &xUSART1NotREPin, &xUSART1DEPin, &xUSART1Pins[0], PIO_LISTSIZE( xUSART1Pins )},
+    {USART1, ID_USART1, USART1_IRQn, &xUSART1NotREPin, &xUSART1DEPin, &xUSART1Pins[0], PIO_LISTSIZE( xUSART1Pins )},
 #endif
 };
 
-static UCHAR    ucUsedPort = USART_INVALID_PORT;
+static UCHAR ucUsedPort = USART_INVALID_PORT;
 
 void
 vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
@@ -135,13 +127,13 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 BOOL
 xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
-    BOOL            bStatus = FALSE;
-    uint32_t        uiMode = US_MR_USART_MODE_NORMAL;
+    BOOL     bStatus = FALSE;
+    uint32_t uiMode  = US_MR_USART_MODE_NORMAL;
 
     if( ( ucPORT <= USART_IDX_LAST ) )
     {
         bStatus = TRUE;
-        switch ( eParity )
+        switch( eParity )
         {
         case MB_PAR_NONE:
             uiMode |= US_MR_PAR_NONE | US_MR_NBSTOP_2_BIT;
@@ -157,7 +149,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
             break;
         }
 
-        switch ( ucDataBits )
+        switch( ucDataBits )
         {
         case 8:
             uiMode |= US_MR_CHRL_8_BITS;
@@ -223,7 +215,7 @@ xMBPortSerialPutByte( CHAR ucByte )
 }
 
 BOOL
-xMBPortSerialGetByte( CHAR *pucByte )
+xMBPortSerialGetByte( CHAR * pucByte )
 {
     *pucByte = USART1->US_RHR;
     return TRUE;
@@ -232,23 +224,23 @@ xMBPortSerialGetByte( CHAR *pucByte )
 void
 vUSARTHandler( void )
 {
-    uint32_t        uiCSR;
-    uint32_t        uiIMR;
-    BOOL            bTaskWoken = FALSE;
+    uint32_t uiCSR;
+    uint32_t uiIMR;
+    BOOL     bTaskWoken = FALSE;
 
     vMBPortSetWithinException( TRUE );
 
-    uiCSR = xUSARTHWMappings[ucUsedPort].pUsart->US_CSR;
-    uiIMR = xUSARTHWMappings[ucUsedPort].pUsart->US_IMR;
-    uint32_t        uiCSRMasked = uiCSR & uiIMR;
+    uiCSR                = xUSARTHWMappings[ucUsedPort].pUsart->US_CSR;
+    uiIMR                = xUSARTHWMappings[ucUsedPort].pUsart->US_IMR;
+    uint32_t uiCSRMasked = uiCSR & uiIMR;
 
     if( uiCSRMasked & US_CSR_RXRDY )
     {
-        bTaskWoken = pxMBFrameCBByteReceived(  );
+        bTaskWoken = pxMBFrameCBByteReceived( );
     }
     if( uiCSRMasked & US_CSR_TXRDY )
     {
-        bTaskWoken = pxMBFrameCBTransmitterEmpty(  );
+        bTaskWoken = pxMBFrameCBTransmitterEmpty( );
     }
     if( uiCSRMasked & US_CSR_TXEMPTY )
     {
@@ -271,7 +263,7 @@ vUSARTHandler( void )
 void
 USART1_IrqHandler( void )
 {
-    vUSARTHandler(  );
+    vUSARTHandler( );
 }
 #endif
 
@@ -279,6 +271,6 @@ USART1_IrqHandler( void )
 void
 USART0_IrqHandler( void )
 {
-    vUSARTHandler(  );
+    vUSARTHandler( );
 }
 #endif

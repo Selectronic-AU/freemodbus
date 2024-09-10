@@ -34,78 +34,78 @@
 #include "mb.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define REG_HOLDING_START           0x1000
-#define REG_HOLDING_NREGS           130
-#define REG_INPUT_START             0x1000
-#define REG_INPUT_NREGS             4
+#define REG_HOLDING_START 0x1000
+#define REG_HOLDING_NREGS 130
+#define REG_INPUT_START   0x1000
+#define REG_INPUT_NREGS   4
 
 /* ----------------------- Static variables ---------------------------------*/
-static USHORT   usRegHoldingStart = REG_HOLDING_START;
-static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
-static USHORT   usRegInputStart = REG_INPUT_START;
-static USHORT   usRegInputBuf[REG_INPUT_NREGS];
+static USHORT usRegHoldingStart = REG_HOLDING_START;
+static USHORT usRegHoldingBuf[REG_HOLDING_NREGS];
+static USHORT usRegInputStart = REG_INPUT_START;
+static USHORT usRegInputBuf[REG_INPUT_NREGS];
 
 /* ----------------------- Static functions ---------------------------------*/
-STATIC void     vModbusTask( void *pvParameters );
-STATIC void     vSetupHardware( void );
+STATIC void vModbusTask( void * pvParameters );
+STATIC void vSetupHardware( void );
 
 /* ----------------------- Start implementation -----------------------------*/
 int
 main( void )
 {
-    vSetupHardware(  );
+    vSetupHardware( );
 
-    ( void )xTaskCreate( vModbusTask, NULL, configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+    ( void ) xTaskCreate( vModbusTask, NULL, configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
 
-    vTaskStartScheduler(  );
+    vTaskStartScheduler( );
     return 0;
 }
 
 static void
-vModbusTask( void *pvParameters )
+vModbusTask( void * pvParameters )
 {
-    int             i;
+    int i;
 
     /* Select either ASCII or RTU Mode. */
-    ( void )eMBInit( MB_RTU, 0x0A, 0, 38400, MB_PAR_EVEN );
+    ( void ) eMBInit( MB_RTU, 0x0A, 0, 38400, MB_PAR_EVEN );
 
     /* Initialize the holding register values before starting the
      * Modbus stack
      */
     for( i = 0; i < REG_HOLDING_NREGS; i++ )
     {
-        usRegHoldingBuf[i] = ( unsigned short )i;
+        usRegHoldingBuf[i] = ( unsigned short ) i;
     }
     /* Initialize the input register values before starting the
      * Modbus stack
      */
     for( i = 0; i < REG_INPUT_NREGS; i++ )
     {
-        usRegInputBuf[i] = ( unsigned short )i;
+        usRegInputBuf[i] = ( unsigned short ) i;
     }
 
     /* Enable the Modbus Protocol Stack. */
-    ( void )eMBEnable(  );
+    ( void ) eMBEnable( );
     for( ;; )
     {
         /* Call the main polling loop of the Modbus protocol stack. */
-        ( void )eMBPoll(  );
+        ( void ) eMBPoll( );
     }
 }
 
 eMBErrorCode
-eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
+eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    eMBErrorCode eStatus = MB_ENOERR;
+    int          iRegIndex;
 
     if( ( usAddress >= REG_INPUT_START ) && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegInputStart );
+        iRegIndex = ( int ) ( usAddress - usRegInputStart );
         while( usNRegs > 0 )
         {
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] >> 8 );
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] & 0xFF );
+            *pucRegBuffer++ = ( unsigned char ) ( usRegInputBuf[iRegIndex] >> 8 );
+            *pucRegBuffer++ = ( unsigned char ) ( usRegInputBuf[iRegIndex] & 0xFF );
             iRegIndex++;
             usNRegs--;
         }
@@ -119,22 +119,22 @@ eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 }
 
 eMBErrorCode
-eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
+eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    eMBErrorCode eStatus = MB_ENOERR;
+    int          iRegIndex;
 
     if( ( usAddress >= REG_HOLDING_START ) && ( usAddress + usNRegs <= REG_HOLDING_START + REG_HOLDING_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegHoldingStart );
-        switch ( eMode )
+        iRegIndex = ( int ) ( usAddress - usRegHoldingStart );
+        switch( eMode )
         {
             /* Pass current register values to the protocol stack. */
         case MB_REG_READ:
             while( usNRegs > 0 )
             {
-                *pucRegBuffer++ = ( unsigned char )( usRegHoldingBuf[iRegIndex] >> 8 );
-                *pucRegBuffer++ = ( unsigned char )( usRegHoldingBuf[iRegIndex] & 0xFF );
+                *pucRegBuffer++ = ( unsigned char ) ( usRegHoldingBuf[iRegIndex] >> 8 );
+                *pucRegBuffer++ = ( unsigned char ) ( usRegHoldingBuf[iRegIndex] & 0xFF );
                 iRegIndex++;
                 usNRegs--;
             }
@@ -159,24 +159,22 @@ eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegis
     return eStatus;
 }
 
-
 eMBErrorCode
-eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
+eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
 {
     return MB_ENOREG;
 }
 
 eMBErrorCode
-eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
+eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 {
     return MB_ENOREG;
 }
-
 
 void
 vSetupHardware( void )
 {
-    vMBPInit(  );
+    vMBPInit( );
 
     /* Enable the peripheral clock. */
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA;

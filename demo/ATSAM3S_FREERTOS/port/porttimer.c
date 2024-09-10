@@ -40,26 +40,29 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_TIMER_DEBUG                      ( 0 )
-#define MB_TIMER_PRESCALER                  ( 128UL )
-#define MB_TIMER_TICKS                      ( BOARD_MCK / MB_TIMER_PRESCALER )
-#define MB_50US_TICKS                       ( 20000UL )
+#define MB_TIMER_DEBUG                  ( 0 )
+#define MB_TIMER_PRESCALER              ( 128UL )
+#define MB_TIMER_TICKS                  ( BOARD_MCK / MB_TIMER_PRESCALER )
+#define MB_50US_TICKS                   ( 20000UL )
 
-#define TCX                                 ( TC0 )
-#define TCXIRQ                              ( TC0_IRQn )
-#define TCCHANNEL                           ( 0 )
-#define TCX_IRQHANDLER                      TC0_IrqHandler
+#define TCX                             ( TC0 )
+#define TCXIRQ                          ( TC0_IRQn )
+#define TCCHANNEL                       ( 0 )
+#define TCX_IRQHANDLER                  TC0_IrqHandler
 
-#define TC_CMRX_WAVE                        ( 0x1 << 15 )
-#define TC_CMRX_TCCLKS_TIMER_DIV4_CLOCK     ( 0x3 << 0 )
-#define TC_CMRX_CPCSTOP                     ( 0x1 << 6 )
-#define TC_CMRX_WAVESEL_UP_RC               ( 0x2 << 13 )
+#define TC_CMRX_WAVE                    ( 0x1 << 15 )
+#define TC_CMRX_TCCLKS_TIMER_DIV4_CLOCK ( 0x3 << 0 )
+#define TC_CMRX_CPCSTOP                 ( 0x1 << 6 )
+#define TC_CMRX_WAVESEL_UP_RC           ( 0x2 << 13 )
 
-#define TC_IERX_CPCS                        ( 0x1 << 4 )
-#define TC_IERX_CPAS                        ( 0x1 << 2 )
-#define TC_SRX_CPAS                         ( 0x1 << 2 )
+#define TC_IERX_CPCS                    ( 0x1 << 4 )
+#define TC_IERX_CPAS                    ( 0x1 << 2 )
+#define TC_SRX_CPAS                     ( 0x1 << 2 )
 #if MB_TIMER_DEBUG == 1
-#define TIMER_PIN { 1 << 6, PIOA, ID_PIOA, PIO_OUTPUT_1, PIO_DEFAULT }
+#define TIMER_PIN                                                                                                      \
+    {                                                                                                                  \
+        1 << 6, PIOA, ID_PIOA, PIO_OUTPUT_1, PIO_DEFAULT                                                               \
+    }
 #endif
 
 /* ----------------------- Static variables ---------------------------------*/
@@ -96,7 +99,7 @@ vMBPortTimerClose( void )
 }
 
 void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable( )
 {
 #if MB_TIMER_DEBUG == 1
     PIO_Set( &xTimerDebugPins[0] );
@@ -106,7 +109,7 @@ vMBPortTimersEnable(  )
 }
 
 void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable( )
 {
     TC_Stop( TCX, 0 );
 #if MB_TIMER_DEBUG == 1
@@ -123,10 +126,10 @@ vMBPortTimersDelay( USHORT usTimeOutMS )
 void
 TCX_IRQHANDLER( void )
 {
-    uint32_t        xTCX_IMRX = TCX->TC_CHANNEL[TCCHANNEL].TC_IMR;
-    uint32_t        xTCX_SRX = TCX->TC_CHANNEL[TCCHANNEL].TC_SR;
-    uint32_t        uiSRMasked = xTCX_SRX & xTCX_IMRX;
-    BOOL            bTaskWoken = FALSE;
+    uint32_t xTCX_IMRX  = TCX->TC_CHANNEL[TCCHANNEL].TC_IMR;
+    uint32_t xTCX_SRX   = TCX->TC_CHANNEL[TCCHANNEL].TC_SR;
+    uint32_t uiSRMasked = xTCX_SRX & xTCX_IMRX;
+    BOOL     bTaskWoken = FALSE;
 
     vMBPortSetWithinException( TRUE );
 
@@ -135,7 +138,7 @@ TCX_IRQHANDLER( void )
 #if MB_TIMER_DEBUG == 1
         PIO_Clear( &xTimerDebugPins[0] );
 #endif
-        ( void )pxMBPortCBTimerExpired(  );
+        ( void ) pxMBPortCBTimerExpired( );
     }
     vMBPortSetWithinException( FALSE );
 

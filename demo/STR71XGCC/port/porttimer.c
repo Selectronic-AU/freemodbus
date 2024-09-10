@@ -40,21 +40,21 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_TIMER_DEV            ( TIM0 )
-#define MB_TIMER_PRESCALER      ( 255UL )
-#define MB_TIMER_IRQ_CH         ( T0TIMI_IRQChannel )
-#define MB_IRQ_PRIORITY         ( 1 )
+#define MB_TIMER_DEV       ( TIM0 )
+#define MB_TIMER_PRESCALER ( 255UL )
+#define MB_TIMER_IRQ_CH    ( T0TIMI_IRQChannel )
+#define MB_IRQ_PRIORITY    ( 1 )
 
 /* Timer ticks are counted in multiples of 50us. Therefore 20000 ticks are
  * one second.
  */
-#define MB_TIMER_TICKS          ( 20000UL )
+#define MB_TIMER_TICKS ( 20000UL )
 
 /* ----------------------- Static variables ---------------------------------*/
-static USHORT   usTimerDeltaOCRA;
+static USHORT usTimerDeltaOCRA;
 
 /* ----------------------- Static functions ---------------------------------*/
-void            prvvMBTimerIRQHandler( void ) __attribute__( ( naked ) );
+void prvvMBTimerIRQHandler( void ) __attribute__( ( naked ) );
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
@@ -71,7 +71,7 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
         TIM_OCMPModeConfig( MB_TIMER_DEV, TIM_CHANNEL_A, usTimerDeltaOCRA, TIM_TIMING, TIM_LOW );
     }
 
-    vMBPortTimersDisable(  );
+    vMBPortTimersDisable( );
     EIC_IRQChannelConfig( MB_TIMER_IRQ_CH, ENABLE );
     EIC_IRQChannelPriorityConfig( MB_TIMER_IRQ_CH, MB_IRQ_PRIORITY );
 
@@ -81,28 +81,28 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
 void
 prvvMBTimerIRQHandler( void )
 {
-    portENTER_SWITCHING_ISR(  );
+    portENTER_SWITCHING_ISR( );
 
     static portBASE_TYPE xTaskSwitch = pdFALSE;
 
     if( ( usTimerDeltaOCRA > 0 ) && ( TIM_FlagStatus( MB_TIMER_DEV, TIM_OCFA ) ) )
     {
-        xTaskSwitch |= pxMBPortCBTimerExpired(  );
+        xTaskSwitch |= pxMBPortCBTimerExpired( );
         TIM_FlagClear( MB_TIMER_DEV, TIM_OCFA );
     }
 
     /* End the interrupt in the EIC. */
-    EIC->IPR |= 1 << EIC_CurrentIRQChannelValue(  );
+    EIC->IPR |= 1 << EIC_CurrentIRQChannelValue( );
     portEXIT_SWITCHING_ISR( xTaskSwitch );
 }
 
 void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable( )
 {
     unsigned portSHORT maskTimFlags = 0;
-    unsigned portSHORT maskTimIT = 0;
+    unsigned portSHORT maskTimIT    = 0;
 
-    MB_TIMER_DEV->CNTR = 0;
+    MB_TIMER_DEV->CNTR              = 0;
     if( usTimerDeltaOCRA > 0 )
     {
         MB_TIMER_DEV->OCAR = usTimerDeltaOCRA;
@@ -116,7 +116,7 @@ vMBPortTimersEnable(  )
 }
 
 void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable( )
 {
     /* We can always clear both flags. This improves performance. */
     TIM_FlagClear( MB_TIMER_DEV, TIM_OCFA | TIM_OCFB );

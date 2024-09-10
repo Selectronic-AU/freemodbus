@@ -24,8 +24,8 @@
 #include "mbutils.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define REG_COILS_START     1000
-#define REG_COILS_SIZE      16
+#define REG_COILS_START 1000
+#define REG_COILS_SIZE  16
 
 /* ----------------------- Static variables ---------------------------------*/
 static unsigned char ucRegCoilsBuf[REG_COILS_SIZE / 8];
@@ -36,36 +36,36 @@ main( void )
 {
 
     /* Select either ASCII or RTU Mode. */
-    ( void )eMBInit( MB_RTU, 0x0A, 0, 9600, MB_PAR_EVEN );
+    ( void ) eMBInit( MB_RTU, 0x0A, 0, 9600, MB_PAR_EVEN );
 
     /* Enable the Modbus Protocol Stack. */
-    ( void )eMBEnable(  );
+    ( void ) eMBEnable( );
     for( ;; )
     {
         /* Call the main polling loop of the Modbus protocol stack. */
-        ( void )eMBPoll(  );
+        ( void ) eMBPoll( );
     }
 }
 
 eMBErrorCode
-eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
+eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    short           iNCoils = ( short )usNCoils;
-    unsigned short  usBitOffset;
+    eMBErrorCode   eStatus = MB_ENOERR;
+    short          iNCoils = ( short ) usNCoils;
+    unsigned short usBitOffset;
 
     /* Check if we have registers mapped at this block. */
     if( ( usAddress >= REG_COILS_START ) && ( usAddress + usNCoils <= REG_COILS_START + REG_COILS_SIZE ) )
     {
-        usBitOffset = ( unsigned short )( usAddress - REG_COILS_START );
-        switch ( eMode )
+        usBitOffset = ( unsigned short ) ( usAddress - REG_COILS_START );
+        switch( eMode )
         {
             /* Read current values and pass to protocol stack. */
         case MB_REG_READ:
             while( iNCoils > 0 )
             {
                 *pucRegBuffer++ =
-                    xMBUtilGetBits( ucRegCoilsBuf, usBitOffset, ( unsigned char )( iNCoils > 8 ? 8 : iNCoils ) );
+                    xMBUtilGetBits( ucRegCoilsBuf, usBitOffset, ( unsigned char ) ( iNCoils > 8 ? 8 : iNCoils ) );
                 iNCoils -= 8;
                 usBitOffset += 8;
             }
@@ -75,13 +75,12 @@ eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegist
         case MB_REG_WRITE:
             while( iNCoils > 0 )
             {
-                xMBUtilSetBits( ucRegCoilsBuf, usBitOffset, ( unsigned char )( iNCoils > 8 ? 8 : iNCoils ),
+                xMBUtilSetBits( ucRegCoilsBuf, usBitOffset, ( unsigned char ) ( iNCoils > 8 ? 8 : iNCoils ),
                                 *pucRegBuffer++ );
                 iNCoils -= 8;
             }
             break;
         }
-
     }
     else
     {
@@ -90,21 +89,20 @@ eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegist
     return eStatus;
 }
 
-
 eMBErrorCode
-eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
+eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
     return MB_ENOREG;
 }
 
 eMBErrorCode
-eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
+eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
 {
     return MB_ENOREG;
 }
 
 eMBErrorCode
-eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
+eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 {
     return MB_ENOREG;
 }

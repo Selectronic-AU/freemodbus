@@ -25,7 +25,7 @@
 
 /* ----------------------- Variables ----------------------------------------*/
 static eMBEventType eQueuedEvent;
-static BOOL     xEventInQueue;
+static BOOL         xEventInQueue;
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
@@ -39,19 +39,19 @@ BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
     xEventInQueue = TRUE;
-    eQueuedEvent = eEvent;
+    eQueuedEvent  = eEvent;
     return TRUE;
 }
 
 BOOL
-xMBPortEventGet( eMBEventType *eEvent )
+xMBPortEventGet( eMBEventType * eEvent )
 {
-    BOOL            xEventHappened = FALSE;
+    BOOL xEventHappened = FALSE;
 
     if( xEventInQueue )
     {
-        *eEvent = eQueuedEvent;
-        xEventInQueue = FALSE;
+        *eEvent        = eQueuedEvent;
+        xEventInQueue  = FALSE;
         xEventHappened = TRUE;
     }
     else
@@ -62,11 +62,10 @@ xMBPortEventGet( eMBEventType *eEvent )
          * amount of time. Both timeouts are configured from the timer
          * init functions.
          */
-        ( void )xMBPortSerialPoll(  );
+        ( void ) xMBPortSerialPoll( );
 
         /* Check if any of the timers have expired. */
-        vMBPortTimerPoll(  );
-
+        vMBPortTimerPoll( );
     }
     return xEventHappened;
 }

@@ -19,7 +19,7 @@
  * File: $Id$
  */
 
- /**********************************************************
+/**********************************************************
  *  Linux TCP support.
  *  Based on Walter's project.
  *  Modified by Steven Guo <gotop167@163.com>
@@ -39,18 +39,18 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define PROG            "freemodbus"
+#define PROG              "freemodbus"
 
-#define REG_INPUT_START 1000
-#define REG_INPUT_NREGS 4
+#define REG_INPUT_START   1000
+#define REG_INPUT_NREGS   4
 #define REG_HOLDING_START 2000
 #define REG_HOLDING_NREGS 130
 
 /* ----------------------- Static variables ---------------------------------*/
-static USHORT   usRegInputStart = REG_INPUT_START;
-static USHORT   usRegInputBuf[REG_INPUT_NREGS];
-static USHORT   usRegHoldingStart = REG_HOLDING_START;
-static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
+static USHORT          usRegInputStart = REG_INPUT_START;
+static USHORT          usRegInputBuf[REG_INPUT_NREGS];
+static USHORT          usRegHoldingStart = REG_HOLDING_START;
+static USHORT          usRegHoldingBuf[REG_HOLDING_NREGS];
 static pthread_mutex_t xLock = PTHREAD_MUTEX_INITIALIZER;
 static enum ThreadState
 {
@@ -60,18 +60,18 @@ static enum ThreadState
 } ePollThreadState;
 
 /* ----------------------- Static functions ---------------------------------*/
-static BOOL     bCreatePollingThread( void );
+static BOOL             bCreatePollingThread( void );
 static enum ThreadState eGetPollingThreadState( void );
-static void     eSetPollingThreadState( enum ThreadState eNewState );
-static void    *pvPollingThread( void *pvParameter );
+static void             eSetPollingThreadState( enum ThreadState eNewState );
+static void *           pvPollingThread( void * pvParameter );
 
 /* ----------------------- Start implementation -----------------------------*/
 int
-main( int argc, char *argv[] )
+main( int argc, char * argv[] )
 {
-    int             iExitCode;
-    CHAR            cCh;
-    BOOL            bDoExit;
+    int  iExitCode;
+    CHAR cCh;
+    BOOL bDoExit;
 
     if( eMBTCPInit( MB_TCP_PORT_USE_DEFAULT ) != MB_ENOERR )
     {
@@ -87,8 +87,8 @@ main( int argc, char *argv[] )
         do
         {
             printf( "> " );
-            cCh = getchar(  );
-            switch ( cCh )
+            cCh = getchar( );
+            switch( cCh )
             {
             case 'q':
                 bDoExit = TRUE;
@@ -97,13 +97,13 @@ main( int argc, char *argv[] )
                 eSetPollingThreadState( SHUTDOWN );
                 break;
             case 'e':
-                if( bCreatePollingThread(  ) != TRUE )
+                if( bCreatePollingThread( ) != TRUE )
                 {
                     printf( "Can't start protocol stack! Already running?\r\n" );
                 }
                 break;
             case 's':
-                switch ( eGetPollingThreadState(  ) )
+                switch( eGetPollingThreadState( ) )
                 {
                 case RUNNING:
                     printf( "Protocol stack is running.\r\n" );
@@ -137,13 +137,13 @@ main( int argc, char *argv[] )
             /* eat up everything untill return character. */
             while( cCh != '\n' )
             {
-                cCh = getchar(  );
+                cCh = getchar( );
             }
         }
         while( !bDoExit );
 
         /* Release hardware resources. */
-        ( void )eMBClose(  );
+        ( void ) eMBClose( );
         iExitCode = EXIT_SUCCESS;
     }
     return iExitCode;
@@ -152,10 +152,10 @@ main( int argc, char *argv[] )
 BOOL
 bCreatePollingThread( void )
 {
-    BOOL            bResult;
-    pthread_t       xThread;
+    BOOL      bResult;
+    pthread_t xThread;
 
-    if( eGetPollingThreadState(  ) == STOPPED )
+    if( eGetPollingThreadState( ) == STOPPED )
     {
         if( pthread_create( &xThread, NULL, pvPollingThread, NULL ) != 0 )
         {
@@ -175,22 +175,22 @@ bCreatePollingThread( void )
     return bResult;
 }
 
-void           *
-pvPollingThread( void *pvParameter )
+void *
+pvPollingThread( void * pvParameter )
 {
     eSetPollingThreadState( RUNNING );
 
-    if( eMBEnable(  ) == MB_ENOERR )
+    if( eMBEnable( ) == MB_ENOERR )
     {
         do
         {
-            if( eMBPoll(  ) != MB_ENOERR )
+            if( eMBPoll( ) != MB_ENOERR )
                 break;
         }
-        while( eGetPollingThreadState(  ) != SHUTDOWN );
+        while( eGetPollingThreadState( ) != SHUTDOWN );
     }
 
-    ( void )eMBDisable(  );
+    ( void ) eMBDisable( );
 
     eSetPollingThreadState( STOPPED );
 
@@ -198,13 +198,13 @@ pvPollingThread( void *pvParameter )
 }
 
 enum ThreadState
-eGetPollingThreadState(  )
+eGetPollingThreadState( )
 {
     enum ThreadState eCurState;
 
-    ( void )pthread_mutex_lock( &xLock );
+    ( void ) pthread_mutex_lock( &xLock );
     eCurState = ePollThreadState;
-    ( void )pthread_mutex_unlock( &xLock );
+    ( void ) pthread_mutex_unlock( &xLock );
 
     return eCurState;
 }
@@ -212,24 +212,24 @@ eGetPollingThreadState(  )
 void
 eSetPollingThreadState( enum ThreadState eNewState )
 {
-    ( void )pthread_mutex_lock( &xLock );
+    ( void ) pthread_mutex_lock( &xLock );
     ePollThreadState = eNewState;
-    ( void )pthread_mutex_unlock( &xLock );
+    ( void ) pthread_mutex_unlock( &xLock );
 }
 
 eMBErrorCode
-eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
+eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    eMBErrorCode eStatus = MB_ENOERR;
+    int          iRegIndex;
 
     if( ( usAddress >= REG_INPUT_START ) && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegInputStart );
+        iRegIndex = ( int ) ( usAddress - usRegInputStart );
         while( usNRegs > 0 )
         {
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] >> 8 );
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] & 0xFF );
+            *pucRegBuffer++ = ( unsigned char ) ( usRegInputBuf[iRegIndex] >> 8 );
+            *pucRegBuffer++ = ( unsigned char ) ( usRegInputBuf[iRegIndex] & 0xFF );
             iRegIndex++;
             usNRegs--;
         }
@@ -243,15 +243,15 @@ eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 }
 
 eMBErrorCode
-eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
+eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    eMBErrorCode eStatus = MB_ENOERR;
+    int          iRegIndex;
 
     if( ( usAddress >= REG_HOLDING_START ) && ( usAddress + usNRegs <= REG_HOLDING_START + REG_HOLDING_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegHoldingStart );
-        switch ( eMode )
+        iRegIndex = ( int ) ( usAddress - usRegHoldingStart );
+        switch( eMode )
         {
             /* Pass current register values to the protocol stack. */
         case MB_REG_READ:
@@ -283,15 +283,14 @@ eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegis
     return eStatus;
 }
 
-
 eMBErrorCode
-eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
+eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
 {
     return MB_ENOREG;
 }
 
 eMBErrorCode
-eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
+eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 {
     return MB_ENOREG;
 }

@@ -42,68 +42,68 @@ static unsigned short usRegHoldingStart = REG_HOLDING_START;
 static unsigned short usRegHoldingBuf[REG_HOLDING_NREGS];
 
 /* ----------------------- Static functions ---------------------------------*/
-static void     vModbusTask( void *pvParameters );
+static void vModbusTask( void * pvParameters );
 
 /* ----------------------- Start implementation -----------------------------*/
 int
 main( void )
 {
-    EIC_Init(  );
+    EIC_Init( );
     EIC_IRQConfig( ENABLE );
 
-    ( void )xTaskCreate( vModbusTask, NULL, configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
+    ( void ) xTaskCreate( vModbusTask, NULL, configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, NULL );
 
-    vTaskStartScheduler(  );
+    vTaskStartScheduler( );
     return 0;
 }
 
 static void
-vModbusTask( void *pvParameters )
+vModbusTask( void * pvParameters )
 {
-    int             i;
+    int i;
 
     /* Select either ASCII or RTU Mode. */
-    ( void )eMBInit( MB_RTU, 0x0A, 0, 38400, MB_PAR_EVEN );
+    ( void ) eMBInit( MB_RTU, 0x0A, 0, 38400, MB_PAR_EVEN );
 
     /* Initialize the holding register values before starting the
      * Modbus stack. */
     for( i = 0; i < REG_HOLDING_NREGS; i++ )
     {
-        usRegHoldingBuf[i] = ( unsigned short )i;
+        usRegHoldingBuf[i] = ( unsigned short ) i;
     }
 
     /* Enable the Modbus Protocol Stack. */
-    ( void )eMBEnable(  );
+    ( void ) eMBEnable( );
     for( ;; )
     {
         /* Call the main polling loop of the Modbus protocol stack. */
-        ( void )eMBPoll(  );
+        ( void ) eMBPoll( );
     }
 }
 
 eMBErrorCode
-eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
+eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
     return MB_ENOREG;
 }
 
 eMBErrorCode
-eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
+eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    eMBErrorCode eStatus = MB_ENOERR;
+    int          iRegIndex;
 
     if( ( usAddress >= REG_HOLDING_START ) && ( usAddress + usNRegs <= REG_HOLDING_START + REG_HOLDING_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegHoldingStart );
-        switch ( eMode )
+        iRegIndex = ( int ) ( usAddress - usRegHoldingStart );
+        switch( eMode )
         {
             /* Pass current register values to the protocol stack. */
         case MB_REG_READ:
             while( usNRegs > 0 )
             {
-                *pucRegBuffer++ = ( unsigned char )( usRegHoldingBuf[iRegIndex] >> 8 );
-                *pucRegBuffer++ = ( unsigned char )( usRegHoldingBuf[iRegIndex] & 0xFF );
+                *pucRegBuffer++ = ( unsigned char ) ( usRegHoldingBuf[iRegIndex] >> 8 );
+                *pucRegBuffer++ = ( unsigned char ) ( usRegHoldingBuf[iRegIndex] & 0xFF );
                 iRegIndex++;
                 usNRegs--;
             }
@@ -128,22 +128,22 @@ eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegis
     return eStatus;
 }
 
-
 eMBErrorCode
-eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
+eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
 {
     return MB_ENOREG;
 }
 
 eMBErrorCode
-eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
+eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 {
     return MB_ENOREG;
 }
 
 void
-__assert( const char *pcFile, const char *pcLine, int iLineNumber )
+__assert( const char * pcFile, const char * pcLine, int iLineNumber )
 {
-    portENTER_CRITICAL(  );
-    for( ;; );
+    portENTER_CRITICAL( );
+    for( ;; )
+        ;
 }

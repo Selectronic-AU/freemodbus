@@ -29,10 +29,10 @@
 /* ----------------------- Defines ------------------------------------------*/
 
 /* ----------------------- Static variables ---------------------------------*/
-DWORD           dwTimeOut;
-BOOL            bTimeoutEnable;
-DWORD           dwTimeLast;
-extern HANDLE   g_hSerial;
+DWORD         dwTimeOut;
+BOOL          bTimeoutEnable;
+DWORD         dwTimeLast;
+extern HANDLE g_hSerial;
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
@@ -46,38 +46,38 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
 }
 
 void
-xMBPortTimersClose(  )
+xMBPortTimersClose( )
 {
     /* Does not use any hardware resources. */
 }
 
 void
-vMBPortTimerPoll(  )
+vMBPortTimerPoll( )
 {
 
     /* Timers are called from the serial layer because we have no high
      * res timer in Win32. */
     if( bTimeoutEnable )
     {
-        DWORD           dwTimeCurrent = GetTickCount(  );
+        DWORD dwTimeCurrent = GetTickCount( );
 
         if( ( dwTimeCurrent - dwTimeLast ) > dwTimeOut )
         {
             bTimeoutEnable = FALSE;
-            ( void )pxMBPortCBTimerExpired(  );
+            ( void ) pxMBPortCBTimerExpired( );
         }
     }
 }
 
 void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable( )
 {
     bTimeoutEnable = TRUE;
-    dwTimeLast = GetTickCount(  );
+    dwTimeLast     = GetTickCount( );
 }
 
 void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable( )
 {
     bTimeoutEnable = FALSE;
 }

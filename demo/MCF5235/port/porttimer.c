@@ -30,13 +30,12 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ----------------------------------------- */
-#define PIT_PRESCALER               1024UL
-#define PIT_TIMER_TICKS             ( FCPU / PIT_PRESCALER )
-#define PIT_MODULUS_REGISTER(t50us) \
-    ( (t50us * PIT_TIMER_TICKS )/20000UL - 1UL)
+#define PIT_PRESCALER                 1024UL
+#define PIT_TIMER_TICKS               ( FCPU / PIT_PRESCALER )
+#define PIT_MODULUS_REGISTER( t50us ) ( ( t50us * PIT_TIMER_TICKS ) / 20000UL - 1UL )
 
 /* ----------------------- Static variables -------------------------------- */
-USHORT          usTimerModulus;
+USHORT usTimerModulus;
 
 /* ----------------------- Start implementation ---------------------------- */
 
@@ -55,14 +54,14 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
 }
 
 inline void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable( )
 {
     MCF_PIT_PMR0 = usTimerModulus;
     MCF_PIT_PCSR0 |= MCF_PIT_PCSR_PIE | MCF_PIT_PCSR_EN | MCF_PIT_PCSR_PIF;
 }
 
 inline void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable( )
 {
     MCF_PIT_PCSR0 |= MCF_PIT_PCSR_PIF;
     MCF_PIT_PCSR0 &= ~MCF_PIT_PCSR_PIE;
@@ -70,8 +69,8 @@ vMBPortTimersDisable(  )
 }
 
 void
-prvvMBPortTimerISR(  )
+prvvMBPortTimerISR( )
 {
-    ( void )pxMBPortCBTimerExpired(  );
+    ( void ) pxMBPortCBTimerExpired( );
     MCF_PIT_PCSR0 |= MCF_PIT_PCSR_PIF;
 }

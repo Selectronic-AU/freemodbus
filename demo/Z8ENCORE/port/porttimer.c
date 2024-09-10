@@ -41,8 +41,8 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
      * */
     T0CTL1 = 0x00;
 
-    T0H = 0x00;
-    T0L = 0x00;
+    T0H    = 0x00;
+    T0L    = 0x00;
 
     /* Time = (reload x prescale)/CLOCK
      * reload = (Time*CLOCK)/prescale
@@ -53,7 +53,7 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
     T0CPL = ( usTim1Timerout50us * ( CLOCK / 20000 ) ) & 0x00FF;
 
     IRQ0ENH |= 0x20;
-    IRQ0ENL |= 0x20;            /* Enable Timer0 High Priority */
+    IRQ0ENL |= 0x20; /* Enable Timer0 High Priority */
 
     /* Set Interrupt Vector */
     SET_VECTOR( TIMER0, prvvTIMERExpiredISR );
@@ -61,9 +61,8 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
     return TRUE;
 }
 
-
 void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable( )
 {
     T0H = 0x00;
     T0L = 0x00;
@@ -72,7 +71,7 @@ vMBPortTimersEnable(  )
 }
 
 void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable( )
 {
     T0CTL1 &= ~0x80;
 }
@@ -82,8 +81,8 @@ vMBPortTimersDisable(  )
  * must then call pxMBPortCBTimerExpired( ) to notify the protocol stack that
  * the timer has expired.
  */
-static void     interrupt
+static void interrupt
 prvvTIMERExpiredISR( void )
 {
-    ( void )pxMBPortCBTimerExpired(  );
+    ( void ) pxMBPortCBTimerExpired( );
 }

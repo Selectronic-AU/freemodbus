@@ -27,8 +27,10 @@
 #include <assert.h>
 
 #define INLINE
-#define PR_BEGIN_EXTERN_C           extern "C" {
-#define PR_END_EXTERN_C             }
+#define PR_BEGIN_EXTERN_C                                                                                              \
+    extern "C"                                                                                                         \
+    {
+#define PR_END_EXTERN_C }
 
 #ifdef __cplusplus
 /* *INDENT-OFF* */
@@ -39,12 +41,12 @@ PR_BEGIN_EXTERN_C
 /* ----------------------- Defines ------------------------------------------*/
 #define ENTER_CRITICAL_SECTION( )
 #define EXIT_CRITICAL_SECTION( )
-#define MB_PORT_HAS_CLOSE   1
+#define MB_PORT_HAS_CLOSE 1
 #ifndef TRUE
-#define TRUE            1
+#define TRUE 1
 #endif
 #ifndef FALSE
-#define FALSE           0
+#define FALSE 0
 #endif
 
 /* ----------------------- Type definitions ---------------------------------*/
@@ -58,7 +60,7 @@ typedef enum
 
 /* ----------------------- Function prototypes ------------------------------*/
 
-void            vMBPortLog( eMBPortLogLevel eLevel, const TCHAR * szModule, const TCHAR * szFmt, ... );
+void vMBPortLog( eMBPortLogLevel eLevel, const TCHAR * szModule, const TCHAR * szFmt, ... );
 
 #ifdef __cplusplus
 /* *INDENT-OFF* */

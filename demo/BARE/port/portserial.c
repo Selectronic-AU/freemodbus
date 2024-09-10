@@ -26,8 +26,8 @@
 #include "mbport.h"
 
 /* ----------------------- static functions ---------------------------------*/
-static void     prvvUARTTxReadyISR( void );
-static void     prvvUARTRxISR( void );
+static void prvvUARTTxReadyISR( void );
+static void prvvUARTRxISR( void );
 
 /* ----------------------- Start implementation -----------------------------*/
 void
@@ -54,7 +54,7 @@ xMBPortSerialPutByte( CHAR ucByte )
 }
 
 BOOL
-xMBPortSerialGetByte( CHAR *pucByte )
+xMBPortSerialGetByte( CHAR * pucByte )
 {
     /* Return the byte in the UARTs receive buffer. This function is called
      * by the protocol stack after pxMBFrameCBByteReceived( ) has been called.
@@ -71,7 +71,7 @@ xMBPortSerialGetByte( CHAR *pucByte )
 static void
 prvvUARTTxReadyISR( void )
 {
-    pxMBFrameCBTransmitterEmpty(  );
+    pxMBFrameCBTransmitterEmpty( );
 }
 
 /* Create an interrupt handler for the receive interrupt for your target
@@ -82,5 +82,5 @@ prvvUARTTxReadyISR( void )
 static void
 prvvUARTRxISR( void )
 {
-    pxMBFrameCBByteReceived(  );
+    pxMBFrameCBByteReceived( );
 }

@@ -46,7 +46,7 @@ typedef enum
 } sio_stop_t;
 
 /* ------------------------ Prototypes ------------------------------------ */
-sio_fd_t        sio_open_new( u8_t devnr, u32_t baudrate, u8_t databits, sio_stop_t stopbits, sio_parity_t parity );
-u32_t           sio_write_noisr( sio_fd_t fd, u8_t * buf, u32_t size );
-void            sio_send_noisr( u8_t data, sio_fd_t fd );
+sio_fd_t sio_open_new( u8_t devnr, u32_t baudrate, u8_t databits, sio_stop_t stopbits, sio_parity_t parity );
+u32_t    sio_write_noisr( sio_fd_t fd, u8_t * buf, u32_t size );
+void     sio_send_noisr( u8_t data, sio_fd_t fd );
 #endif

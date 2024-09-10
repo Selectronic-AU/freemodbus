@@ -19,7 +19,6 @@
  * File: $Id$
  */
 
-
 /* ----------------------- Platform includes --------------------------------*/
 #include "uart.h"
 #include "eic.h"
@@ -39,86 +38,88 @@
 #include "serial.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define UART0_DEV               ( UART0 )
-#define UART0_RX_PORT           ( GPIO0 )
-#define UART0_RX_PIN            ( 8 )
-#define UART0_TX_PORT           ( GPIO0 )
-#define UART0_TX_PIN            ( 9 )
-#define UART0_IRQ_CH            ( UART0_IRQChannel )
-#define UART0_IRQ_PRIORITY      ( 1 )
+#define UART0_DEV              ( UART0 )
+#define UART0_RX_PORT          ( GPIO0 )
+#define UART0_RX_PIN           ( 8 )
+#define UART0_TX_PORT          ( GPIO0 )
+#define UART0_TX_PIN           ( 9 )
+#define UART0_IRQ_CH           ( UART0_IRQChannel )
+#define UART0_IRQ_PRIORITY     ( 1 )
 
-#define UART1_DEV               ( UART1 )
-#define UART1_RX_PORT           ( GPIO0 )
-#define UART1_RX_PIN            ( 10 )
-#define UART1_TX_PORT           ( GPIO0 )
-#define UART1_TX_PIN            ( 11 )
-#define UART1_IRQ_CH            ( UART1_IRQChannel )
-#define UART1_IRQ_PRIORITY      ( 1 )
+#define UART1_DEV              ( UART1 )
+#define UART1_RX_PORT          ( GPIO0 )
+#define UART1_RX_PIN           ( 10 )
+#define UART1_TX_PORT          ( GPIO0 )
+#define UART1_TX_PIN           ( 11 )
+#define UART1_IRQ_CH           ( UART1_IRQChannel )
+#define UART1_IRQ_PRIORITY     ( 1 )
 
-#define UART_DEVICES_MAX        ( 2 )
+#define UART_DEVICES_MAX       ( 2 )
 
-#define DEFAULT_BAUDRATE        ( 38400 )
-#define DEFAULT_DATABITS        ( 8 )
-#define DEFAULT_STOPBITS        ( 1 )
-#define DEFAULT_PARITY          ( SIO_PAR_NONE )
+#define DEFAULT_BAUDRATE       ( 38400 )
+#define DEFAULT_DATABITS       ( 8 )
+#define DEFAULT_STOPBITS       ( 1 )
+#define DEFAULT_PARITY         ( SIO_PAR_NONE )
 
-#define DEFAULT_TX_BUFSIZE      ( 64 )
-#define DEFAULT_RX_BUFSIZE      ( 64 )
+#define DEFAULT_TX_BUFSIZE     ( 64 )
+#define DEFAULT_RX_BUFSIZE     ( 64 )
 
-#define DEFAULT_READTIMEOUT_MS  ( 10 )
+#define DEFAULT_READTIMEOUT_MS ( 10 )
 
-#define SIO_RESET_STATE( dev )    do { \
-        ( dev )->ready = 0; \
-        ( dev )->abort = 0; \
-        ( dev )->UARTx = NULL; \
-        ( dev )->rx_buf_rdpos = ( dev )->rx_buf_wrpos = 0; \
-        ( dev )->rx_sem = SYS_SEM_NULL; \
-        ( dev )->tx_buf_rdpos = ( dev )->tx_buf_wrpos = 0; \
-        ( dev )->tx_sem = SYS_SEM_NULL; \
-    } while( 0 )
+#define SIO_RESET_STATE( dev )                                                                                         \
+    do                                                                                                                 \
+    {                                                                                                                  \
+        ( dev )->ready        = 0;                                                                                     \
+        ( dev )->abort        = 0;                                                                                     \
+        ( dev )->UARTx        = NULL;                                                                                  \
+        ( dev )->rx_buf_rdpos = ( dev )->rx_buf_wrpos = 0;                                                             \
+        ( dev )->rx_sem                               = SYS_SEM_NULL;                                                  \
+        ( dev )->tx_buf_rdpos = ( dev )->tx_buf_wrpos = 0;                                                             \
+        ( dev )->tx_sem                               = SYS_SEM_NULL;                                                  \
+    }                                                                                                                  \
+    while( 0 )
 
-#define MS_TO_TICKS( ms )           \
-    ( portTickType )( ( portTickType ) ( ms ) / portTICK_RATE_MS )
+#define MS_TO_TICKS( ms ) ( portTickType )( ( portTickType ) ( ms ) / portTICK_RATE_MS )
 
 /* ----------------------- Type definitions ---------------------------------*/
 typedef struct
 {
-    u8_t            ready;
-    u8_t            abort;
+    u8_t             ready;
+    u8_t             abort;
 
-    u8_t            rx_buf[DEFAULT_RX_BUFSIZE];
-    u8_t            rx_buf_rdpos;
-    u8_t            rx_buf_wrpos;
-    u8_t            rx_buf_cnt;
+    u8_t             rx_buf[DEFAULT_RX_BUFSIZE];
+    u8_t             rx_buf_rdpos;
+    u8_t             rx_buf_wrpos;
+    u8_t             rx_buf_cnt;
     xSemaphoreHandle rx_sem;
 
-    u8_t            tx_buf[DEFAULT_TX_BUFSIZE];
-    u8_t            tx_buf_rdpos;
-    u8_t            tx_buf_wrpos;
-    u8_t            tx_buf_cnt;
+    u8_t             tx_buf[DEFAULT_TX_BUFSIZE];
+    u8_t             tx_buf_rdpos;
+    u8_t             tx_buf_wrpos;
+    u8_t             tx_buf_cnt;
     xSemaphoreHandle tx_sem;
-    UART_TypeDef   *UARTx;
+    UART_TypeDef *   UARTx;
 } serdev_t;
 
 /* ----------------------- Prototypes ---------------------------------------*/
-void            sio_uart0_irq( void ) __attribute__( ( naked ) );
-void            sio_uart1_irq( void ) __attribute__( ( naked ) );
+void sio_uart0_irq( void ) __attribute__( ( naked ) );
+void sio_uart1_irq( void ) __attribute__( ( naked ) );
 
 /* ----------------------- Static functions ---------------------------------*/
 
-static err_t    sio_open_low_level( u8_t devnr, serdev_t * dev );
-static err_t    sio_close_low_level( u8_t devnr, serdev_t * dev );
+static err_t sio_open_low_level( u8_t devnr, serdev_t * dev );
+static err_t sio_close_low_level( u8_t devnr, serdev_t * dev );
 
 /* ----------------------- Static variables ---------------------------------*/
-static u8_t     initialized = FALSE;
+static u8_t              initialized = FALSE;
 static volatile serdev_t devices[UART_DEVICES_MAX];
 
 /* ----------------------- Start implementation -----------------------------*/
 
 err_t
-sio_open_low_level( u8_t devnr, serdev_t *dev )
+sio_open_low_level( u8_t devnr, serdev_t * dev )
 {
-    err_t           error = ERR_OK;
+    err_t error = ERR_OK;
 
     if( devnr == 0 )
     {
@@ -160,9 +161,9 @@ sio_open_low_level( u8_t devnr, serdev_t *dev )
 }
 
 err_t
-sio_close_low_level( u8_t devnr, serdev_t *dev )
+sio_close_low_level( u8_t devnr, serdev_t * dev )
 {
-    err_t           error = ERR_OK;
+    err_t error = ERR_OK;
 
     if( devnr == 0 )
     {
@@ -194,10 +195,10 @@ sio_close_low_level( u8_t devnr, serdev_t *dev )
 }
 
 err_t
-sio_close( serdev_t *dev )
+sio_close( serdev_t * dev )
 {
-    int             i;
-    err_t           error = ERR_VAL;
+    int   i;
+    err_t error = ERR_VAL;
 
     for( i = 0; i < UART_DEVICES_MAX; i++ )
     {
@@ -208,9 +209,9 @@ sio_close( serdev_t *dev )
     }
     if( i < UART_DEVICES_MAX )
     {
-        vPortEnterCritical(  );
+        vPortEnterCritical( );
         error = sio_close_low_level( i, dev );
-        vPortExitCritical(  );
+        vPortExitCritical( );
 
         if( dev->tx_sem != ( xSemaphoreHandle ) 0 )
         {
@@ -229,11 +230,11 @@ sio_close( serdev_t *dev )
 sio_fd_t
 sio_open_new( u8_t devnr, u32_t baudrate, u8_t databits, sio_stop_t stopbits, sio_parity_t parity )
 {
-    int             i;
-    err_t           error = ERR_OK;
-    serdev_t       *dev;
-    UARTParity_TypeDef eUARTParity = UART_NO_PARITY;
-    UARTMode_TypeDef eUARTMode = UARTM_8D;
+    int                  i;
+    err_t                error = ERR_OK;
+    serdev_t *           dev;
+    UARTParity_TypeDef   eUARTParity = UART_NO_PARITY;
+    UARTMode_TypeDef     eUARTMode   = UARTM_8D;
     UARTStopBits_TypeDef eUARTStopBits;
 
     if( !initialized )
@@ -248,9 +249,9 @@ sio_open_new( u8_t devnr, u32_t baudrate, u8_t databits, sio_stop_t stopbits, si
     /* Check if devicename is valid and not in use. */
     if( ( devnr < UART_DEVICES_MAX ) && ( devices[devnr].ready == 0 ) )
     {
-        dev = ( serdev_t * ) & devices[devnr];
+        dev = ( serdev_t * ) &devices[devnr];
 
-        switch ( parity )
+        switch( parity )
         {
         case SIO_PAR_EVEN:
             eUARTParity = UART_EVEN_PARITY;
@@ -265,7 +266,7 @@ sio_open_new( u8_t devnr, u32_t baudrate, u8_t databits, sio_stop_t stopbits, si
             error = ERR_VAL;
         }
 
-        switch ( databits )
+        switch( databits )
         {
         case 7:
             if( parity != SIO_PAR_NONE )
@@ -280,7 +281,7 @@ sio_open_new( u8_t devnr, u32_t baudrate, u8_t databits, sio_stop_t stopbits, si
             error = ERR_VAL;
         }
 
-        switch ( stopbits )
+        switch( stopbits )
         {
         case SIO_STOP_0_5:
             eUARTStopBits = UART_0_5_StopBits;
@@ -305,7 +306,7 @@ sio_open_new( u8_t devnr, u32_t baudrate, u8_t databits, sio_stop_t stopbits, si
             vSemaphoreCreateBinary( dev->rx_sem );
             vSemaphoreCreateBinary( dev->tx_sem );
 
-            vPortEnterCritical(  );
+            vPortEnterCritical( );
             if( ( error = sio_open_low_level( devnr, dev ) ) != ERR_OK )
             {
                 /* Hardware interface does not exist. */
@@ -339,14 +340,14 @@ sio_open_new( u8_t devnr, u32_t baudrate, u8_t databits, sio_stop_t stopbits, si
             {
                 sio_close( dev );
             }
-            vPortExitCritical(  );
+            vPortExitCritical( );
         }
     }
     else
     {
         error = ERR_VAL;
     }
-    return error == ERR_OK ? ( void * )dev : SIO_FD_NULL;
+    return error == ERR_OK ? ( void * ) dev : SIO_FD_NULL;
 }
 
 sio_fd_t
@@ -358,7 +359,7 @@ sio_open( u8_t devnr )
 void
 sio_send_noisr( u8_t data, sio_fd_t fd )
 {
-    serdev_t       *dev = fd;
+    serdev_t * dev = fd;
 
     if( dev->ready )
     {
@@ -367,11 +368,11 @@ sio_send_noisr( u8_t data, sio_fd_t fd )
 }
 
 u32_t
-sio_write_noisr( sio_fd_t fd, u8_t *buf, u32_t size )
+sio_write_noisr( sio_fd_t fd, u8_t * buf, u32_t size )
 {
-    u32_t           left = size;
-    u8_t            send;
-    serdev_t       *dev = fd;
+    u32_t      left = size;
+    u8_t       send;
+    serdev_t * dev = fd;
 
     if( dev->ready )
     {
@@ -389,18 +390,20 @@ sio_write_noisr( sio_fd_t fd, u8_t *buf, u32_t size )
 void
 sio_send( u8_t data, sio_fd_t fd )
 {
-    while( sio_write( fd, &data, 1 ) != 1 );
+    while( sio_write( fd, &data, 1 ) != 1 )
+        ;
 }
 
 u8_t
 sio_recv( sio_fd_t fd )
 {
-    u8_t            data;
-    serdev_t       *dev = fd;
+    u8_t       data;
+    serdev_t * dev = fd;
 
     if( dev->ready )
     {
-        while( sio_read( fd, &data, 1 ) != 1 );
+        while( sio_read( fd, &data, 1 ) != 1 )
+            ;
     }
     else
     {
@@ -411,29 +414,29 @@ sio_recv( sio_fd_t fd )
 }
 
 u32_t
-sio_read( sio_fd_t fd, u8_t *buf, u32_t size )
+sio_read( sio_fd_t fd, u8_t * buf, u32_t size )
 {
-    u32_t           ch_left = size;
-    u32_t           ch_received = 0;
-    volatile serdev_t *dev = fd;
+    u32_t               ch_left     = size;
+    u32_t               ch_received = 0;
+    volatile serdev_t * dev         = fd;
 
     if( dev->ready )
     {
         dev->abort = 0;
         while( ch_left && !dev->abort )
         {
-            vPortEnterCritical(  );
+            vPortEnterCritical( );
             while( ( dev->rx_buf_cnt > 0 ) && ( ch_left > 0 ) )
             {
                 /* Fetch character from the ring buffer. */
-                *buf++ = dev->rx_buf[dev->rx_buf_rdpos];
+                *buf++            = dev->rx_buf[dev->rx_buf_rdpos];
                 dev->rx_buf_rdpos = ( dev->rx_buf_rdpos + 1 ) % DEFAULT_RX_BUFSIZE;
                 dev->rx_buf_cnt--;
                 /* Count character received and left for read. */
                 ch_left--;
                 ch_received++;
             }
-            vPortExitCritical(  );
+            vPortExitCritical( );
             /* If we want more data block on the semaphore and wait until
              * something happens.
              */
@@ -453,35 +456,36 @@ sio_read( sio_fd_t fd, u8_t *buf, u32_t size )
 }
 
 u32_t
-sio_write( sio_fd_t fd, u8_t *buf, u32_t size )
+sio_write( sio_fd_t fd, u8_t * buf, u32_t size )
 {
-    u32_t           ch_left;
+    u32_t               ch_left;
 
-    volatile serdev_t *dev = fd;
+    volatile serdev_t * dev = fd;
 
     if( dev->ready )
     {
         ch_left = size;
         while( ch_left > 0 )
         {
-            vPortEnterCritical(  );
+            vPortEnterCritical( );
             while( ( dev->tx_buf_cnt < DEFAULT_TX_BUFSIZE ) && ( ch_left > 0 ) )
             {
                 dev->tx_buf[dev->tx_buf_wrpos] = *buf++;
-                dev->tx_buf_wrpos = ( dev->tx_buf_wrpos + 1 ) % DEFAULT_TX_BUFSIZE;
+                dev->tx_buf_wrpos              = ( dev->tx_buf_wrpos + 1 ) % DEFAULT_TX_BUFSIZE;
                 dev->tx_buf_cnt++;
                 ch_left--;
             }
             /* Enable transmit FIFO empty interrupts and block. */
             UART_ItConfig( dev->UARTx, UART_TxHalfEmpty, ENABLE );
-            vPortExitCritical(  );
+            vPortExitCritical( );
 
             /* Not all characters sent within one write. Block on a semaphore
              * which is triggered when the buffer is empty again.
              */
             if( ch_left != 0 )
             {
-                while( xSemaphoreTake( dev->tx_sem, portMAX_DELAY ) != pdTRUE );
+                while( xSemaphoreTake( dev->tx_sem, portMAX_DELAY ) != pdTRUE )
+                    ;
             }
         }
     }
@@ -491,20 +495,20 @@ sio_write( sio_fd_t fd, u8_t *buf, u32_t size )
 void
 sio_read_abort( sio_fd_t fd )
 {
-    volatile serdev_t *dev = fd;
+    volatile serdev_t * dev = fd;
 
-    dev->abort = 1;
+    dev->abort              = 1;
 }
 
 void
-sio_serial_isr( UART_TypeDef *UARTx, u8_t *need_ctx_switch )
+sio_serial_isr( UART_TypeDef * UARTx, u8_t * need_ctx_switch )
 {
-    int             i;
-    u16             status;
-    volatile serdev_t *dev = SIO_FD_NULL;
+    int                 i;
+    u16                 status;
+    volatile serdev_t * dev      = SIO_FD_NULL;
 
-    portBASE_TYPE   rx_woken = pdFALSE;
-    portBASE_TYPE   tx_woken = pdFALSE;
+    portBASE_TYPE       rx_woken = pdFALSE;
+    portBASE_TYPE       tx_woken = pdFALSE;
 
     for( i = 0; i < UART_DEVICES_MAX; i++ )
     {
@@ -529,7 +533,7 @@ sio_serial_isr( UART_TypeDef *UARTx, u8_t *need_ctx_switch )
                 /* Store the character in the ring buffer and advance write
                  * position. */
                 dev->rx_buf[dev->rx_buf_wrpos] = dev->UARTx->RxBUFR;
-                dev->rx_buf_wrpos = ( dev->rx_buf_wrpos + 1 ) % DEFAULT_RX_BUFSIZE;
+                dev->rx_buf_wrpos              = ( dev->rx_buf_wrpos + 1 ) % DEFAULT_RX_BUFSIZE;
 
                 /* Increment the receiver buffer counter. Check for a buffer
                  * overrun. In that case we have overwritten a old character.
@@ -567,7 +571,7 @@ sio_serial_isr( UART_TypeDef *UARTx, u8_t *need_ctx_switch )
                 /* Fetch character from the ring buffer and place them into
                  * the FIFO. */
                 dev->UARTx->TxBUFR = dev->tx_buf[dev->tx_buf_rdpos];
-                dev->tx_buf_rdpos = ( dev->tx_buf_rdpos + 1 ) % DEFAULT_TX_BUFSIZE;
+                dev->tx_buf_rdpos  = ( dev->tx_buf_rdpos + 1 ) % DEFAULT_TX_BUFSIZE;
                 dev->tx_buf_cnt--;
 
                 /* Get the new status from the UART. */
@@ -589,19 +593,18 @@ sio_serial_isr( UART_TypeDef *UARTx, u8_t *need_ctx_switch )
     }
 }
 
-
 void
 sio_uart0_irq( void )
 {
     /* Save context to stack. */
-    portENTER_SWITCHING_ISR(  );
+    portENTER_SWITCHING_ISR( );
 
-    static u8_t     need_ctx_switch;
+    static u8_t need_ctx_switch;
 
     sio_serial_isr( UART0, &need_ctx_switch );
 
     /* End the interrupt in the EIC. */
-    EIC->IPR |= 1 << EIC_CurrentIRQChannelValue(  );
+    EIC->IPR |= 1 << EIC_CurrentIRQChannelValue( );
 
     /* End the ISR. */
     portEXIT_SWITCHING_ISR( need_ctx_switch ? pdTRUE : pdFALSE );
@@ -611,14 +614,14 @@ void
 sio_uart1_irq( void )
 {
     /* Save context to stack. */
-    portENTER_SWITCHING_ISR(  );
+    portENTER_SWITCHING_ISR( );
 
-    static u8_t     need_ctx_switch;
+    static u8_t need_ctx_switch;
 
     sio_serial_isr( UART1, &need_ctx_switch );
 
     /* End the interrupt in the EIC. */
-    EIC->IPR |= 1 << EIC_CurrentIRQChannelValue(  );
+    EIC->IPR |= 1 << EIC_CurrentIRQChannelValue( );
 
     /* End the ISR. */
     portEXIT_SWITCHING_ISR( need_ctx_switch ? pdTRUE : pdFALSE );

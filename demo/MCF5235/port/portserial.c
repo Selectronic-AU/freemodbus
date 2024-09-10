@@ -30,19 +30,19 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ----------------------------------------- */
-#define BAUDRATE_VALUE(fsys, baud)  ( ( fsys )/(32UL * baud) )
+#define BAUDRATE_VALUE( fsys, baud ) ( ( fsys ) / ( 32UL * baud ) )
 
 /* ----------------------- Static variables -------------------------------- */
-BOOL            bTXEnabled;
-BOOL            bRXEnabled;
+BOOL bTXEnabled;
+BOOL bRXEnabled;
 
 /* ----------------------- Start implementation ---------------------------- */
 
 void
 vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 {
-    UCHAR           ucUCR = 0;
-    UCHAR           ucIMR = 0;
+    UCHAR ucUCR = 0;
+    UCHAR ucIMR = 0;
 
     if( xRxEnable )
     {
@@ -66,19 +66,19 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
         ucUCR |= MCF_UART_UCR_TXC( 0x2 );
         bTXEnabled = FALSE;
     }
-    MCF_UART_UCR0 = ucUCR;
+    MCF_UART_UCR0  = ucUCR;
     MCF_UART_UIMR0 = ucIMR;
 }
 
 BOOL
 xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
-    BOOL            bStatus = TRUE;
-    UCHAR           ucMode = 0;
+    BOOL  bStatus = TRUE;
+    UCHAR ucMode  = 0;
 
-    ( void )ucPort;
+    ( void ) ucPort;
 
-    switch ( eParity )
+    switch( eParity )
     {
     case MB_PAR_EVEN:
         ucMode |= MCF_UART_UMR_PM( 0x0 );
@@ -93,7 +93,7 @@ xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         bStatus = FALSE;
     }
 
-    switch ( ucDataBits )
+    switch( ucDataBits )
     {
     case 8:
         ucMode |= MCF_UART_UMR_BC( 0x3 );
@@ -143,21 +143,21 @@ xMBPortSerialPutByte( CHAR ucByte )
 }
 
 BOOL
-xMBPortSerialGetByte( CHAR *pucByte )
+xMBPortSerialGetByte( CHAR * pucByte )
 {
     *pucByte = MCF_UART_URB0;
     return TRUE;
 }
 
 void
-prvvMBPortSerialISR(  )
+prvvMBPortSerialISR( )
 {
     if( bTXEnabled && ( MCF_UART_UISR0 & MCF_UART_UISR_TXRDY ) )
     {
-        ( void )pxMBFrameCBTransmitterEmpty(  );
+        ( void ) pxMBFrameCBTransmitterEmpty( );
     }
     if( bRXEnabled && ( MCF_UART_UISR0 & MCF_UART_UISR_RXRDY_FU ) )
     {
-        ( void )pxMBFrameCBByteReceived(  );
+        ( void ) pxMBFrameCBByteReceived( );
     }
 }

@@ -1,6 +1,6 @@
 /*
-  * FreeModbus Library: LPC214X Port
-  * Copyright (C) 2007 Tiago Prado Lone <tiago@maxwellbohr.com.br>
+ * FreeModbus Library: LPC214X Port
+ * Copyright (C) 2007 Tiago Prado Lone <tiago@maxwellbohr.com.br>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,14 +27,13 @@
 #include "mbport.h"
 
 /* ----------------------- static functions ---------------------------------*/
-static void
-sio_irq( void )
-    __irq;
-     static void     prvvUARTTxReadyISR( void );
-     static void     prvvUARTRxISR( void );
+static void sio_irq( void ) __irq;
+static void prvvUARTTxReadyISR( void );
+static void prvvUARTRxISR( void );
 
 /* ----------------------- Start implementation -----------------------------*/
-     void            vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
+void
+vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 {
     if( xRxEnable )
     {
@@ -47,7 +46,7 @@ sio_irq( void )
     if( xTxEnable )
     {
         U1IER |= 0x02;
-        prvvUARTTxReadyISR(  );
+        prvvUARTTxReadyISR( );
     }
     else
     {
@@ -63,16 +62,16 @@ vMBPortClose( void )
 BOOL
 xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
-    BOOL            bInitialized = TRUE;
-    USHORT          cfg = 0;
-    ULONG           reload = ( ( PCLK / ulBaudRate ) / 16UL );
-    volatile char   dummy;
+    BOOL          bInitialized = TRUE;
+    USHORT        cfg          = 0;
+    ULONG         reload       = ( ( PCLK / ulBaudRate ) / 16UL );
+    volatile char dummy;
 
-    ( void )ucPORT;
+    ( void ) ucPORT;
     /* Configure UART1 Pins */
-    PINSEL0 = 0x00050000;       /* Enable RxD1 and TxD1 */
+    PINSEL0 = 0x00050000; /* Enable RxD1 and TxD1 */
 
-    switch ( ucDataBits )
+    switch( ucDataBits )
     {
     case 5:
         break;
@@ -93,7 +92,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         bInitialized = FALSE;
     }
 
-    switch ( eParity )
+    switch( eParity )
     {
     case MB_PAR_NONE:
         break;
@@ -109,20 +108,20 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
 
     if( bInitialized )
     {
-        U1LCR = cfg;            /* Configure Data Bits and Parity */
-        U1IER = 0;              /* Disable UART1 Interrupts */
+        U1LCR = cfg; /* Configure Data Bits and Parity */
+        U1IER = 0;   /* Disable UART1 Interrupts */
 
-        U1LCR |= 0x80;          /* Set DLAB */
-        U1DLL = reload;         /* Set Baud     */
-        U1DLM = reload >> 8;    /* Set Baud */
-        U1LCR &= ~0x80;         /* Clear DLAB */
+        U1LCR |= 0x80;       /* Set DLAB */
+        U1DLL = reload;      /* Set Baud     */
+        U1DLM = reload >> 8; /* Set Baud */
+        U1LCR &= ~0x80;      /* Clear DLAB */
 
         /* Configure UART1 Interrupt */
-        VICVectAddr0 = ( unsigned long )sio_irq;
+        VICVectAddr0 = ( unsigned long ) sio_irq;
         VICVectCntl0 = 0x20 | 7;
-        VICIntEnable = 1 << 7;  /* Enable UART1 Interrupt */
+        VICIntEnable = 1 << 7; /* Enable UART1 Interrupt */
 
-        dummy = U1IIR;          /* Required to Get Interrupts Started */
+        dummy        = U1IIR; /* Required to Get Interrupts Started */
     }
 
     return bInitialized;
@@ -142,7 +141,7 @@ xMBPortSerialPutByte( CHAR ucByte )
 }
 
 BOOL
-xMBPortSerialGetByte( CHAR *pucByte )
+xMBPortSerialGetByte( CHAR * pucByte )
 {
     while( !( U1LSR & 0x01 ) )
     {
@@ -154,33 +153,31 @@ xMBPortSerialGetByte( CHAR *pucByte )
     return TRUE;
 }
 
-
 void
-sio_irq( void )
-    __irq
+sio_irq( void ) __irq
 {
-    volatile char   dummy;
-    volatile char   IIR;
+    volatile char dummy;
+    volatile char IIR;
 
     while( ( ( IIR = U1IIR ) & 0x01 ) == 0 )
     {
-        switch ( IIR & 0x0E )
+        switch( IIR & 0x0E )
         {
-        case 0x06:             /* Receive Line Status */
-            dummy = U1LSR;      /* Just clear the interrupt source */
+        case 0x06:         /* Receive Line Status */
+            dummy = U1LSR; /* Just clear the interrupt source */
             break;
 
-        case 0x04:             /* Receive Data Available */
-        case 0x0C:             /* Character Time-Out */
-            prvvUARTRxISR(  );
+        case 0x04: /* Receive Data Available */
+        case 0x0C: /* Character Time-Out */
+            prvvUARTRxISR( );
             break;
 
-        case 0x02:             /* THRE Interrupt */
-            prvvUARTTxReadyISR(  );
+        case 0x02: /* THRE Interrupt */
+            prvvUARTTxReadyISR( );
             break;
 
-        case 0x00:             /* Modem Interrupt */
-            dummy = U1MSR;      /* Just clear the interrupt source */
+        case 0x00:         /* Modem Interrupt */
+            dummy = U1MSR; /* Just clear the interrupt source */
             break;
 
         default:
@@ -188,9 +185,8 @@ sio_irq( void )
         }
     }
 
-    VICVectAddr = 0xFF;         /* Acknowledge Interrupt */
+    VICVectAddr = 0xFF; /* Acknowledge Interrupt */
 }
-
 
 /*
  * Create an interrupt handler for the transmit buffer empty interrupt
@@ -202,7 +198,7 @@ sio_irq( void )
 static void
 prvvUARTTxReadyISR( void )
 {
-    pxMBFrameCBTransmitterEmpty(  );
+    pxMBFrameCBTransmitterEmpty( );
 }
 
 /*
@@ -214,5 +210,5 @@ prvvUARTTxReadyISR( void )
 static void
 prvvUARTRxISR( void )
 {
-    pxMBFrameCBByteReceived(  );
+    pxMBFrameCBByteReceived( );
 }

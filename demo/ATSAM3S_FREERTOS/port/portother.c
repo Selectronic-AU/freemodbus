@@ -42,7 +42,7 @@
 #include <intrinsics.h>
 
 /* ----------------------- Variables ----------------------------------------*/
-static BOOL     bIsWithinException = FALSE;
+static BOOL bIsWithinException = FALSE;
 
 /* ----------------------- Start implementation -----------------------------*/
 
@@ -61,23 +61,23 @@ bMBPortIsWithinException( void )
 void
 vMBPortEnterCritical( void )
 {
-    taskENTER_CRITICAL(  );
+    taskENTER_CRITICAL( );
 }
 
 void
 vMBPortExitCritical( void )
 {
-    taskEXIT_CRITICAL(  );
+    taskEXIT_CRITICAL( );
 }
 
 void
 vMBPortClose( void )
 {
-    extern void     vMBPortSerialClose( void );
-    extern void     vMBPortTimerClose( void );
-    extern void     vMBPortEventClose( void );
+    extern void vMBPortSerialClose( void );
+    extern void vMBPortTimerClose( void );
+    extern void vMBPortEventClose( void );
 
-    vMBPortSerialClose(  );
-    vMBPortTimerClose(  );
-    vMBPortEventClose(  );
+    vMBPortSerialClose( );
+    vMBPortTimerClose( );
+    vMBPortEventClose( );
 }
