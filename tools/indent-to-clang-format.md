@@ -1,0 +1,23 @@
+Indent option                        | Clang-format option
+-------------------------------------|--------------------
+--declaration-indentation 16         | Use *AlignConsecutive...*
+--procnames-start-lines              | AlwaysBreakAfterReturnType: AllDefinitions
+--blank-lines-after-declarations     | Use *MaxEmptyLinesToKeep: 1*
+--blank-lines-after-procedures       | ''
+--blank-lines-before-block-comments  | ''
+--break-before-boolean-operator      | BreakBeforeBinaryOperators: All
+--braces-after-if-line               | BraceWrapping.AfterControlStatement: Always
+--braces-after-struct-decl-line      | BraceWrapping.AfterStruct : true
+--brace-indent 0                     | BraceWrapping.IndentBraces: false
+--case-indentation 0                 | IndentCaseLabels: false
+--no-space-after-function-call-names | AfterFunctionDeclarationName: false
+--no-space-after-for                 | AfterControlStatements: false
+--no-space-after-if                  | AfterControlStatements: false
+--no-space-after-while               | AfterControlStatements: false
+--no-space-after-casts               | SpaceAfterCStyleCast: false
+--space-after-parentheses            | SpacesInParentheses
+--dont-format-comments               | ReflowComments: false
+--indent-level 4                     | IndentWidth: 4
+--ignore-newlines                    | MaxEmptyLinesToKeep: 1
+--no-tabs                            | UseTab: Never
+--line-length 120                    | ColumnLimit: 120

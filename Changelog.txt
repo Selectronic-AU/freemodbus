@@ -196,7 +196,7 @@
    - BUGS (STR71XTCP): pppMain must not return - Instead it should remove 
        its task from the scheduler.
 
-2006-08-30 (REL_9) Christian Walter <wolti@sil.at>:
+2006-08-30 (REL_0_9) Christian Walter <wolti@sil.at>:
  Notes: Added lwIP port for the MCF5235 target. The lwIP part is
    generic and therefore FreeModbus now works on any target with
    lwIP support.
@@ -207,7 +207,7 @@
    - FEATURES: Added lwIP port for FreeModbus
    - FEATURES: Added demo application for FreeModbus and lwIP.
 
-2006-08-22 (REL_0_82) Christian Walter <wolti@sil.at>
+2006-08-22 (REL_0_8_2) Christian Walter <wolti@sil.at>
  Notes: Fixed bug with Modbus ASCII support
 
  Detailed notes:
@@ -216,7 +216,7 @@
        support was broken. The bug is fixed now and was tested with
        the Win32 port.
 
-2006-08-22 (REL_0_81) Christian Walter <wolti@sil.at>
+2006-08-22 (REL_0_8_1) Christian Walter <wolti@sil.at>
  Notes: Added porting guide
 
  Detailed notes:
@@ -262,7 +262,7 @@
    - OTHER: prototypes for xMBUtilSetBits and xMBUtilGetBits fixed.
        usNBits should be ucNBits by convention.
 
-2006-06-17 Christian Walter <wolti@sil.at>
+2006-06-17 (REL_0_6_1) Christian Walter <wolti@sil.at>
 
  Notes: Fixed various bugs with the Win32 port
 
@@ -274,14 +274,14 @@
    - FEATURES: extended Win32 demo application to use the new features.
    - BUG: fixed bug in Win32 demo for ASCII mode.
 
-2006-06-16 Christian Walter <wolti@sil.at>
+2006-06-16 (REL_0_6) Christian Walter <wolti@sil.at>
  Notes: The new version includes a new port for the
    Win32 platform
 
  Detailed notes:
    - FEATURES: added Win32 platform
 
-2006-05-14 Christian Walter <wolti@sil.at>
+2006-05-14 (REL_0_5) Christian Walter <wolti@sil.at>
  Notes: The new version includes a new port for the
    Freescale MCF5235 processor.
 
@@ -289,10 +289,10 @@
    - FEATURES: added new MCF5235 port.
    - OTHER: fixed some missing code headers.
 
-2006-05-01 Christian Walter <wolti@sil.at>
+2006-05-01 (REL_0_4) Christian Walter <wolti@sil.at>
  Notes: This version removes the t1.5 timers from the Modbus RTU
    implementation because no one actually uses it and the CPU
-   load is very high. T
+   load is very high.
    In addition some documentation cleanups has been done and the
    ARM demo has been updated.
 
@@ -303,7 +303,7 @@
   - BUG: the ARM demo project missed some files in the project
      workspace and did not compile cleanly
 
-2006-02-28 Christian Walter <wolti@sil.at>
+2006-02-28 (REL_0_3_2) Christian Walter <wolti@sil.at>
  Notes: This version includes support for two new command 
    (write multiple coils, read discrete input)
 
@@ -313,7 +313,7 @@
   - FEATURES: added support for read discrete input.
   - OTHER: some code cleanups with lint tool.
 
-2006-02-28 Christian Walter <wolti@sil.at>
+2006-02-28 (REL_0_3_1) Christian Walter <wolti@sil.at>
 
  Notes: The new version 0.31 adds support for reading and writing the
    coil registers and add some bug fixes.
@@ -325,6 +325,6 @@
      to support coils and discrete inputs better.
   - API: API for set slave id functions changed.
 
-2006-02-26 Christian Walter <wolti@sil.at>
+2006-02-26 (REL_0_3) Christian Walter <wolti@sil.at>
 
  Notes: First public release which includes an ARM and AVR port.

@@ -1,0 +1,48 @@
+---
+BasedOnStyle: GNU
+Language: Cpp
+AlignArrayOfStructures: Right
+AlignConsecutiveMacros: AcrossEmptyLines
+AlignConsecutiveAssignments: AcrossEmptyLines
+AlignConsecutiveBitFields: AcrossEmptyLines
+AlignConsecutiveDeclarations: AcrossEmptyLines
+AlignOperands: Align
+AllowShortEnumsOnASingleLine: false
+BraceWrapping:
+  AfterCaseLabel:  true
+  AfterClass:      true
+  AfterControlStatement: Always
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock: true
+  BeforeCatch:     true
+  BeforeElse:      true
+  BeforeLambdaBody: false
+  BeforeWhile:     true
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Custom
+ColumnLimit: 120
+IndentGotoLabels: false
+IndentWidth: 4
+PointerAlignment: Middle
+SortIncludes: Never
+SpaceBeforeParens: Never
+SpaceAfterCStyleCast: true
+SpaceAroundPointerQualifiers: Both
+SpaceInEmptyBlock: true
+SpaceInEmptyParentheses: true
+SpacesInConditionalStatement: true
+SpacesInCStyleCastParentheses: true
+SpacesInParentheses: true
+Standard: Latest
+TabWidth: 4
+UseCRLF: false
+UseTab: Never

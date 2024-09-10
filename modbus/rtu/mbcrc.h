@@ -1,4 +1,4 @@
-/* 
+/*
  * FreeModbus Libary: A portable Modbus implementation for Modbus ASCII/RTU.
  * Copyright (c) 2006-2018 Christian Walter <cwalter@embedded-solutions.at>
  * All rights reserved.
@@ -30,6 +30,6 @@
 #ifndef _MB_CRC_H
 #define _MB_CRC_H
 
-USHORT          usMBCRC16( UCHAR * pucFrame, USHORT usLen );
+USHORT usMBCRC16( UCHAR * pucFrame, USHORT usLen );
 
 #endif
