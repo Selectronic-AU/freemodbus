@@ -37,7 +37,7 @@
 PR_BEGIN_EXTERN_C
 #endif
 
-USHORT usMBCRC16( UCHAR * pucFrame, USHORT usLen );
+USHORT usMBCRC16( const UCHAR * pucFrame, USHORT usLen );
 
 #ifdef __cplusplus
 PR_END_EXTERN_C
