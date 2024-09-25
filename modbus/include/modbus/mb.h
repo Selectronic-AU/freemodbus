@@ -225,6 +225,8 @@ eMBErrorCode eMBDisable( void );
  */
 eMBErrorCode eMBPoll( void );
 
+eMBErrorCode eMBHandleEvent( eMBEventType eEvent );
+
 /*! \ingroup modbus
  * \brief Configure the slave id of the device.
  *
