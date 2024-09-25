@@ -33,6 +33,13 @@
 /* ----------------------- Platform includes --------------------------------*/
 #include "port.h"
 
+#ifdef __cplusplus
+PR_BEGIN_EXTERN_C
+#endif
+
 USHORT usMBCRC16( UCHAR * pucFrame, USHORT usLen );
 
+#ifdef __cplusplus
+PR_END_EXTERN_C
+#endif
 #endif
