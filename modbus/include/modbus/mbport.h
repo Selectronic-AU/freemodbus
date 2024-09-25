@@ -136,6 +136,24 @@ BOOL xMBTCPPortGetRequest( UCHAR ** ppucMBTCPFrame, USHORT * usTCPLength );
 
 BOOL xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength );
 
+INLINE const CHAR *
+szEventName( eMBEventType eEvent )
+{
+    switch( eEvent )
+    {
+    case EV_READY:
+        return "EV_READY";
+    case EV_FRAME_RECEIVED:
+        return "EV_FRAME_RECEIVED";
+    case EV_EXECUTE:
+        return "EV_EXECUTE";
+    case EV_FRAME_SENT:
+        return "EV_FRAME_SENT";
+    default:
+        return "UNKNOWN";
+    }
+}
+
 #ifdef __cplusplus
 /* *INDENT-OFF* */
 PR_END_EXTERN_C
