@@ -62,7 +62,14 @@ typedef enum
 } eMBParity;
 
 /* ----------------------- Supporting functions -----------------------------*/
+
+void vMBPortClose( void );
+
+/* ----------------------- Event functons -----------------------------------*/
+
 BOOL xMBPortEventInit( void );
+
+void vMBPortEventClose( void );
 
 BOOL xMBPortEventPost( eMBEventType eEvent );
 
@@ -71,8 +78,6 @@ BOOL xMBPortEventGet( /*@out@ */ eMBEventType * eEvent );
 /* ----------------------- Serial port functions ----------------------------*/
 
 BOOL xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity );
-
-void vMBPortClose( void );
 
 void vMBPortSerialClose( void );
 
@@ -89,7 +94,7 @@ BOOL xMBPortSerialPutResponse( UCHAR * pucMBRTUFrame, USHORT usRTULength );
 /* ----------------------- Timers functions ---------------------------------*/
 BOOL xMBPortTimersInit( USHORT usTimeOut50us );
 
-void xMBPortTimersClose( void );
+void vMBPortTimersClose( void );
 
 void vMBPortTimersEnable( void );
 
