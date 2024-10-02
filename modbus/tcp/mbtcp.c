@@ -137,7 +137,7 @@ eMBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength )
 }
 
 eMBErrorCode
-eMBTCPSend( UCHAR _unused, const UCHAR * pucFrame, USHORT usLength )
+eMBTCPSend( __unused UCHAR slaveAddress, const UCHAR * pucFrame, USHORT usLength )
 {
     eMBErrorCode eStatus       = MB_ENOERR;
     UCHAR *      pucMBTCPFrame = ( UCHAR * ) pucFrame - MB_TCP_FUNC;
