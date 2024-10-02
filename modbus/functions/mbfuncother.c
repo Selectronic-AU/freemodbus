@@ -44,6 +44,10 @@
 
 #if MB_FUNC_OTHER_REP_SLAVEID_ENABLED > 0
 
+#if MB_FUNC_OTHER_REP_SLAVEID_BUF < 2
+#error "Define at least 2 bytes for MB_FUNC_OTHER_REP_SLAVEID_BUF"
+#endif
+
 /* ----------------------- Static variables ---------------------------------*/
 static UCHAR  ucMBSlaveID[MB_FUNC_OTHER_REP_SLAVEID_BUF];
 static USHORT usMBSlaveIDLen;
@@ -58,7 +62,7 @@ eMBSetSlaveID( UCHAR ucSlaveID, BOOL xIsRunning, UCHAR const * pucAdditional, US
     /* the first byte and second byte in the buffer is reserved for
      * the parameter ucSlaveID and the running flag. The rest of
      * the buffer is available for additional data. */
-    if( usAdditionalLen + 2 < MB_FUNC_OTHER_REP_SLAVEID_BUF )
+    if( usAdditionalLen < ( MB_FUNC_OTHER_REP_SLAVEID_BUF - 2 ) )
     {
         usMBSlaveIDLen                = 0;
         ucMBSlaveID[usMBSlaveIDLen++] = ucSlaveID;
