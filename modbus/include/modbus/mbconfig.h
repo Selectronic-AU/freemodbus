@@ -168,6 +168,11 @@ PR_BEGIN_EXTERN_C
 #define MB_FUNC_READWRITE_HOLDING_ENABLED ( 1 )
 #endif
 
+/*! \brief If the <em>Diagnostics</em> function should be enabled. */
+#ifndef MB_FUNC_DIAG_ENABLED
+#define MB_FUNC_DIAG_ENABLED ( 0 )
+#endif
+
 /*! @} */
 
 #ifdef __cplusplus
