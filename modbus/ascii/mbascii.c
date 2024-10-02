@@ -419,6 +419,7 @@ xMBASCIITimerT1SExpired( void )
         eRcvState = STATE_RX_IDLE;
         break;
 
+    case STATE_RX_IDLE:
     default:
         assert( ( eRcvState == STATE_RX_RCV ) || ( eRcvState == STATE_RX_WAIT_EOF ) );
         break;
