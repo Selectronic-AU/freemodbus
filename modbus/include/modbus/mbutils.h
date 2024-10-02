@@ -102,6 +102,18 @@ void xMBUtilSetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucNBits, UCHAR
  */
 UCHAR xMBUtilGetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucNBits );
 
+/*! \brief Function to look up an exception value for an error code.
+ *
+ * This function is used to map an error code to an exception code which
+ * can be sent as a response to the Modbus request.
+ *
+ * \param eErrorCode The error code that should be mapped to an exception.
+ *
+ * \return The exception code that should be returned to the Modbus
+ *   request.
+ */
+eMBException prveMBError2Exception( eMBErrorCode eErrorCode );
+
 /*! @} */
 
 #ifdef __cplusplus
