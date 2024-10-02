@@ -168,6 +168,7 @@ eMBInit( eMBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eM
             eStatus                     = eMBASCIIInit( ucMBAddress, ucPort, ulBaudRate, eParity );
             break;
 #endif
+        case MB_TCP:
         default:
             eStatus = MB_EINVAL;
         }

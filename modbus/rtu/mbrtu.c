@@ -346,6 +346,7 @@ xMBRTUTimerT35Expired( void )
         break;
 
         /* Function called in an illegal state. */
+    case STATE_RX_IDLE:
     default:
         assert( ( eRcvState == STATE_RX_INIT ) || ( eRcvState == STATE_RX_RCV ) || ( eRcvState == STATE_RX_ERROR ) );
     }
