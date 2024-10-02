@@ -276,6 +276,9 @@ xMBASCIIReceiveFSM( void )
                 usRcvBufferPos++;
                 eBytePos = BYTE_HIGH_NIBBLE;
                 break;
+
+            default:
+                break;
             }
         }
         break;
@@ -320,6 +323,9 @@ xMBASCIIReceiveFSM( void )
             eBytePos       = BYTE_HIGH_NIBBLE;
             eRcvState      = STATE_RX_RCV;
         }
+        break;
+
+    default:
         break;
     }
 
@@ -366,6 +372,8 @@ xMBASCIITransmitFSM( void )
                 eBytePos = BYTE_HIGH_NIBBLE;
                 usSndBufferCount--;
                 break;
+            default:
+                break;
             }
         }
         else
@@ -400,6 +408,9 @@ xMBASCIITransmitFSM( void )
     case STATE_TX_IDLE:
         /* enable receiver/disable transmitter. */
         vMBPortSerialEnable( TRUE, FALSE );
+        break;
+
+    default:
         break;
     }
 

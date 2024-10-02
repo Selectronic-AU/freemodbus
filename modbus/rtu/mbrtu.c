@@ -64,7 +64,8 @@ typedef enum
 typedef enum
 {
     STATE_TX_IDLE, /*!< Transmitter is in idle state. */
-    STATE_TX_XMIT  /*!< Transmitter is in transfer state. */
+    STATE_TX_XMIT, /*!< Transmitter is in transfer state. */
+    STATE_TX_ERROR /*!< If an error occured. */
 } eMBSndState;
 
 /* ----------------------- Static variables ---------------------------------*/
@@ -280,6 +281,10 @@ xMBRTUReceiveFSM( void )
         }
         vMBPortTimersEnable( );
         break;
+
+    default:
+        eRcvState = STATE_RX_ERROR;
+        break;
     }
     return xTaskNeedSwitch;
 }
@@ -316,6 +321,11 @@ xMBRTUTransmitFSM( void )
             vMBPortSerialEnable( TRUE, FALSE );
             eSndState = STATE_TX_IDLE;
         }
+        break;
+
+    case STATE_TX_ERROR:
+    default:
+        eSndState = STATE_TX_ERROR;
         break;
     }
 
