@@ -349,9 +349,6 @@ eMBPoll( void )
     {
         switch( eEvent )
         {
-        case EV_READY:
-            break;
-
         case EV_FRAME_RECEIVED:
             eStatus = peMBFrameReceiveCur( &ucRcvAddress, &ucMBFrame, &usLength );
             if( eStatus == MB_ENOERR )
@@ -400,7 +397,9 @@ eMBPoll( void )
             }
             break;
 
+        case EV_READY:
         case EV_FRAME_SENT:
+        default:
             break;
         }
     }
