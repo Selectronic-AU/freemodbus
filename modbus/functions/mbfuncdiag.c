@@ -26,3 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+/* ----------------------- System includes ----------------------------------*/
+#include <stdlib.h>
+#include <string.h>
+
+/* ----------------------- Modbus includes ----------------------------------*/
+#include "mb.h"
+#include "mbframe.h"
+#include "mbfunc.h"
+
+#if MB_FUNC_DIAG_ENABLED > 0
+
+#endif
