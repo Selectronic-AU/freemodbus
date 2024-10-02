@@ -42,7 +42,7 @@ eMBErrorCode eMBTCPDoInit( USHORT ucTCPPort );
 void         eMBTCPStart( void );
 void         eMBTCPStop( void );
 eMBErrorCode eMBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength );
-eMBErrorCode eMBTCPSend( UCHAR _unused, const UCHAR * pucFrame, USHORT usLength );
+eMBErrorCode eMBTCPSend( UCHAR slaveAddress, const UCHAR * pucFrame, USHORT usLength );
 
 #ifdef __cplusplus
 PR_END_EXTERN_C
