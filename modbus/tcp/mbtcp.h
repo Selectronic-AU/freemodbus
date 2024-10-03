@@ -30,6 +30,9 @@
 #ifndef _MB_TCP_H
 #define _MB_TCP_H
 
+/* ----------------------- Modbus includes ----------------------------------*/
+#include "mb.h"
+
 #ifdef __cplusplus
 /* *INDENT-OFF* */
 PR_BEGIN_EXTERN_C

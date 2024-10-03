@@ -30,6 +30,9 @@
 #ifndef _MB_PROTO_H
 #define _MB_PROTO_H
 
+/* ----------------------- Platform includes --------------------------------*/
+#include "port.h"
+
 #ifdef __cplusplus
 /* *INDENT-OFF* */
 PR_BEGIN_EXTERN_C

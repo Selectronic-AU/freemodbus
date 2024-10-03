@@ -37,12 +37,9 @@
 
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
-#include "mbconfig.h"
 #include "mbframe.h"
-#include "mbproto.h"
 #include "mbfunc.h"
 
-#include "mbport.h"
 #if MB_RTU_ENABLED == 1
 #include "mbrtu.h"
 #endif

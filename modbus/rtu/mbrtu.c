@@ -40,11 +40,10 @@
 
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
-#include "mbrtu.h"
-#include "mbframe.h"
-
 #include "mbcrc.h"
+#include "mbframe.h"
 #include "mbport.h"
+#include "mbrtu.h"
 
 /* ----------------------- Defines ------------------------------------------*/
 #define MB_SER_PDU_SIZE_MIN 4   /*!< Minimum size of a Modbus RTU frame. */

@@ -30,6 +30,9 @@
 #ifndef _MB_FRAME_H
 #define _MB_FRAME_H
 
+/* ----------------------- Modbus includes ----------------------------------*/
+#include "mb.h"
+
 #ifdef __cplusplus
 /* *INDENT-OFF* */
 PR_BEGIN_EXTERN_C
