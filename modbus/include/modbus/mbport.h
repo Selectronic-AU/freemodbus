@@ -32,6 +32,9 @@
 #ifndef _MB_PORT_H
 #define _MB_PORT_H
 
+/* ----------------------- Platform includes --------------------------------*/
+#include "port.h"
+
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif

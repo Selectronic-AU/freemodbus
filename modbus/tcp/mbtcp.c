@@ -39,9 +39,9 @@
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbconfig.h"
-#include "mbtcp.h"
 #include "mbframe.h"
 #include "mbport.h"
+#include "mbtcp.h"
 
 #if MB_TCP_ENABLED > 0
 

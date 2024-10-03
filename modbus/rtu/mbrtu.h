@@ -30,9 +30,13 @@
 #ifndef _MB_RTU_H
 #define _MB_RTU_H
 
+/* ----------------------- Modbus includes ----------------------------------*/
+#include "mb.h"
+
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif
+
 eMBErrorCode eMBRTUInit( UCHAR slaveAddress, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity );
 void         eMBRTUStart( void );
 void         eMBRTUStop( void );

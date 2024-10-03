@@ -30,9 +30,13 @@
 #ifndef _MB_FUNC_H
 #define _MB_FUNC_H
 
+/* ----------------------- Modbus includes ----------------------------------*/
+#include "mb.h"
+
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif
+
 #if MB_FUNC_OTHER_REP_SLAVEID_BUF > 0
 eMBException eMBFuncReportSlaveID( UCHAR * pucFrame, USHORT * usLen );
 #endif

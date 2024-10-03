@@ -33,7 +33,7 @@ ColumnLimit: 120
 IndentGotoLabels: false
 IndentWidth: 4
 PointerAlignment: Middle
-SortIncludes: Never
+SortIncludes: CaseInsensitive
 SpaceBeforeParens: Never
 SpaceAfterCStyleCast: true
 SpaceAroundPointerQualifiers: Both

@@ -30,6 +30,9 @@
 #ifndef _MB_ASCII_H
 #define _MB_ASCII_H
 
+/* ----------------------- Modbus includes ----------------------------------*/
+#include "mb.h"
+
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif

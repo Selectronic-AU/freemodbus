@@ -30,13 +30,17 @@
 #ifndef _MB_H
 #define _MB_H
 
+/* ----------------------- Platform includes --------------------------------*/
 #include "port.h"
+
+/* ----------------------- Modbus includes ----------------------------------*/
+#include "mbconfig.h"
+#include "mbport.h"
+#include "mbproto.h"
 
 #ifdef __cplusplus
 PR_BEGIN_EXTERN_C
 #endif
-#include "mbport.h"
-#include "mbproto.h"
 
 /*! \defgroup modbus Modbus
  * \code #include "mb.h" \endcode
