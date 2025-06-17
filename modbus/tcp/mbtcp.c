@@ -41,7 +41,7 @@
 #include "mbframe.h"
 #include "mbport.h"
 
-#if MB_TCP_ENABLED > 0
+#if MB_SLAVE_TCP_ENABLED > 0
 
 /* ----------------------- Defines ------------------------------------------*/
 
