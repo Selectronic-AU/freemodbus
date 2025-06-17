@@ -139,8 +139,8 @@ eMBMasterInit( eMBMode eMode, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity 
 
     switch( eMode )
     {
-#if MB_MASTER_RTU_ENABLED > 0
     case MB_RTU:
+#if MB_MASTER_RTU_ENABLED > 0
         pvMBMasterFrameStartCur           = eMBMasterRTUStart;
         pvMBMasterFrameStopCur            = eMBMasterRTUStop;
         peMBMasterFrameSendCur            = eMBMasterRTUSend;
@@ -151,10 +151,13 @@ eMBMasterInit( eMBMode eMode, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity 
         pxMBMasterPortCBTimerExpired      = xMBMasterRTUTimerExpired;
 
         eStatus                           = eMBMasterRTUInit( ucPort, ulBaudRate, eParity );
-        break;
+#else
+        eStatus = MB_EINVAL;
 #endif
-#if MB_MASTER_ASCII_ENABLED > 0
+        break;
+
     case MB_ASCII:
+#if MB_MASTER_ASCII_ENABLED > 0
         pvMBMasterFrameStartCur           = eMBMasterASCIIStart;
         pvMBMasterFrameStopCur            = eMBMasterASCIIStop;
         peMBMasterFrameSendCur            = eMBMasterASCIISend;
@@ -165,8 +168,12 @@ eMBMasterInit( eMBMode eMode, UCHAR ucPort, ULONG ulBaudRate, eMBParity eParity 
         pxMBMasterPortCBTimerExpired      = xMBMasterASCIITimerT1SExpired;
 
         eStatus                           = eMBMasterASCIIInit( ucPort, ulBaudRate, eParity );
-        break;
+#else
+        eStatus = MB_EINVAL;
 #endif
+        break;
+
+    case MB_TCP:
     default:
         eStatus = MB_EINVAL;
         break;
@@ -380,10 +387,16 @@ eMBMasterPoll( void )
             case EV_ERROR_EXECUTE_FUNCTION:
                 vMBMasterErrorCBExecuteFunction( ucMBMasterGetDestAddress( ), ucMBFrame, usMBMasterGetPDUSndLength( ) );
                 break;
+            default:
+                break;
             }
             vMBMasterRunResRelease( );
             break;
 
+        case EV_MASTER_PROCESS_SUCESS:
+        case EV_MASTER_ERROR_RESPOND_TIMEOUT:
+        case EV_MASTER_ERROR_RECEIVE_DATA:
+        case EV_MASTER_ERROR_EXECUTE_FUNCTION:
         default:
             break;
         }
