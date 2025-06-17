@@ -114,7 +114,4 @@ be satisfied for the port to work.
  - If you have changed the execution mode make sure you have called
    'make clean'
 
-$Id: README.txt,v 1.2 2006/11/02 23:29:47 wolti Exp $
-
 STR71X FreeModbus Port Copyright (c) 2006 Christian Walter.
-
