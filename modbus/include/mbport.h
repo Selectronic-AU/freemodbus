@@ -1,6 +1,6 @@
 /*
  * FreeModbus Library: A portable Modbus implementation for Modbus ASCII/RTU.
- * Copyright (c) 2006 Christian Walter <wolti@sil.at>
+ * Copyright (c) 2006-2018 Christian Walter <cwalter@embedded-solutions.at>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,8 +25,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * File: $Id: mbport.h,v 1.17 2006/12/07 22:10:34 wolti Exp $
- *            mbport.h,v 1.60 2013/08/17 11:42:56 Armink Add Master Functions  $
  */
 
 #ifndef _MB_PORT_H
@@ -112,9 +110,9 @@ void            xMBPortSerialClose( void );
 
 void            vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 
-INLINE BOOL     xMBPortSerialGetByte( CHAR * pucByte );
+BOOL            xMBPortSerialGetByte( CHAR * pucByte );
 
-INLINE BOOL     xMBPortSerialPutByte( CHAR ucByte );
+BOOL            xMBPortSerialPutByte( CHAR ucByte );
 
 BOOL            xMBMasterPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity );
 
@@ -133,9 +131,11 @@ BOOL            xMBPortTimersInit( USHORT usTimeOut50us );
 
 void            xMBPortTimersClose( void );
 
-INLINE void     vMBPortTimersEnable( void );
+void            vMBPortTimersEnable( void );
 
-INLINE void     vMBPortTimersDisable( void );
+void            vMBPortTimersDisable( void );
+
+void            vMBPortTimersDelay( USHORT usTimeOutMS );
 
 BOOL            xMBMasterPortTimersInit( USHORT usTimeOut50us );
 

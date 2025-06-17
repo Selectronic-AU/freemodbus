@@ -1,6 +1,6 @@
 /*
  * FreeModbus Library: A portable Modbus implementation for Modbus ASCII/RTU.
- * Copyright (c) 2006 Christian Walter <wolti@sil.at>
+ * Copyright (c) 2006-2018 Christian Walter <cwalter@embedded-solutions.at>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,8 +25,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * File: $Id: mbconfig.h,v 1.14 2006/12/07 22:10:34 wolti Exp $
- *       $Id: mbconfig.h,v 1.60 2013/08/13 21:19:55 Armink Add Master Functions $
  */
 
 #ifndef _MB_CONFIG_H
@@ -78,6 +76,19 @@ PR_BEGIN_EXTERN_C
  * time of the network.
  */
 #define MB_ASCII_TIMEOUT_SEC                    (  1 )
+
+/*! \brief Timeout to wait in ASCII prior to enabling transmitter.
+ *
+ * If defined the function calls vMBPortSerialDelay with the argument
+ * MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS to allow for a delay before
+ * the serial transmitter is enabled. This is required because some
+ * targets are so fast that there is no time between receiving and
+ * transmitting the frame. If the master is to slow with enabling its
+ * receiver then he will not receive the response correctly.
+ */
+#ifndef MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS
+#define MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS    ( 0 )
+#endif
 
 /*! \brief Maximum number of Modbus functions codes the protocol stack
  *    should support.

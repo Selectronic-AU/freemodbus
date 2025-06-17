@@ -1,6 +1,6 @@
 /*
  * FreeModbus Library: A portable Modbus implementation for Modbus ASCII/RTU.
- * Copyright (c) 2006 Christian Walter <wolti@sil.at>
+ * Copyright (c) 2006-2018 Christian Walter <cwalter@embedded-solutions.at>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * File: $Id: mbascii.c,v 1.15 2007/02/18 23:46:48 wolti Exp $
  */
 
 /* ----------------------- System includes ----------------------------------*/
@@ -188,7 +187,7 @@ eMBASCIISend( UCHAR ucSlaveAddress, const UCHAR *pucFrame, USHORT usLength )
     UCHAR           usLRC;
 
     ENTER_CRITICAL_SECTION(  );
-    /* Check if the receiver is still in idle state. If not we where to
+    /* Check if the receiver is still in idle state. If not we where too
      * slow with processing the received frame and the master sent another
      * frame on the network. We have to abort sending the frame.
      */
@@ -273,7 +272,8 @@ xMBASCIIReceiveFSM( void )
                 break;
 
             case BYTE_LOW_NIBBLE:
-                ucASCIIBuf[usRcvBufferPos++] |= ucResult;
+                ucASCIIBuf[usRcvBufferPos] |= ucResult;
+                usRcvBufferPos++;
                 eBytePos = BYTE_HIGH_NIBBLE;
                 break;
             }

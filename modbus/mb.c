@@ -1,6 +1,6 @@
 /*
  * FreeModbus Library: A portable Modbus implementation for Modbus ASCII/RTU.
- * Copyright (c) 2006 Christian Walter <wolti@sil.at>
+ * Copyright (c) 2006-2018 Christian Walter <cwalter@embedded-solutions.at>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- * File: $Id: mb.c,v 1.27 2007/02/18 23:45:41 wolti Exp $
  */
 
 /* ----------------------- System includes ----------------------------------*/
@@ -399,6 +398,10 @@ eMBPoll( void )
                     usLength = 0;
                     ucMBFrame[usLength++] = ( UCHAR ) ( ucFunctionCode | MB_FUNC_ERROR );
                     ucMBFrame[usLength++] = eException;
+                }
+                if( ( eMBCurrentMode == MB_ASCII ) && MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS )
+                {
+                    vMBPortTimersDelay( MB_ASCII_TIMEOUT_WAIT_BEFORE_SEND_MS );
                 }
                 eStatus = peMBFrameSendCur( ucMBAddress, ucMBFrame, usLength );
             }
