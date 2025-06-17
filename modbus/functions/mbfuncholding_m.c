@@ -213,6 +213,7 @@ eMBMasterFuncWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
     /* If this request is broadcast, the *usLen is not need check. */
     if( ( *usLen == MB_PDU_SIZE_MIN + MB_PDU_FUNC_WRITE_MUL_SIZE ) || xMBMasterRequestIsBroadcast( ) )
     {
+        ( void ) pucFrame; /** @todo avoid warning until refactored */
         vMBMasterGetPDUSndBuf( &ucMBFrame );
         usRegAddress = ( USHORT ) ( ucMBFrame[MB_PDU_REQ_WRITE_MUL_ADDR_OFF] << 8 );
         usRegAddress |= ( USHORT ) ( ucMBFrame[MB_PDU_REQ_WRITE_MUL_ADDR_OFF + 1] );
