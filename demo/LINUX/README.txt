@@ -41,5 +41,3 @@ The simple testing utility used in the 'demo.sh' script can be found at [3].
 [1] WinTech ModScan32: http://www.win-tech.com/html/modscan32.htm
 [2] Modus Poll: http://www.modbustools.com/modbus_poll.asp
 [3] FieldTalk Modpoll: http://www.focus-sw.com/fieldtalk/modpoll.html
-
-Version: $Id: README.txt,v 1.1 2006/08/01 20:58:49 wolti Exp $

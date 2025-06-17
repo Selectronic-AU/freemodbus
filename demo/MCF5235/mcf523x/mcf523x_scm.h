@@ -1,11 +1,6 @@
 /************************************************************************************
  * Copyright @ 1995-2005 metrowerks inc. All rights reserved.                       *
  *                                                                                  *
- *                                                                                  *
- *    $RCSfile: mcf523x_scm.h,v $                                                            *
- *    $Revision$                                                              *
- *    $Date$                                                  *
- *                                                                                  *
  * DESCRIPTION                                                                      *
  *   Register and bit definitions for the MCF523X.                                  *
  *                                                                                  *

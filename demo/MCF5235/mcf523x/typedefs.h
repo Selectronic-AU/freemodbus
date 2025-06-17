@@ -4,7 +4,7 @@
  * This file defines all of the data types for the Motorola header file.  *
  *========================================================================*
  * ORIGINAL AUTHOR: Jeff Loeliger (r12110)                                *
- * $Log: typedefs.h,v $
+ *
  * Revision 1.1  2006/05/14 21:59:16  wolti
  *  - initial version of MCF5235 port
  *

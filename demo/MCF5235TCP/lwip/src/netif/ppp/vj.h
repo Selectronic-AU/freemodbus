@@ -1,7 +1,6 @@
 /*
  * Definitions for tcp compression routines.
  *
- * $Id$
  *
  * Copyright (c) 1989 Regents of the University of California.
  * All rights reserved.
