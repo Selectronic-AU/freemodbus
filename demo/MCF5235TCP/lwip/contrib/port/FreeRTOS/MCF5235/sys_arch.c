@@ -30,7 +30,6 @@
  * Author: Adam Dunkels <adam@sics.se>
  * Modifcations: Christian Walter <wolti@sil.at>
  *
- * $Id$
  */
 
 /* ------------------------ System includes ------------------------------- */
