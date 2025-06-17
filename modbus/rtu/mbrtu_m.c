@@ -292,6 +292,9 @@ xMBMasterRTUReceiveFSM( void )
         }
         vMBMasterPortTimersT35Enable( );
         break;
+
+    default:
+        break;
     }
     return xTaskNeedSwitch;
 }
@@ -340,6 +343,7 @@ xMBMasterRTUTransmitFSM( void )
         }
         break;
 
+    case STATE_M_TX_XFWR:
     default:
         break;
     }
@@ -357,6 +361,10 @@ xMBMasterRTUTimerExpired( void )
         /* Timer t35 expired. Startup phase is finished. */
     case STATE_M_RX_INIT:
         xNeedPoll = xMBMasterPortEventPost( EV_MASTER_READY );
+        break;
+
+        /* Nothing to do if receiver is already in idle state. */
+    case STATE_M_RX_IDLE:
         break;
 
         /* A frame was received and t35 expired. Notify the listener that
@@ -381,6 +389,11 @@ xMBMasterRTUTimerExpired( void )
 
     switch( eSndState )
     {
+        /* Nothing to do if transmitter is in idle or transfer state. */
+    case STATE_M_TX_IDLE:
+    case STATE_M_TX_XMIT:
+        break;
+
         /* A frame was send finish and convert delay or respond timeout expired.
          * If the frame is broadcast,The master will idle,and if the frame is not
          * broadcast.Notify the listener process error.*/
