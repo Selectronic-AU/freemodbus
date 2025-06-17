@@ -11,6 +11,11 @@
 
 #if defined( MB_PORT_FREERTOS_TIMERS ) && MB_PORT_FREERTOS_TIMERS
 
+/// @brief The FreeRTOS tick period in microseconds.
+#ifndef portTICK_RATE_MICROSECONDS
+#define portTICK_RATE_MICROSECONDS ( ( ULONG ) ( portTICK_PERIOD_MS * 1000 ) )
+#endif
+
 /// @brief Timer structure for the FreeModbus stack.
 static StaticTimer_t mb_port_timer;
 
@@ -31,7 +36,9 @@ xMBPortTimersCallback( __attribute__( ( unused ) ) TimerHandle_t xTimer )
 BOOL
 xMBPortTimersInit( USHORT usTimeOut50us )
 {
-    TickType_t PeriodInTicks = ( ( TickType_t ) usTimeOut50us * 50 ) / portTICK_RATE_MICROSECONDS;
+    TickType_t PeriodInTicks =
+        ( TickType_t ) ( ( ( ( ULONG ) usTimeOut50us * 50 ) + ( portTICK_RATE_MICROSECONDS - 1 ) )
+                         / portTICK_RATE_MICROSECONDS );
 
     mb_port_timer_handle =
         xTimerCreateStatic( "modbus", PeriodInTicks, pdFALSE, NULL, xMBPortTimersCallback, &mb_port_timer );
