@@ -156,34 +156,28 @@ eMBMasterRTUStop( void )
 eMBErrorCode
 eMBMasterRTUReceive( UCHAR * pucRcvAddress, UCHAR ** pucFrame, USHORT * pusLength )
 {
-    eMBErrorCode eStatus = MB_ENOERR;
+    eMBErrorCode eStatus = MB_EIO;
+    UCHAR *      pucMBRTUFrame;
+    USHORT       usLength;
 
-    ENTER_CRITICAL_SECTION( );
-    assert_param( usMasterRcvBufferPos < MB_SER_PDU_SIZE_MAX );
-
-    /* Length and CRC check */
-    if( ( usMasterRcvBufferPos >= MB_SER_PDU_SIZE_MIN )
-        && ( usMBCRC16( ( UCHAR * ) ucMasterRTURcvBuf, usMasterRcvBufferPos ) == 0 ) )
+    if( xMBMasterPortSerialGetRequest( &pucMBRTUFrame, &usLength ) != FALSE )
     {
-        /* Save the address field. All frames are passed to the upper layed
-         * and the decision if a frame is used is done there.
-         */
-        *pucRcvAddress = ucMasterRTURcvBuf[MB_SER_PDU_ADDR_OFF];
+        ENTER_CRITICAL_SECTION( );
+        assert( usLength < MB_SER_PDU_SIZE_MAX );
 
-        /* Total length of Modbus-PDU is Modbus-Serial-Line-PDU minus
-         * size of address field and CRC checksum.
-         */
-        *pusLength = ( USHORT ) ( usMasterRcvBufferPos - MB_SER_PDU_PDU_OFF - MB_SER_PDU_SIZE_CRC );
+        /* Length and CRC check */
+        if( ( usLength >= MB_SER_PDU_SIZE_MIN ) && ( usMBCRC16( pucMBRTUFrame, usLength ) == 0 ) )
+        {
+            *pucRcvAddress = pucMBRTUFrame[MB_SER_PDU_ADDR_OFF];
 
-        /* Return the start of the Modbus PDU to the caller. */
-        *pucFrame = ( UCHAR * ) &ucMasterRTURcvBuf[MB_SER_PDU_PDU_OFF];
+            *pucFrame      = &pucMBRTUFrame[MB_SER_PDU_PDU_OFF];
+
+            *pusLength     = usLength - MB_SER_PDU_PDU_OFF - MB_SER_PDU_SIZE_CRC;
+
+            eStatus        = MB_ENOERR;
+        }
+        EXIT_CRITICAL_SECTION( );
     }
-    else
-    {
-        eStatus = MB_EIO;
-    }
-
-    EXIT_CRITICAL_SECTION( );
     return eStatus;
 }
 
@@ -214,12 +208,13 @@ eMBMasterRTUSend( UCHAR ucSlaveAddress, const UCHAR * pucFrame, USHORT usLength 
 
         /* Calculate CRC16 checksum for Modbus-Serial-Line-PDU. */
         usCRC16 = usMBCRC16( ( UCHAR * ) pucMasterSndBufferCur, usMasterSndBufferCount );
-        ucMasterRTUSndBuf[usMasterSndBufferCount++] = ( UCHAR ) ( usCRC16 & 0xFF );
-        ucMasterRTUSndBuf[usMasterSndBufferCount++] = ( UCHAR ) ( usCRC16 >> 8 );
+        pucMasterSndBufferCur[usMasterSndBufferCount++] = ( UCHAR ) ( usCRC16 & 0xFF );
+        pucMasterSndBufferCur[usMasterSndBufferCount++] = ( UCHAR ) ( usCRC16 >> 8 );
 
-        /* Activate the transmitter. */
-        eSndState = STATE_M_TX_XMIT;
-        vMBMasterPortSerialEnable( FALSE, TRUE );
+        if( xMBMasterPortSerialPutResponse( ( UCHAR * ) pucMasterSndBufferCur, usMasterSndBufferCount ) == false )
+        {
+            eStatus = MB_EIO;
+        }
     }
     else
     {
@@ -463,4 +458,21 @@ xMBMasterRequestIsBroadcast( void )
 {
     return xFrameIsBroadcast;
 }
+
+__weak BOOL
+xMBMasterPortSerialPutResponse( __unused UCHAR * pucMBTCPFrame, __unused USHORT usTCPLength )
+{
+    eSndState = STATE_M_TX_XMIT;
+    vMBMasterPortSerialEnable( FALSE, TRUE );
+    return TRUE;
+}
+
+__weak BOOL
+xMBMasterPortSerialGetRequest( UCHAR ** ppucMBRTUFrame, USHORT * pusLength )
+{
+    *ppucMBRTUFrame = ( UCHAR * ) ucMasterRTURcvBuf;
+    *pusLength      = usMasterRcvBufferPos;
+    return TRUE;
+}
+
 #endif

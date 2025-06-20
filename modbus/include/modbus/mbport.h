@@ -123,10 +123,13 @@ extern void vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 extern BOOL xMBPortSerialGetByte( CHAR * pucByte );
 
 extern BOOL xMBPortSerialGetRequest( UCHAR ** ppucMBRTUFrame, USHORT * usRTULength );
+extern BOOL xMBMasterPortSerialGetRequest( UCHAR ** ppucMBRTUFrame, USHORT * usRTULength );
 
 extern BOOL xMBPortSerialPutByte( CHAR ucByte );
 
 extern BOOL xMBPortSerialPutResponse( UCHAR * pucMBRTUFrame, USHORT usRTULength );
+
+extern BOOL xMBMasterPortSerialPutResponse( UCHAR * pucMBRTUFrame, USHORT usRTULength );
 
 extern BOOL xMBMasterPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity );
 
