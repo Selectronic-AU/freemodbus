@@ -10,7 +10,14 @@ set(FUNCTIONS_SRC
     mbutils.c
 )
 
-add_library(freemodbus-functions STATIC ${FUNCTIONS_SRC})
+set(MASTER_FUNCTIONS_SRC
+    mbfunccoils_m.c
+    mbfuncdisc_m.c
+    mbfuncholding_m.c
+    mbfuncinput_m.c
+)
+
+add_library(freemodbus-functions STATIC ${FUNCTIONS_SRC} ${MASTER_FUNCTIONS_SRC})
 
 target_include_directories(freemodbus-functions PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include

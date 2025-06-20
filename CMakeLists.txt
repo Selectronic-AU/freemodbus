@@ -5,10 +5,12 @@ project(freemodbus C CXX)
 # freemodbus core source
 set(FREEMODBUS_SRC
     modbus/mb.c
+    modbus/mb_m.c
 )
 
 # Include modbus include directories
 include_directories(
+    ${COMPONENT_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/modbus/include
     ${CMAKE_CURRENT_SOURCE_DIR}/modbus/port/include
     ${CMAKE_CURRENT_SOURCE_DIR}/modbus/include/modbus
@@ -24,6 +26,7 @@ add_definitions(
     -DMB_PORT_FREERTOS
     -DMB_PORT_FREERTOS_EVENT_QUEUE
     -DMB_PORT_FREERTOS_TIMERS
+    #-DMB_SLAVE_RTU_ENABLED
 )
 
 # Add subdirectories for each modbus protocol part
