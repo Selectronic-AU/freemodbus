@@ -205,6 +205,8 @@ BOOL eMBMasterIsEstablished( void );
  */
 eMBErrorCode eMBMasterPoll( void );
 
+eMBErrorCode eMBMasterHandleEvent( eMBMasterEventType eEvent );
+
 /*! \ingroup modbus
  * \brief Registers a callback handler for a given function code.
  *

@@ -230,6 +230,34 @@ szEventName( eMBEventType eEvent )
     }
 }
 
+INLINE const CHAR *
+szMasterEventName( eMBMasterEventType eEvent )
+{
+    switch( eEvent )
+    {
+    case EV_MASTER_READY:
+        return "EV_MASTER_READY";
+    case EV_MASTER_FRAME_RECEIVED:
+        return "EV_MASTER_FRAME_RECEIVED";
+    case EV_MASTER_EXECUTE:
+        return "EV_MASTER_EXECUTE";
+    case EV_MASTER_FRAME_SENT:
+        return "EV_MASTER_FRAME_SENT";
+    case EV_MASTER_ERROR_PROCESS:
+        return "EV_MASTER_ERROR_PROCESS";
+    case EV_MASTER_PROCESS_SUCESS:
+        return "EV_MASTER_PROCESS_SUCESS";
+    case EV_MASTER_ERROR_RESPOND_TIMEOUT:
+        return "EV_MASTER_ERROR_RESPOND_TIMEOUT";
+    case EV_MASTER_ERROR_RECEIVE_DATA:
+        return "EV_MASTER_ERROR_RECEIVE_DATA";
+    case EV_MASTER_ERROR_EXECUTE_FUNCTION:
+        return "EV_MASTER_ERROR_EXECUTE_FUNCTION";
+    default:
+        return "UNKNOWN";
+    }
+}
+
 #ifdef __cplusplus
 /* *INDENT-OFF* */
 PR_END_EXTERN_C
