@@ -3,8 +3,6 @@
 #
 # Copyright (c) 2006 Christian Walter, Vienna 2006.
 #
-# $Id: Makefile,v 1.2 2006/08/30 23:18:06 wolti Exp $
-#
 # ---------------------------------------------------------------------------
 
 BASE        = /opt/gcc-m68k/bin

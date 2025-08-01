@@ -64,5 +64,3 @@ REFERENCES
 [2] Modus Poll: http://www.modbustools.com/modbus_poll.asp
 [3] FieldTalk Modpoll: http://www.focus-sw.com/fieldtalk/modpoll.html
 [4] Embedded Solutions: http://www.embedded-solutions.at
-
-Version: $Id: README.txt,v 1.1 2010/06/05 09:57:46 wolti Exp $

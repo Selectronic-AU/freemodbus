@@ -1,11 +1,6 @@
 /************************************************************************************
  * Copyright @ 1995-2005 metrowerks inc. All rights reserved.                       *
  *                                                                                  *
- *                                                                                  *
- *    $RCSfile: descriptors.h,v $                                                            *
- *    $Revision$                                                              *
- *    $Date$                                                  *
- *                                                                                  *
  * DESCRIPTION                                                                      *
  *   USB Descriptors definitions.                                                   *
  *                                                                                  *

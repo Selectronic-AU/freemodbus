@@ -47,5 +47,3 @@ PROBLEMS
 [2] WinTech ModScan32: http://www.win-tech.com/html/modscan32.htm
 [3] Modus Poll: http://www.modbustools.com/modbus_poll.asp
 [4] FieldTalk Modpoll: http://www.focus-sw.com/fieldtalk/modpoll.html
-
-Version: $Id: README.txt,v 1.1 2006/11/19 03:00:33 wolti Exp $

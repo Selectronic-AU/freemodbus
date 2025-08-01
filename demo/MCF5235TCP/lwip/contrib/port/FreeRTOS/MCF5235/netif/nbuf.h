@@ -27,7 +27,6 @@
  * Note: Most of the network buffer code is based on the MCF5235 examples from
  *   Freescale.
  *
- * File: $Id$
  */
 
 #ifndef _NBUF_H

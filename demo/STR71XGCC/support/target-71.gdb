@@ -14,8 +14,6 @@
 # OF ANY KIND WHETHER UNDER THIS AGREEMENT OR OTHERWISE, EVEN IF ADVISED OF
 # THE POSSIBILITY OF SUCH DAMAGES.
 #
-# $Id: target-71.gdb,v 1.1 2006/11/02 23:14:44 wolti Exp $
-#
 
 set remote memory-write-packet-size 1024
 set remote memory-write-packet-size fixed

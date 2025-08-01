@@ -42,7 +42,6 @@
 #include "mb.h"
 #include "mbcrc.h"
 #include "mbframe.h"
-#include "mbport.h"
 #include "mbrtu.h"
 
 /* ----------------------- Defines ------------------------------------------*/
@@ -231,7 +230,7 @@ xMBRTUReceiveFSM( void )
     BOOL  xTaskNeedSwitch = FALSE;
     UCHAR ucByte;
 
-    assert( eSndState == STATE_TX_IDLE );
+    assert_param( eSndState == STATE_TX_IDLE );
 
     /* Always read the character. */
     ( void ) xMBPortSerialGetByte( ( CHAR * ) &ucByte );
@@ -294,7 +293,7 @@ xMBRTUTransmitFSM( void )
 {
     BOOL xNeedPoll = FALSE;
 
-    assert( eRcvState == STATE_RX_IDLE );
+    assert_param( eRcvState == STATE_RX_IDLE );
 
     switch( eSndState )
     {
@@ -357,7 +356,9 @@ xMBRTUTimerT35Expired( void )
         /* Function called in an illegal state. */
     case STATE_RX_IDLE:
     default:
-        assert( ( eRcvState == STATE_RX_INIT ) || ( eRcvState == STATE_RX_RCV ) || ( eRcvState == STATE_RX_ERROR ) );
+        assert_param( ( eRcvState == STATE_RX_INIT ) || ( eRcvState == STATE_RX_RCV )
+                      || ( eRcvState == STATE_RX_ERROR ) );
+        break;
     }
 
     vMBPortTimersDisable( );

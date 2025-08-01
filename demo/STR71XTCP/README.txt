@@ -63,7 +63,4 @@ DEBUG: MBTCP-SENT: | TID = 0000 | PID = 0000 | LEN = 0007 | UID = 01||
   FUNC = 04 | DATA = 04B0420001 |
 ----------------------- end console output ----------------------------------
 
-$Id: README.txt,v 1.1 2006/09/04 19:33:58 wolti Exp $
-
 STR71X + lwIP/PPP port - Copyright (c) 2006 Christian Walter.
-

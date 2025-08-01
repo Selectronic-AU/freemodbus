@@ -32,7 +32,6 @@
  *  - Avoid copying the buffers - this requires changeing the nbuf driver code
  *    to use the lwIP pbuf buffer implementation.
  *
- * File: $Id$
  */
 
 /* ------------------------ System includes ------------------------------- */

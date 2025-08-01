@@ -26,7 +26,6 @@
  *
  * Author: Christian Walter <wolti@sil.at>
  *
- * File: $Id$
  */
 
 #ifndef _FEC_H

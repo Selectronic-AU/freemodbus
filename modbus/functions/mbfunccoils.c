@@ -29,6 +29,7 @@
 
 /* ----------------------- System includes ----------------------------------*/
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -135,6 +136,7 @@ eMBFuncReadCoils( UCHAR * pucFrame, USHORT * usLen )
     }
     return eStatus;
 }
+#endif
 
 #if MB_FUNC_WRITE_COIL_ENABLED > 0
 eMBException
@@ -254,7 +256,5 @@ eMBFuncWriteMultipleCoils( UCHAR * pucFrame, USHORT * usLen )
     }
     return eStatus;
 }
-
-#endif
 
 #endif

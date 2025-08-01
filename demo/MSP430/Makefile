@@ -3,8 +3,6 @@
 #
 # Copyright (c) 2006 Christian Walter, Vienna 2006.
 #
-# $Id: Makefile,v 1.3 2007/06/12 06:42:01 wolti Exp $
-#
 # ---------------------------------------------------------------------------
 
 BASE        = /cygdrive/c/mspgcc

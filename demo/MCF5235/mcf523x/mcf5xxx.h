@@ -1,11 +1,6 @@
 /************************************************************************************
  * Copyright @ 1995-2005 metrowerks inc. All rights reserved.                       *
  *                                                                                  *
- *                                                                                  *
- *    $RCSfile: mcf5xxx.h,v $                                                            *
- *    $Revision$                                                              *
- *    $Date$                                                  *
- *                                                                                  *
  * DESCRIPTION                                                                      *
  *   Definitions common to all ColdFire processors.                                 *
  *                                                                                  *

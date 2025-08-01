@@ -10,8 +10,8 @@ export PROJECT ?= freemodbus
 language = c
 subdir = modbus
 
-H_SRC = mb.h mbconfig.h mbframe.h mbfunc.h mbport.h mbproto.h \
-    mbutils.h
+H_SRC = mb.h mb_m.h mbconfig.h mbframe.h mbfunc.h mbport.h \
+    mbproto.h mbutils.h
 
 # Relative path to top of freeMODBUS sources.
 top_mbdir = ../..

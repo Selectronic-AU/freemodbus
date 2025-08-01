@@ -10,7 +10,7 @@ export PROJECT ?= freemodbus
 language = c
 subdir = modbus
 
-C_SRC = mb.c
+C_SRC = mb.c mb_m.c
 
 SUBLIB_SRC = ascii/$(archdir)/lib.$(a) functions/$(archdir)/lib.$(a) \
     port/$(archdir)/lib.$(a) rtu/$(archdir)/lib.$(a) \

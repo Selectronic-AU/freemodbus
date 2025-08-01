@@ -7,7 +7,7 @@ The memory requirements of FreeModbus can be tuned in the following way. These a
 
  - Decided if you need RTU, ASCII and TCP at the same time. If not disable
    them in the file mbconfig.h by settings the respective options
-   MB_RTU_ENABLED, MB_ASCII_ENABLED and MB_TCP_ENABLED to zero.
+   MB_SLAVE_RTU_ENABLED, MB_SLAVE_ASCII_ENABLED and MB_SLAVE_TCP_ENABLED to zero.
  - If you don't need all Modbus functions disable them in the file mbconfig.h.
    This will reduce code requirements.
  - Set the variable MB_FUNC_HANDLERS_MAX in mbconfig.h to the number

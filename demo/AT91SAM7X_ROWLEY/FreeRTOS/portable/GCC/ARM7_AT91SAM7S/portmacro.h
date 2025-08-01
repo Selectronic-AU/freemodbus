@@ -3,7 +3,6 @@
  * Copyright (c) 2007 Christian Walter <wolti@sil.at>
  * All rights reserved.
  *
- * $Id$
  */
 
 /*

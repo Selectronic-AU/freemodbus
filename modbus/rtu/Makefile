@@ -11,7 +11,7 @@ language = c
 subdir = modbus
 
 H_SRC = mbcrc.h mbrtu.h
-C_SRC = mbcrc.c mbrtu.c
+C_SRC = mbcrc.c mbrtu.c mbrtu_m.c
 
 # Relative path to top of freeMODBUS sources.
 top_mbdir = ..
