@@ -25,10 +25,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ * Copyright (c) 2024 Selectronic Australia Pty Ltd. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause AND LicenseRef-Selectronic
  */
 
 #ifndef _MB_PORT_H
 #define _MB_PORT_H
+
+/* ----------------------- Platform includes --------------------------------*/
+#include "port.h"
 
 #ifdef __cplusplus
 /* *INDENT-OFF* */
@@ -39,10 +44,10 @@ PR_BEGIN_EXTERN_C
 /* ----------------------- Type definitions ---------------------------------*/
 typedef enum
 {
-    EV_READY,                   /*!< Startup finished. */
-    EV_FRAME_RECEIVED,          /*!< Frame received. */
-    EV_EXECUTE,                 /*!< Execute function. */
-    EV_FRAME_SENT               /*!< Frame sent. */
+    EV_READY,          /*!< Startup finished. */
+    EV_FRAME_RECEIVED, /*!< Frame received. */
+    EV_EXECUTE,        /*!< Execute function. */
+    EV_FRAME_SENT      /*!< Frame sent. */
 } eMBEventType;
 
 /*! \ingroup modbus
@@ -54,42 +59,51 @@ typedef enum
  */
 typedef enum
 {
-    MB_PAR_NONE,                /*!< No parity. */
-    MB_PAR_ODD,                 /*!< Odd parity. */
-    MB_PAR_EVEN                 /*!< Even parity. */
+    MB_PAR_NONE, /*!< No parity. */
+    MB_PAR_ODD,  /*!< Odd parity. */
+    MB_PAR_EVEN  /*!< Even parity. */
 } eMBParity;
 
 /* ----------------------- Supporting functions -----------------------------*/
-BOOL            xMBPortEventInit( void );
 
-BOOL            xMBPortEventPost( eMBEventType eEvent );
+void vMBPortClose( void );
 
-BOOL            xMBPortEventGet(  /*@out@ */ eMBEventType * eEvent );
+/* ----------------------- Event functons -----------------------------------*/
+
+BOOL xMBPortEventInit( void );
+
+void vMBPortEventClose( void );
+
+BOOL xMBPortEventPost( eMBEventType eEvent );
+
+BOOL xMBPortEventGet( /*@out@ */ eMBEventType * eEvent );
 
 /* ----------------------- Serial port functions ----------------------------*/
 
-BOOL            xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity );
+BOOL xMBPortSerialInit( UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity );
 
-void            vMBPortClose( void );
+void vMBPortSerialClose( void );
 
-void            xMBPortSerialClose( void );
+void vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
 
-void            vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable );
+BOOL xMBPortSerialGetByte( CHAR * pucByte );
 
-BOOL            xMBPortSerialGetByte( CHAR * pucByte );
+BOOL xMBPortSerialGetRequest( UCHAR ** ppucMBRTUFrame, USHORT * usRTULength );
 
-BOOL            xMBPortSerialPutByte( CHAR ucByte );
+BOOL xMBPortSerialPutByte( CHAR ucByte );
+
+BOOL xMBPortSerialPutResponse( UCHAR * pucMBRTUFrame, USHORT usRTULength );
 
 /* ----------------------- Timers functions ---------------------------------*/
-BOOL            xMBPortTimersInit( USHORT usTimeOut50us );
+BOOL xMBPortTimersInit( USHORT usTimeOut50us );
 
-void            xMBPortTimersClose( void );
+void vMBPortTimersClose( void );
 
-void            vMBPortTimersEnable( void );
+void vMBPortTimersEnable( void );
 
-void            vMBPortTimersDisable( void );
+void vMBPortTimersDisable( void );
 
-void            vMBPortTimersDelay( USHORT usTimeOutMS );
+void vMBPortTimersDelay( USHORT usTimeOutMS );
 
 /* ----------------------- Callback for the protocol stack ------------------*/
 
@@ -105,22 +119,40 @@ void            vMBPortTimersDelay( USHORT usTimeOutMS );
  *   a new byte was received. The port implementation should wake up the
  *   tasks which are currently blocked on the eventqueue.
  */
-extern          BOOL( *pxMBFrameCBByteReceived ) ( void );
+extern BOOL ( *pxMBFrameCBByteReceived )( void );
 
-extern          BOOL( *pxMBFrameCBTransmitterEmpty ) ( void );
+extern BOOL ( *pxMBFrameCBTransmitterEmpty )( void );
 
-extern          BOOL( *pxMBPortCBTimerExpired ) ( void );
+extern BOOL ( *pxMBPortCBTimerExpired )( void );
 
 /* ----------------------- TCP port functions -------------------------------*/
-BOOL            xMBTCPPortInit( USHORT usTCPPort );
+BOOL xMBTCPPortInit( USHORT usTCPPort );
 
-void            vMBTCPPortClose( void );
+void vMBTCPPortClose( void );
 
-void            vMBTCPPortDisable( void );
+void vMBTCPPortDisable( void );
 
-BOOL            xMBTCPPortGetRequest( UCHAR ** ppucMBTCPFrame, USHORT * usTCPLength );
+BOOL xMBTCPPortGetRequest( UCHAR ** ppucMBTCPFrame, USHORT * usTCPLength );
 
-BOOL            xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength );
+BOOL xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength );
+
+INLINE const CHAR *
+szEventName( eMBEventType eEvent )
+{
+    switch( eEvent )
+    {
+    case EV_READY:
+        return "EV_READY";
+    case EV_FRAME_RECEIVED:
+        return "EV_FRAME_RECEIVED";
+    case EV_EXECUTE:
+        return "EV_EXECUTE";
+    case EV_FRAME_SENT:
+        return "EV_FRAME_SENT";
+    default:
+        return "UNKNOWN";
+    }
+}
 
 #ifdef __cplusplus
 /* *INDENT-OFF* */

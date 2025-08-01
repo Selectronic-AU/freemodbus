@@ -25,11 +25,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
+ * Copyright (c) 2024 Selectronic Australia Pty Ltd. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause AND LicenseRef-Selectronic
  */
 
 /* ----------------------- System includes ----------------------------------*/
-#include "stdlib.h"
-#include "string.h"
+
+#include <stdlib.h>
+#include <string.h>
 
 /* ----------------------- Platform includes --------------------------------*/
 #include "port.h"
@@ -37,9 +40,9 @@
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbconfig.h"
-#include "mbtcp.h"
 #include "mbframe.h"
 #include "mbport.h"
+#include "mbtcp.h"
 
 #if MB_TCP_ENABLED > 0
 
@@ -67,20 +70,19 @@
  * (1') ... Modbus Protocol Data Unit
  */
 
-#define MB_TCP_TID          0
-#define MB_TCP_PID          2
-#define MB_TCP_LEN          4
-#define MB_TCP_UID          6
-#define MB_TCP_FUNC         7
+#define MB_TCP_TID         0
+#define MB_TCP_PID         2
+#define MB_TCP_LEN         4
+#define MB_TCP_UID         6
+#define MB_TCP_FUNC        7
 
-#define MB_TCP_PROTOCOL_ID  0   /* 0 = Modbus Protocol */
-
+#define MB_TCP_PROTOCOL_ID 0 /* 0 = Modbus Protocol */
 
 /* ----------------------- Start implementation -----------------------------*/
 eMBErrorCode
 eMBTCPDoInit( USHORT ucTCPPort )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
+    eMBErrorCode eStatus = MB_ENOERR;
 
     if( xMBTCPPortInit( ucTCPPort ) == FALSE )
     {
@@ -98,16 +100,16 @@ void
 eMBTCPStop( void )
 {
     /* Make sure that no more clients are connected. */
-    vMBTCPPortDisable(  );
+    vMBTCPPortDisable( );
 }
 
 eMBErrorCode
-eMBTCPReceive( UCHAR *pucRcvAddress, UCHAR **ppucFrame, USHORT *pusLength )
+eMBTCPReceive( UCHAR * pucRcvAddress, UCHAR ** ppucFrame, USHORT * pusLength )
 {
-    eMBErrorCode    eStatus = MB_EIO;
-    UCHAR          *pucMBTCPFrame;
-    USHORT          usLength;
-    USHORT          usPID;
+    eMBErrorCode eStatus = MB_EIO;
+    UCHAR *      pucMBTCPFrame;
+    USHORT       usLength;
+    USHORT       usPID;
 
     if( xMBTCPPortGetRequest( &pucMBTCPFrame, &usLength ) != FALSE )
     {
@@ -116,29 +118,30 @@ eMBTCPReceive( UCHAR *pucRcvAddress, UCHAR **ppucFrame, USHORT *pusLength )
 
         if( usPID == MB_TCP_PROTOCOL_ID )
         {
-            *ppucFrame = &pucMBTCPFrame[MB_TCP_FUNC];
-            *pusLength = usLength - MB_TCP_FUNC;
-            eStatus = MB_ENOERR;
-
-            /* Modbus TCP does not use any addresses. Fake the source address such
-             * that the processing part deals with this frame.
+            /* Modbus TCP does not use any addresses. Fake the source
+             * address such that the processing part deals with this frame.
              */
             *pucRcvAddress = MB_TCP_PSEUDO_ADDRESS;
+
+            /* Return the start of the Modbus PDU to the caller. */
+            *ppucFrame = &pucMBTCPFrame[MB_TCP_FUNC];
+
+            /* Total length of Modbus-PDU is Modbus-TCP-ADU minus the size
+             * of the Modbus Application Protocol (MBAP) Header.
+             */
+            *pusLength = usLength - MB_TCP_FUNC;
+            eStatus    = MB_ENOERR;
         }
-    }
-    else
-    {
-        eStatus = MB_EIO;
     }
     return eStatus;
 }
 
 eMBErrorCode
-eMBTCPSend( UCHAR _unused, const UCHAR *pucFrame, USHORT usLength )
+eMBTCPSend( __unused UCHAR slaveAddress, const UCHAR * pucFrame, USHORT usLength )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    UCHAR          *pucMBTCPFrame = ( UCHAR * ) pucFrame - MB_TCP_FUNC;
-    USHORT          usTCPLength = usLength + MB_TCP_FUNC;
+    eMBErrorCode eStatus       = MB_ENOERR;
+    UCHAR *      pucMBTCPFrame = ( UCHAR * ) pucFrame - MB_TCP_FUNC;
+    USHORT       usTCPLength   = usLength + MB_TCP_FUNC;
 
     /* The MBAP header is already initialized because the caller calls this
      * function with the buffer returned by the previous call. Therefore we
@@ -146,7 +149,7 @@ eMBTCPSend( UCHAR _unused, const UCHAR *pucFrame, USHORT usLength )
      * header includes the size of the Modbus PDU and the UID Byte. Therefore
      * the length is usLength plus one.
      */
-    pucMBTCPFrame[MB_TCP_LEN] = ( usLength + 1 ) >> 8U;
+    pucMBTCPFrame[MB_TCP_LEN]     = ( usLength + 1 ) >> 8U;
     pucMBTCPFrame[MB_TCP_LEN + 1] = ( usLength + 1 ) & 0xFF;
     if( xMBTCPPortSendResponse( pucMBTCPFrame, usTCPLength ) == FALSE )
     {

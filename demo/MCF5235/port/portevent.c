@@ -26,7 +26,7 @@
 
 /* ----------------------- Variables ----------------------------------------*/
 static eMBEventType eQueuedEvent;
-static BOOL     xEventInQueue;
+static BOOL         xEventInQueue;
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
@@ -40,19 +40,19 @@ BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
     xEventInQueue = TRUE;
-    eQueuedEvent = eEvent;
+    eQueuedEvent  = eEvent;
     return TRUE;
 }
 
 BOOL
-xMBPortEventGet( eMBEventType *eEvent )
+xMBPortEventGet( eMBEventType * eEvent )
 {
-    BOOL            xEventHappened = FALSE;
+    BOOL xEventHappened = FALSE;
 
     if( xEventInQueue )
     {
-        *eEvent = eQueuedEvent;
-        xEventInQueue = FALSE;
+        *eEvent        = eQueuedEvent;
+        xEventInQueue  = FALSE;
         xEventHappened = TRUE;
     }
     return xEventHappened;

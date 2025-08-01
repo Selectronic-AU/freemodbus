@@ -30,6 +30,9 @@
 #ifndef _MB_UTILS_H
 #define _MB_UTILS_H
 
+/* ----------------------- Modbus includes ----------------------------------*/
+#include "mb.h"
+
 #ifdef __cplusplus
 /* *INDENT-OFF* */
 PR_BEGIN_EXTERN_C
@@ -79,7 +82,7 @@ PR_BEGIN_EXTERN_C
  * xMBUtilSetBits( ucBits, 8, 8, 0x5A);
  * \endcode
  */
-void            xMBUtilSetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucNBits, UCHAR ucValues );
+void xMBUtilSetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucNBits, UCHAR ucValues );
 
 /*! \brief Function to read bits in a byte buffer.
  *
@@ -100,7 +103,19 @@ void            xMBUtilSetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucN
  * ucResult = xMBUtilGetBits( ucBits, 3, 8 );
  * \endcode
  */
-UCHAR           xMBUtilGetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucNBits );
+UCHAR xMBUtilGetBits( UCHAR * ucByteBuf, USHORT usBitOffset, UCHAR ucNBits );
+
+/*! \brief Function to look up an exception value for an error code.
+ *
+ * This function is used to map an error code to an exception code which
+ * can be sent as a response to the Modbus request.
+ *
+ * \param eErrorCode The error code that should be mapped to an exception.
+ *
+ * \return The exception code that should be returned to the Modbus
+ *   request.
+ */
+eMBException prveMBError2Exception( eMBErrorCode eErrorCode );
 
 /*! @} */
 

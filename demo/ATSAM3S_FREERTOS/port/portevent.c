@@ -40,12 +40,11 @@
 /* ----------------------- Variables ----------------------------------------*/
 static xQueueHandle xQueueHdl;
 
-
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
 xMBPortEventInit( void )
 {
-    BOOL            bStatus = FALSE;
+    BOOL bStatus = FALSE;
 
     if( 0 != ( xQueueHdl = xQueueCreate( 1, sizeof( eMBEventType ) ) ) )
     {
@@ -67,24 +66,24 @@ vMBPortEventClose( void )
 BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
-    BOOL            bStatus = TRUE;
+    BOOL bStatus = TRUE;
 
-    if( bMBPortIsWithinException(  ) )
+    if( bMBPortIsWithinException( ) )
     {
-        ( void )xQueueSendFromISR( xQueueHdl, ( const void * )&eEvent, pdFALSE );
+        ( void ) xQueueSendFromISR( xQueueHdl, ( const void * ) &eEvent, pdFALSE );
     }
     else
     {
-        ( void )xQueueSend( xQueueHdl, ( const void * )&eEvent, pdFALSE );
+        ( void ) xQueueSend( xQueueHdl, ( const void * ) &eEvent, pdFALSE );
     }
 
     return bStatus;
 }
 
 BOOL
-xMBPortEventGet( eMBEventType *peEvent )
+xMBPortEventGet( eMBEventType * peEvent )
 {
-    BOOL            xEventHappened = FALSE;
+    BOOL xEventHappened = FALSE;
 
     if( pdTRUE == xQueueReceive( xQueueHdl, peEvent, portTICK_RATE_MS * 50 ) )
     {

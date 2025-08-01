@@ -33,29 +33,29 @@
 #include "mbport.h"
 
 /* ----------------------- MBAP Header --------------------------------------*/
-#define MB_TCP_UID          6
-#define MB_TCP_LEN          4
-#define MB_TCP_FUNC         7
+#define MB_TCP_UID  6
+#define MB_TCP_LEN  4
+#define MB_TCP_FUNC 7
 
 /* ----------------------- Defines  -----------------------------------------*/
-#define MB_TCP_DEFAULT_PORT 502 /* TCP listening port. */
+#define MB_TCP_DEFAULT_PORT 502         /* TCP listening port. */
 #define MB_TCP_BUF_SIZE     ( 256 + 7 ) /* Must hold a complete Modbus TCP frame. */
 
 /* ----------------------- Prototypes ---------------------------------------*/
-void            vMBPortEventClose( void );
-void            vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule, const CHAR * szFmt, ... );
+void vMBPortEventClose( void );
+void vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule, const CHAR * szFmt, ... );
 
 /* ----------------------- Static variables ---------------------------------*/
-static struct tcp_pcb *pxPCBListen;
-static struct tcp_pcb *pxPCBClient;
+static struct tcp_pcb * pxPCBListen;
+static struct tcp_pcb * pxPCBClient;
 
-static UCHAR    aucTCPBuf[MB_TCP_BUF_SIZE];
-static USHORT   usTCPBufPos;
+static UCHAR            aucTCPBuf[MB_TCP_BUF_SIZE];
+static USHORT           usTCPBufPos;
 
 /* ----------------------- Static functions ---------------------------------*/
-static err_t    prvxMBTCPPortAccept( void *pvArg, struct tcp_pcb *pxPCB, err_t xErr );
-static err_t    prvxMBTCPPortReceive( void *pvArg, struct tcp_pcb *pxPCB, struct pbuf *p, err_t xErr );
-static void     prvvMBTCPPortError( void *pvArg, err_t xErr );
+static err_t prvxMBTCPPortAccept( void * pvArg, struct tcp_pcb * pxPCB, err_t xErr );
+static err_t prvxMBTCPPortReceive( void * pvArg, struct tcp_pcb * pxPCB, struct pbuf * p, err_t xErr );
+static void  prvvMBTCPPortError( void * pvArg, err_t xErr );
 
 /* ----------------------- Begin implementation -----------------------------*/
 BOOL
@@ -74,7 +74,7 @@ xMBTCPPortInit( USHORT usTCPPort )
         usPort = ( USHORT ) usTCPPort;
     }
 
-    if( ( pxPCBListenNew = pxPCBListenOld = tcp_new(  ) ) == NULL )
+    if( ( pxPCBListenNew = pxPCBListenOld = tcp_new( ) ) == NULL )
     {
         /* Can't create TCP socket. */
         bOkay = FALSE;
@@ -82,12 +82,12 @@ xMBTCPPortInit( USHORT usTCPPort )
     else if( tcp_bind( pxPCBListenNew, IP_ADDR_ANY, ( u16_t ) usPort ) != ERR_OK )
     {
         /* Bind failed - Maybe illegal port value or in use. */
-        ( void )tcp_close( pxPCBListenOld );
+        ( void ) tcp_close( pxPCBListenOld );
         bOkay = FALSE;
     }
     else if( ( pxPCBListenNew = tcp_listen( pxPCBListenNew ) ) == NULL )
     {
-        ( void )tcp_close( pxPCBListenOld );
+        ( void ) tcp_close( pxPCBListenOld );
         bOkay = FALSE;
     }
     else
@@ -107,7 +107,7 @@ xMBTCPPortInit( USHORT usTCPPort )
 }
 
 void
-prvvMBPortReleaseClient( struct tcp_pcb *pxPCB )
+prvvMBPortReleaseClient( struct tcp_pcb * pxPCB )
 {
     if( pxPCB != NULL )
     {
@@ -132,7 +132,7 @@ prvvMBPortReleaseClient( struct tcp_pcb *pxPCB )
 }
 
 void
-vMBTCPPortClose(  )
+vMBTCPPortClose( )
 {
     /* Shutdown any open client sockets. */
     prvvMBPortReleaseClient( pxPCBClient );
@@ -141,7 +141,7 @@ vMBTCPPortClose(  )
     prvvMBPortReleaseClient( pxPCBListen );
 
     /* Release resources for the event queue. */
-    vMBPortEventClose(  );
+    vMBPortEventClose( );
 }
 
 void
@@ -151,9 +151,9 @@ vMBTCPPortDisable( void )
 }
 
 err_t
-prvxMBTCPPortAccept( void *pvArg, struct tcp_pcb *pxPCB, err_t xErr )
+prvxMBTCPPortAccept( void * pvArg, struct tcp_pcb * pxPCB, err_t xErr )
 {
-    err_t           error;
+    err_t error;
 
     if( xErr != ERR_OK )
     {
@@ -199,9 +199,9 @@ prvxMBTCPPortAccept( void *pvArg, struct tcp_pcb *pxPCB, err_t xErr )
 /* Called in case of an unrecoverable error. In any case we drop the client
  * connection. */
 void
-prvvMBTCPPortError( void *pvArg, err_t xErr )
+prvvMBTCPPortError( void * pvArg, err_t xErr )
 {
-    struct tcp_pcb *pxPCB = pvArg;
+    struct tcp_pcb * pxPCB = pvArg;
 
     if( pxPCB != NULL )
     {
@@ -213,11 +213,11 @@ prvvMBTCPPortError( void *pvArg, err_t xErr )
 }
 
 err_t
-prvxMBTCPPortReceive( void *pvArg, struct tcp_pcb *pxPCB, struct pbuf *p, err_t xErr )
+prvxMBTCPPortReceive( void * pvArg, struct tcp_pcb * pxPCB, struct pbuf * p, err_t xErr )
 {
-    USHORT          usLength;
+    USHORT usLength;
 
-    err_t           error;
+    err_t  error;
 
     if( xErr != ERR_OK )
     {
@@ -266,7 +266,7 @@ prvxMBTCPPortReceive( void *pvArg, struct tcp_pcb *pxPCB, struct pbuf *p, err_t 
 #ifdef MB_TCP_DEBUG
                 prvvMBTCPLogFrame( "MBTCP-RECV", &aucTCPBuf[0], usTCPBufPos );
 #endif
-                ( void )xMBPortEventPost( EV_FRAME_RECEIVED );
+                ( void ) xMBPortEventPost( EV_FRAME_RECEIVED );
             }
             else
             {
@@ -285,10 +285,10 @@ prvxMBTCPPortReceive( void *pvArg, struct tcp_pcb *pxPCB, struct pbuf *p, err_t 
 }
 
 BOOL
-xMBTCPPortGetRequest( UCHAR **ppucMBTCPFrame, USHORT *usTCPLength )
+xMBTCPPortGetRequest( UCHAR ** ppucMBTCPFrame, USHORT * usTCPLength )
 {
     *ppucMBTCPFrame = &aucTCPBuf[0];
-    *usTCPLength = usTCPBufPos;
+    *usTCPLength    = usTCPBufPos;
 
     /* Reset the buffer. */
     usTCPBufPos = 0;
@@ -296,9 +296,9 @@ xMBTCPPortGetRequest( UCHAR **ppucMBTCPFrame, USHORT *usTCPLength )
 }
 
 BOOL
-xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength )
+xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
 {
-    BOOL            bFrameSent = FALSE;
+    BOOL bFrameSent = FALSE;
 
     if( pxPCBClient )
     {
@@ -311,7 +311,7 @@ xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength )
             prvvMBTCPLogFrame( "MBTCP-SENT", &aucTCPBuf[0], usTCPLength );
 #endif
             /* Make sure data gets sent immediately. */
-            ( void )tcp_output( pxPCBClient );
+            ( void ) tcp_output( pxPCBClient );
             bFrameSent = TRUE;
         }
         else

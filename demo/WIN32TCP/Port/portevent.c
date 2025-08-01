@@ -25,10 +25,10 @@
 
 /* ----------------------- Variables ----------------------------------------*/
 static eMBEventType eQueuedEvent;
-static BOOL     xEventInQueue;
+static BOOL         xEventInQueue;
 
 /* ----------------------- Function prototypes ------------------------------*/
-BOOL            xMBPortTCPPool( void );
+BOOL xMBPortTCPPool( void );
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
@@ -42,25 +42,25 @@ BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
     xEventInQueue = TRUE;
-    eQueuedEvent = eEvent;
+    eQueuedEvent  = eEvent;
     return TRUE;
 }
 
 BOOL
-xMBPortEventGet( eMBEventType *eEvent )
+xMBPortEventGet( eMBEventType * eEvent )
 {
-    BOOL            xEventHappened = FALSE;
+    BOOL xEventHappened = FALSE;
 
     if( xEventInQueue )
     {
-        *eEvent = eQueuedEvent;
-        xEventInQueue = FALSE;
+        *eEvent        = eQueuedEvent;
+        xEventInQueue  = FALSE;
         xEventHappened = TRUE;
     }
     else
     {
         /* We can't do anything with errors from the pooling module. */
-        ( void )xMBPortTCPPool(  );
+        ( void ) xMBPortTCPPool( );
     }
     return xEventHappened;
 }

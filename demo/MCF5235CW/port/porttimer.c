@@ -31,13 +31,12 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ----------------------------------------- */
-#define PIT_PRESCALER               4096UL
-#define PIT_TIMER_TICKS             ( FSYS_2 / PIT_PRESCALER )
-#define PIT_MODULUS_REGISTER(t50us) \
-    ( (t50us * PIT_TIMER_TICKS )/20000UL - 1UL)
+#define PIT_PRESCALER                 4096UL
+#define PIT_TIMER_TICKS               ( FSYS_2 / PIT_PRESCALER )
+#define PIT_MODULUS_REGISTER( t50us ) ( ( t50us * PIT_TIMER_TICKS ) / 20000UL - 1UL )
 
 /* ----------------------- Static variables -------------------------------- */
-USHORT          usTimerModulus;
+USHORT usTimerModulus;
 
 /* ----------------------- Start implementation ---------------------------- */
 
@@ -56,46 +55,43 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
 }
 
 void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable( )
 {
     MCF_GPIO_PPDSDR_FECI2C = MCF_GPIO_PODR_FECI2C_PODR_FECI2C0;
 
-    MCF_PIT_PMR1 = usTimerModulus;
+    MCF_PIT_PMR1           = usTimerModulus;
     MCF_PIT_PCSR1 |= MCF_PIT_PCSR_PIE | MCF_PIT_PCSR_EN | MCF_PIT_PCSR_PIF;
 }
 
-
 void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable( )
 {
-    MCF_GPIO_PCLRR_FECI2C = ( UCHAR ) ~ MCF_GPIO_PODR_FECI2C_PODR_FECI2C0;
+    MCF_GPIO_PCLRR_FECI2C = ( UCHAR ) ~MCF_GPIO_PODR_FECI2C_PODR_FECI2C0;
 
     MCF_PIT_PCSR1 |= MCF_PIT_PCSR_PIF;
     MCF_PIT_PCSR1 &= ~MCF_PIT_PCSR_PIE;
     MCF_PIT_PCSR1 &= ~MCF_PIT_PCSR_EN;
 }
 
-extern volatile void *pxCurrentTCB;
+extern volatile void * pxCurrentTCB;
 
-static          BOOL
+static BOOL
 prvvMBPortTimerISRImpl( void )
 {
     MCF_PIT_PCSR1 |= MCF_PIT_PCSR_PIF;
-    return pxMBPortCBTimerExpired(  );
+    return pxMBPortCBTimerExpired( );
 }
 
 asm void
 prvvMBPortTimerISR( void )
 {
     /* *INDENT-OFF* */
-    move.w  #0x2700, sr;
-    portSAVE_CONTEXT_IMPL(  );
-    jsr     prvvMBPortTimerISRImpl;
+    move.w #0x2700, sr;
+    portSAVE_CONTEXT_IMPL( );
+    jsr prvvMBPortTimerISRImpl;
 
-    cmp.l   #0, d0
-    beq     exit
-    jsr     vTaskSwitchContext;
+    cmp.l #0, d0 beq exit jsr vTaskSwitchContext;
 exit:
-    portRESTORE_CONTEXT_IMPL(  );
+    portRESTORE_CONTEXT_IMPL( );
     /* *INDENT-ON* */
 }

@@ -28,50 +28,52 @@
 #include "FreeRTOS.h"
 
 #ifdef _cplusplus
-extern          "C"
+extern "C"
 {
 #endif
 
-/* ----------------------- Defines ------------------------------------------*/
+    /* ----------------------- Defines ------------------------------------------*/
 
-#define INLINE                         inline
-#define STATIC                         static
+#define INLINE inline
+#define STATIC static
 
-#define PR_BEGIN_EXTERN_C              extern "C" {
-#define PR_END_EXTERN_C                }
+#define PR_BEGIN_EXTERN_C                                                                                              \
+    extern "C"                                                                                                         \
+    {
+#define PR_END_EXTERN_C           }
 
-#define MB_PORT_HAS_CLOSE              1
-#define ENTER_CRITICAL_SECTION( )      vMBPPortEnterCritical( )
-#define EXIT_CRITICAL_SECTION( )       vMBPPortExitCritical( )
+#define MB_PORT_HAS_CLOSE         1
+#define ENTER_CRITICAL_SECTION( ) vMBPPortEnterCritical( )
+#define EXIT_CRITICAL_SECTION( )  vMBPPortExitCritical( )
 
 #ifndef TRUE
-#define TRUE                           ( BOOL )1
+#define TRUE ( BOOL ) 1
 #endif
 
 #ifndef FALSE
-#define FALSE                          ( BOOL )0
+#define FALSE ( BOOL ) 0
 #endif
 
-/* ----------------------- Type definitions ---------------------------------*/
-    typedef char    BOOL;
+    /* ----------------------- Type definitions ---------------------------------*/
+    typedef char           BOOL;
 
-    typedef signed char BYTE;
-    typedef unsigned char UBYTE;
+    typedef signed char    BYTE;
+    typedef unsigned char  UBYTE;
 
-    typedef unsigned char UCHAR;
-    typedef char    CHAR;
+    typedef unsigned char  UCHAR;
+    typedef char           CHAR;
 
     typedef unsigned short USHORT;
-    typedef short   SHORT;
+    typedef short          SHORT;
 
-    typedef unsigned long ULONG;
-    typedef long    LONG;
+    typedef unsigned long  ULONG;
+    typedef long           LONG;
 
-/* ----------------------- Function prototypes ------------------------------*/
-    BOOL            bMBPIsWithinException( void );
-    void            vMBPInit( void );
-    void            vMBPPortEnterCritical( void );
-    void            vMBPPortExitCritical( void );
+    /* ----------------------- Function prototypes ------------------------------*/
+    BOOL bMBPIsWithinException( void );
+    void vMBPInit( void );
+    void vMBPPortEnterCritical( void );
+    void vMBPPortExitCritical( void );
 
 #ifdef _cplusplus
 }

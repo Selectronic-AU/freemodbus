@@ -37,29 +37,29 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define REG_INPUT_START                 ( 1000 )
-#define REG_INPUT_NREGS                 ( 64 )
+#define REG_INPUT_START   ( 1000 )
+#define REG_INPUT_NREGS   ( 64 )
 
-#define REG_HOLDING_START               ( 1 )
-#define REG_HOLDING_NREGS               ( 32 )
+#define REG_HOLDING_START ( 1 )
+#define REG_HOLDING_NREGS ( 32 )
 
 /* ----------------------- Static functions ---------------------------------*/
-static void     _SetupHardware( void );
+static void _SetupHardware( void );
 
 /* ----------------------- Static variables ---------------------------------*/
-static USHORT   usRegInputStart = REG_INPUT_START;
-static USHORT   usRegInputBuf[REG_INPUT_NREGS];
-static USHORT   usRegHoldingStart = REG_HOLDING_START;
-static USHORT   usRegHoldingBuf[REG_HOLDING_NREGS];
+static USHORT usRegInputStart = REG_INPUT_START;
+static USHORT usRegInputBuf[REG_INPUT_NREGS];
+static USHORT usRegHoldingStart = REG_HOLDING_START;
+static USHORT usRegHoldingBuf[REG_HOLDING_NREGS];
 
 /* ----------------------- Start implementation -----------------------------*/
 int
 main( void )
 {
-    _SetupHardware(  );
+    _SetupHardware( );
 
-    const UCHAR     ucSlaveID[] = { 0xAA, 0xBB, 0xCC };
-    eMBErrorCode    eStatus;
+    const UCHAR  ucSlaveID[] = { 0xAA, 0xBB, 0xCC };
+    eMBErrorCode eStatus;
 
     for( ;; )
     {
@@ -73,7 +73,7 @@ main( void )
             {
                 /* Can not set slave id. Check arguments */
             }
-            else if( MB_ENOERR != ( eStatus = eMBEnable(  ) ) )
+            else if( MB_ENOERR != ( eStatus = eMBEnable( ) ) )
             {
                 /* Enable failed. */
             }
@@ -82,14 +82,14 @@ main( void )
                 usRegHoldingBuf[0] = 1;
                 do
                 {
-                    ( void )eMBPoll(  );
+                    ( void ) eMBPoll( );
 
                     /* Here we simply count the number of poll cycles. */
                     usRegInputBuf[0]++;
                 }
                 while( usRegHoldingBuf[0] );
-                ( void )eMBDisable(  );
-                ( void )eMBClose(  );
+                ( void ) eMBDisable( );
+                ( void ) eMBClose( );
             }
         }
     }
@@ -99,9 +99,9 @@ main( void )
 void
 _SetupHardware( void )
 {
-    WDT_Disable(  );
+    WDT_Disable( );
 
-    uint32_t        i = 0;
+    uint32_t i = 0;
 
     for( i = 0; i < 35; i++ )
     {
@@ -110,18 +110,18 @@ _SetupHardware( void )
 }
 
 eMBErrorCode
-eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
+eMBRegInputCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    eMBErrorCode eStatus = MB_ENOERR;
+    int          iRegIndex;
 
     if( ( usAddress >= REG_INPUT_START ) && ( usAddress + usNRegs <= REG_INPUT_START + REG_INPUT_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegInputStart );
+        iRegIndex = ( int ) ( usAddress - usRegInputStart );
         while( usNRegs > 0 )
         {
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] >> 8 );
-            *pucRegBuffer++ = ( unsigned char )( usRegInputBuf[iRegIndex] & 0xFF );
+            *pucRegBuffer++ = ( unsigned char ) ( usRegInputBuf[iRegIndex] >> 8 );
+            *pucRegBuffer++ = ( unsigned char ) ( usRegInputBuf[iRegIndex] & 0xFF );
             iRegIndex++;
             usNRegs--;
         }
@@ -135,21 +135,21 @@ eMBRegInputCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs )
 }
 
 eMBErrorCode
-eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
+eMBRegHoldingCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode )
 {
-    eMBErrorCode    eStatus = MB_ENOERR;
-    int             iRegIndex;
+    eMBErrorCode eStatus = MB_ENOERR;
+    int          iRegIndex;
 
     if( ( usAddress >= REG_HOLDING_START ) && ( usAddress + usNRegs <= REG_HOLDING_START + REG_HOLDING_NREGS ) )
     {
-        iRegIndex = ( int )( usAddress - usRegHoldingStart );
-        switch ( eMode )
+        iRegIndex = ( int ) ( usAddress - usRegHoldingStart );
+        switch( eMode )
         {
         case MB_REG_READ:
             while( usNRegs > 0 )
             {
-                *pucRegBuffer++ = ( unsigned char )( usRegHoldingBuf[iRegIndex] >> 8 );
-                *pucRegBuffer++ = ( unsigned char )( usRegHoldingBuf[iRegIndex] & 0xFF );
+                *pucRegBuffer++ = ( unsigned char ) ( usRegHoldingBuf[iRegIndex] >> 8 );
+                *pucRegBuffer++ = ( unsigned char ) ( usRegHoldingBuf[iRegIndex] & 0xFF );
                 iRegIndex++;
                 usNRegs--;
             }
@@ -173,13 +173,13 @@ eMBRegHoldingCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegis
 }
 
 eMBErrorCode
-eMBRegCoilsCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
+eMBRegCoilsCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNCoils, eMBRegisterMode eMode )
 {
     return MB_ENOREG;
 }
 
 eMBErrorCode
-eMBRegDiscreteCB( UCHAR *pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
+eMBRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USHORT usNDiscrete )
 {
     return MB_ENOREG;
 }

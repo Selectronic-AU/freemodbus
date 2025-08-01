@@ -32,29 +32,31 @@
 
 #define INLINE
 
-#define PR_BEGIN_EXTERN_C           extern "C" {
-#define PR_END_EXTERN_C             }
+#define PR_BEGIN_EXTERN_C                                                                                              \
+    extern "C"                                                                                                         \
+    {
+#define PR_END_EXTERN_C           }
 
-#define ENTER_CRITICAL_SECTION( )   portENTER_CRITICAL( )
-#define EXIT_CRITICAL_SECTION( )    portEXIT_CRITICAL( )
+#define ENTER_CRITICAL_SECTION( ) portENTER_CRITICAL( )
+#define EXIT_CRITICAL_SECTION( )  portEXIT_CRITICAL( )
 
-typedef char    BOOL;
+typedef char           BOOL;
 
-typedef unsigned char UCHAR;
-typedef char    CHAR;
+typedef unsigned char  UCHAR;
+typedef char           CHAR;
 
 typedef unsigned short USHORT;
-typedef short   SHORT;
+typedef short          SHORT;
 
-typedef unsigned long ULONG;
-typedef long    LONG;
+typedef unsigned long  ULONG;
+typedef long           LONG;
 
 #ifndef TRUE
-#define TRUE            1
+#define TRUE 1
 #endif
 
 #ifndef FALSE
-#define FALSE           0
+#define FALSE 0
 #endif
 
 #endif

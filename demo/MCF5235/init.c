@@ -24,82 +24,82 @@
 #include "mcf523x.h"
 
 /* Function prototypes */
-void            init_main( void );
-static void     disable_interrupts( void );
-static void     disable_watchdog_timer( void );
-static void     disable_cache( void );
-static void     init_ipsbar( void );
-static void     init_basics( void );
-static void     init_clock_config( void );
-static void     init_chip_selects( void );
-static void     init_bus_config( void );
-static void     init_cache( void );
-static void     init_eport( void );
-static void     init_flexcan( void );
-static void     init_power_management( void );
-static void     init_dma_timers( void );
-static void     init_interrupt_timers( void );
-static void     init_watchdog_timers( void );
-static void     init_pin_assignments( void );
-static void     init_sdram_controller( void );
-static void     init_interrupt_controller( void );
+void        init_main( void );
+static void disable_interrupts( void );
+static void disable_watchdog_timer( void );
+static void disable_cache( void );
+static void init_ipsbar( void );
+static void init_basics( void );
+static void init_clock_config( void );
+static void init_chip_selects( void );
+static void init_bus_config( void );
+static void init_cache( void );
+static void init_eport( void );
+static void init_flexcan( void );
+static void init_power_management( void );
+static void init_dma_timers( void );
+static void init_interrupt_timers( void );
+static void init_watchdog_timers( void );
+static void init_pin_assignments( void );
+static void init_sdram_controller( void );
+static void init_interrupt_controller( void );
 
 /*********************************************************************
-* init_main - Main entry point for initialisation code               *
-**********************************************************************/
+ * init_main - Main entry point for initialisation code               *
+ **********************************************************************/
 void
 init_main( void )
 {
     /* Initialise base address of peripherals, VBR, etc */
-    init_ipsbar(  );
-    init_basics(  );
-    init_clock_config(  );
+    init_ipsbar( );
+    init_basics( );
+    init_clock_config( );
 
     /* Disable interrupts, watchdog timer, cache */
-    disable_interrupts(  );
-    disable_watchdog_timer(  );
-    disable_cache(  );
+    disable_interrupts( );
+    disable_watchdog_timer( );
+    disable_cache( );
 
     /* Initialise individual modules */
-    init_chip_selects(  );
-    init_bus_config(  );
-    init_cache(  );
-    init_eport(  );
-    init_flexcan(  );
-    init_power_management(  );
-    init_dma_timers(  );
-    init_interrupt_timers(  );
-    init_watchdog_timers(  );
-    init_pin_assignments(  );
-    init_sdram_controller(  );
+    init_chip_selects( );
+    init_bus_config( );
+    init_cache( );
+    init_eport( );
+    init_flexcan( );
+    init_power_management( );
+    init_dma_timers( );
+    init_interrupt_timers( );
+    init_watchdog_timers( );
+    init_pin_assignments( );
+    init_sdram_controller( );
 
     /* Initialise interrupt controller */
-    init_interrupt_controller(  );
+    init_interrupt_controller( );
 }
 
 /*********************************************************************
-* disable_interrupts - Disable all interrupt sources                 *
-**********************************************************************/
+ * disable_interrupts - Disable all interrupt sources                 *
+ **********************************************************************/
 static void
 disable_interrupts( void )
 {
-    vuint8         *p;
-    int             i;
+    vuint8 * p;
+    int      i;
 
     /* Set ICR008-ICR063 to 0x0 */
-    p = ( vuint8 * ) & MCF_INTC0_ICR8;
+    p = ( vuint8 * ) &MCF_INTC0_ICR8;
     for( i = 8; i <= 63; i++ )
         *p++ = 0x0;
 
     /* Set ICR108-ICR163 to 0x0 */
-    p = ( vuint8 * ) & MCF_INTC1_ICR8;
+    p = ( vuint8 * ) &MCF_INTC1_ICR8;
     for( i = 108; i <= 163; i++ )
         *p++ = 0x0;
 }
 
 /*********************************************************************
-* disable_watchdog_timer - Disable system watchdog timer             *
-**********************************************************************/
+ * disable_watchdog_timer - Disable system watchdog timer             *
+ **********************************************************************/
 static void
 disable_watchdog_timer( void )
 {
@@ -108,8 +108,8 @@ disable_watchdog_timer( void )
 }
 
 /*********************************************************************
-* disable_cache - Disable and invalidate cache                       *
-**********************************************************************/
+ * disable_cache - Disable and invalidate cache                       *
+ **********************************************************************/
 static void
 disable_cache( void )
 {
@@ -118,13 +118,13 @@ disable_cache( void )
 }
 
 /*********************************************************************
-* init_basics - Configuration Information & VBR                      *
-**********************************************************************/
+ * init_basics - Configuration Information & VBR                      *
+ **********************************************************************/
 static void
 init_basics( void )
 {
-    extern void     ramvec_start;
-    extern void     romvec_start;
+    extern void ramvec_start;
+    extern void romvec_start;
 
     /* Transfer size not driven on SIZ[1:0] pins during external cycles
        Processor Status (PST) and Debug Data (DDATA) functions disabled
@@ -134,13 +134,13 @@ init_basics( void )
     MCF_CCM_CCR = ( 0x1 << 15 ) | MCF_CCM_CCR_BME;
 
     /* Exception vector table at $00000000 */
-  asm( "move.l   %0,%%d0": :"i"( &romvec_start ) );
+    asm( "move.l   %0,%%d0" : : "i"( &romvec_start ) );
     asm( "movec    %d0,%vbr" );
 }
 
 /*********************************************************************
-* init_clock_config - Clock Module                                   *
-**********************************************************************/
+ * init_clock_config - Clock Module                                   *
+ **********************************************************************/
 static void
 init_clock_config( void )
 {
@@ -153,17 +153,17 @@ init_clock_config( void )
        Reset/Interrupt on loss of lock disabled
      */
 
-    MCF_FMPLL_SYNCR = 0x00100000;       /* Set RFD=RFD+1 to avoid frequency overshoot */
-    while( ( MCF_FMPLL_SYNSR & 0x08 ) == 0 )    /* Wait for PLL to lock */
+    MCF_FMPLL_SYNCR = 0x00100000;            /* Set RFD=RFD+1 to avoid frequency overshoot */
+    while( ( MCF_FMPLL_SYNSR & 0x08 ) == 0 ) /* Wait for PLL to lock */
         ;
-    MCF_FMPLL_SYNCR = 0x00080000;       /* Set desired RFD */
-    while( ( MCF_FMPLL_SYNSR & 0x08 ) == 0 )    /* Wait for PLL to lock */
+    MCF_FMPLL_SYNCR = 0x00080000;            /* Set desired RFD */
+    while( ( MCF_FMPLL_SYNSR & 0x08 ) == 0 ) /* Wait for PLL to lock */
         ;
 }
 
 /*********************************************************************
-* init_ipsbar - Internal Peripheral System Base Address (IPSBAR)     *
-**********************************************************************/
+ * init_ipsbar - Internal Peripheral System Base Address (IPSBAR)     *
+ **********************************************************************/
 static void
 init_ipsbar( void )
 {
@@ -172,12 +172,12 @@ init_ipsbar( void )
        Note: Processor powers up with IPS base address = 0x40000000
        Write to IPS base + 0x00000000 to set new value
      */
-    *( vuint32 * ) 0x40000000 = ( vuint32 ) __IPSBAR + 1;       /* +1 for Enable */
+    *( vuint32 * ) 0x40000000 = ( vuint32 ) __IPSBAR + 1; /* +1 for Enable */
 }
 
 /*********************************************************************
-* init_chip_selects - Chip Select Module                             *
-**********************************************************************/
+ * init_chip_selects - Chip Select Module                             *
+ **********************************************************************/
 static void
 init_chip_selects( void )
 {
@@ -223,8 +223,8 @@ init_chip_selects( void )
 }
 
 /*********************************************************************
-* init_bus_config - Internal Bus Arbitration                         *
-**********************************************************************/
+ * init_bus_config - Internal Bus Arbitration                         *
+ **********************************************************************/
 static void
 init_bus_config( void )
 {
@@ -240,8 +240,8 @@ init_bus_config( void )
 }
 
 /*********************************************************************
-* init_cache - Instruction/Data Cache                                *
-**********************************************************************/
+ * init_cache - Instruction/Data Cache                                *
+ **********************************************************************/
 static void
 init_cache( void )
 {
@@ -251,8 +251,8 @@ init_cache( void )
 }
 
 /*********************************************************************
-* init_eport - Edge Port Module (EPORT)                              *
-**********************************************************************/
+ * init_eport - Edge Port Module (EPORT)                              *
+ **********************************************************************/
 static void
 init_eport( void )
 {
@@ -263,35 +263,33 @@ init_eport( void )
 }
 
 /*********************************************************************
-* init_flexcan - FlexCAN Module                                      *
-**********************************************************************/
+ * init_flexcan - FlexCAN Module                                      *
+ **********************************************************************/
 static void
 init_flexcan( void )
 {
     /* FlexCAN controller 0 disabled (CANMCR0[MDIS]=1) */
-    MCF_CAN_IMASK0 = 0;
-    MCF_CAN_RXGMASK0 = MCF_CAN_RXGMASK_MI( 0x1fffffff );
+    MCF_CAN_IMASK0    = 0;
+    MCF_CAN_RXGMASK0  = MCF_CAN_RXGMASK_MI( 0x1fffffff );
     MCF_CAN_RX14MASK0 = MCF_CAN_RX14MASK_MI( 0x1fffffff );
     MCF_CAN_RX15MASK0 = MCF_CAN_RX15MASK_MI( 0x1fffffff );
-    MCF_CAN_CANCTRL0 = 0;
-    MCF_CAN_CANMCR0 =
-        MCF_CAN_CANMCR_MDIS | MCF_CAN_CANMCR_FRZ | MCF_CAN_CANMCR_HALT | MCF_CAN_CANMCR_SUPV |
-        MCF_CAN_CANMCR_MAXMB( 0xf );
+    MCF_CAN_CANCTRL0  = 0;
+    MCF_CAN_CANMCR0   = MCF_CAN_CANMCR_MDIS | MCF_CAN_CANMCR_FRZ | MCF_CAN_CANMCR_HALT | MCF_CAN_CANMCR_SUPV
+                      | MCF_CAN_CANMCR_MAXMB( 0xf );
 
     /* FlexCAN controller 1 disabled (CANMCR1[MDIS]=1) */
-    MCF_CAN_IMASK1 = 0;
-    MCF_CAN_RXGMASK1 = MCF_CAN_RXGMASK_MI( 0x1fffffff );
+    MCF_CAN_IMASK1    = 0;
+    MCF_CAN_RXGMASK1  = MCF_CAN_RXGMASK_MI( 0x1fffffff );
     MCF_CAN_RX14MASK1 = MCF_CAN_RX14MASK_MI( 0x1fffffff );
     MCF_CAN_RX15MASK1 = MCF_CAN_RX15MASK_MI( 0x1fffffff );
-    MCF_CAN_CANCTRL1 = 0;
-    MCF_CAN_CANMCR1 =
-        MCF_CAN_CANMCR_MDIS | MCF_CAN_CANMCR_FRZ | MCF_CAN_CANMCR_HALT | MCF_CAN_CANMCR_SUPV |
-        MCF_CAN_CANMCR_MAXMB( 0xf );
+    MCF_CAN_CANCTRL1  = 0;
+    MCF_CAN_CANMCR1   = MCF_CAN_CANMCR_MDIS | MCF_CAN_CANMCR_FRZ | MCF_CAN_CANMCR_HALT | MCF_CAN_CANMCR_SUPV
+                      | MCF_CAN_CANMCR_MAXMB( 0xf );
 }
 
 /*********************************************************************
-* init_power_management - Power Management                           *
-**********************************************************************/
+ * init_power_management - Power Management                           *
+ **********************************************************************/
 static void
 init_power_management( void )
 {
@@ -299,12 +297,12 @@ init_power_management( void )
        Mode is exited when an interrupt of level 1 or higher is received
      */
     MCF_SCM_LPICR = MCF_SCM_LPICR_ENBSTOP;
-    MCF_CCM_LPCR = 0;
+    MCF_CCM_LPCR  = 0;
 }
 
 /*********************************************************************
-* init_sdram_controller - SDRAM Controller                           *
-**********************************************************************/
+ * init_sdram_controller - SDRAM Controller                           *
+ **********************************************************************/
 static void
 init_sdram_controller( void )
 {
@@ -316,44 +314,44 @@ init_sdram_controller( void )
     MCF_SDRAMC_DCR = MCF_SDRAMC_DCR_RC( 0x1ff );
 
     /* Memory block 0 not in use (DMR0[V] = 0) */
-    MCF_SDRAMC_DMR0 = MCF_SDRAMC_DMR_BAM_256K;
+    MCF_SDRAMC_DMR0  = MCF_SDRAMC_DMR_BAM_256K;
     MCF_SDRAMC_DACR0 = 0;
 
     /* Memory block 1 not in use (DMR1[V] = 0) */
-    MCF_SDRAMC_DMR1 = MCF_SDRAMC_DMR_BAM_256K;
+    MCF_SDRAMC_DMR1  = MCF_SDRAMC_DMR_BAM_256K;
     MCF_SDRAMC_DACR1 = 0;
 }
 
 /*********************************************************************
-* init_dma_timers - DMA Timer Modules                                *
-**********************************************************************/
+ * init_dma_timers - DMA Timer Modules                                *
+ **********************************************************************/
 static void
 init_dma_timers( void )
 {
     /* DMA Timer 0 disabled (DTMR0[RST] = 0) */
-    MCF_TIMER_DTMR0 = 0;
+    MCF_TIMER_DTMR0  = 0;
     MCF_TIMER_DTXMR0 = 0;
-    MCF_TIMER_DTRR0 = 0xffffffff;
+    MCF_TIMER_DTRR0  = 0xffffffff;
 
     /* DMA Timer 1 disabled (DTMR1[RST] = 0) */
-    MCF_TIMER_DTMR1 = 0;
+    MCF_TIMER_DTMR1  = 0;
     MCF_TIMER_DTXMR1 = 0;
-    MCF_TIMER_DTRR1 = 0xffffffff;
+    MCF_TIMER_DTRR1  = 0xffffffff;
 
     /* DMA Timer 2 disabled (DTMR2[RST] = 0) */
-    MCF_TIMER_DTMR2 = 0;
+    MCF_TIMER_DTMR2  = 0;
     MCF_TIMER_DTXMR2 = 0;
-    MCF_TIMER_DTRR2 = 0xffffffff;
+    MCF_TIMER_DTRR2  = 0xffffffff;
 
     /* DMA Timer 3 disabled (DTMR3[RST] = 0) */
-    MCF_TIMER_DTMR3 = 0;
+    MCF_TIMER_DTMR3  = 0;
     MCF_TIMER_DTXMR3 = 0;
-    MCF_TIMER_DTRR3 = 0xffffffff;
+    MCF_TIMER_DTRR3  = 0xffffffff;
 }
 
 /**********************************************************************
-* init_interrupt_timers - Programmable Interrupt Timer (PIT) Modules  *
-***********************************************************************/
+ * init_interrupt_timers - Programmable Interrupt Timer (PIT) Modules  *
+ ***********************************************************************/
 static void
 init_interrupt_timers( void )
 {
@@ -371,8 +369,8 @@ init_interrupt_timers( void )
 }
 
 /*********************************************************************
-* init_watchdog_timers - Watchdog Timer Modules                      *
-**********************************************************************/
+ * init_watchdog_timers - Watchdog Timer Modules                      *
+ **********************************************************************/
 static void
 init_watchdog_timers( void )
 {
@@ -388,8 +386,8 @@ init_watchdog_timers( void )
 }
 
 /*********************************************************************
-* init_interrupt_controller - Interrupt Controller                   *
-**********************************************************************/
+ * init_interrupt_controller - Interrupt Controller                   *
+ **********************************************************************/
 static void
 init_interrupt_controller( void )
 {
@@ -402,15 +400,15 @@ init_interrupt_controller( void )
        Level 2:  External interrupt /IRQ2, (initially masked)
        Level 1:  External interrupt /IRQ1, (initially masked)
      */
-    MCF_INTC0_ICR1 = 0;
-    MCF_INTC0_ICR2 = 0;
-    MCF_INTC0_ICR3 = 0;
-    MCF_INTC0_ICR4 = 0;
-    MCF_INTC0_ICR5 = 0;
-    MCF_INTC0_ICR6 = 0;
-    MCF_INTC0_ICR7 = 0;
-    MCF_INTC0_ICR8 = 0;
-    MCF_INTC0_ICR9 = 0;
+    MCF_INTC0_ICR1  = 0;
+    MCF_INTC0_ICR2  = 0;
+    MCF_INTC0_ICR3  = 0;
+    MCF_INTC0_ICR4  = 0;
+    MCF_INTC0_ICR5  = 0;
+    MCF_INTC0_ICR6  = 0;
+    MCF_INTC0_ICR7  = 0;
+    MCF_INTC0_ICR8  = 0;
+    MCF_INTC0_ICR9  = 0;
     MCF_INTC0_ICR10 = 0;
     MCF_INTC0_ICR11 = 0;
     MCF_INTC0_ICR12 = 0;
@@ -461,8 +459,8 @@ init_interrupt_controller( void )
     MCF_INTC0_ICR58 = 0;
     MCF_INTC0_ICR59 = 0;
     MCF_INTC0_ICR60 = 0;
-    MCF_INTC1_ICR8 = 0;
-    MCF_INTC1_ICR9 = 0;
+    MCF_INTC1_ICR8  = 0;
+    MCF_INTC1_ICR9  = 0;
     MCF_INTC1_ICR10 = 0;
     MCF_INTC1_ICR11 = 0;
     MCF_INTC1_ICR12 = 0;
@@ -496,31 +494,31 @@ init_interrupt_controller( void )
     MCF_INTC1_ICR41 = 0;
     MCF_INTC1_ICR42 = 0;
     MCF_INTC1_ICR59 = 0;
-    MCF_INTC0_IMRH = 0xffffffff;
+    MCF_INTC0_IMRH  = 0xffffffff;
     MCF_INTC0_IMRL =
-        MCF_INTC0_IMRL_INT_MASK31 | MCF_INTC0_IMRL_INT_MASK30 | MCF_INTC0_IMRL_INT_MASK29 | MCF_INTC0_IMRL_INT_MASK28 |
-        MCF_INTC0_IMRL_INT_MASK27 | MCF_INTC0_IMRL_INT_MASK26 | MCF_INTC0_IMRL_INT_MASK25 | MCF_INTC0_IMRL_INT_MASK24 |
-        MCF_INTC0_IMRL_INT_MASK23 | MCF_INTC0_IMRL_INT_MASK22 | MCF_INTC0_IMRL_INT_MASK21 | MCF_INTC0_IMRL_INT_MASK20 |
-        MCF_INTC0_IMRL_INT_MASK19 | MCF_INTC0_IMRL_INT_MASK18 | MCF_INTC0_IMRL_INT_MASK17 | MCF_INTC0_IMRL_INT_MASK16 |
-        MCF_INTC0_IMRL_INT_MASK15 | MCF_INTC0_IMRL_INT_MASK14 | MCF_INTC0_IMRL_INT_MASK13 | MCF_INTC0_IMRL_INT_MASK12 |
-        MCF_INTC0_IMRL_INT_MASK11 | MCF_INTC0_IMRL_INT_MASK10 | MCF_INTC0_IMRL_INT_MASK9 | MCF_INTC0_IMRL_INT_MASK8 |
-        MCF_INTC0_IMRL_INT_MASK7 | MCF_INTC0_IMRL_INT_MASK6 | MCF_INTC0_IMRL_INT_MASK5 | MCF_INTC0_IMRL_INT_MASK4 |
-        MCF_INTC0_IMRL_INT_MASK3 | MCF_INTC0_IMRL_INT_MASK2 | MCF_INTC0_IMRL_INT_MASK1;
+        MCF_INTC0_IMRL_INT_MASK31 | MCF_INTC0_IMRL_INT_MASK30 | MCF_INTC0_IMRL_INT_MASK29 | MCF_INTC0_IMRL_INT_MASK28
+        | MCF_INTC0_IMRL_INT_MASK27 | MCF_INTC0_IMRL_INT_MASK26 | MCF_INTC0_IMRL_INT_MASK25 | MCF_INTC0_IMRL_INT_MASK24
+        | MCF_INTC0_IMRL_INT_MASK23 | MCF_INTC0_IMRL_INT_MASK22 | MCF_INTC0_IMRL_INT_MASK21 | MCF_INTC0_IMRL_INT_MASK20
+        | MCF_INTC0_IMRL_INT_MASK19 | MCF_INTC0_IMRL_INT_MASK18 | MCF_INTC0_IMRL_INT_MASK17 | MCF_INTC0_IMRL_INT_MASK16
+        | MCF_INTC0_IMRL_INT_MASK15 | MCF_INTC0_IMRL_INT_MASK14 | MCF_INTC0_IMRL_INT_MASK13 | MCF_INTC0_IMRL_INT_MASK12
+        | MCF_INTC0_IMRL_INT_MASK11 | MCF_INTC0_IMRL_INT_MASK10 | MCF_INTC0_IMRL_INT_MASK9 | MCF_INTC0_IMRL_INT_MASK8
+        | MCF_INTC0_IMRL_INT_MASK7 | MCF_INTC0_IMRL_INT_MASK6 | MCF_INTC0_IMRL_INT_MASK5 | MCF_INTC0_IMRL_INT_MASK4
+        | MCF_INTC0_IMRL_INT_MASK3 | MCF_INTC0_IMRL_INT_MASK2 | MCF_INTC0_IMRL_INT_MASK1;
     MCF_INTC1_IMRH = 0xffffffff;
     MCF_INTC1_IMRL =
-        MCF_INTC1_IMRL_INT_MASK31 | MCF_INTC1_IMRL_INT_MASK30 | MCF_INTC1_IMRL_INT_MASK29 | MCF_INTC1_IMRL_INT_MASK28 |
-        MCF_INTC1_IMRL_INT_MASK27 | MCF_INTC1_IMRL_INT_MASK26 | MCF_INTC1_IMRL_INT_MASK25 | MCF_INTC1_IMRL_INT_MASK24 |
-        MCF_INTC1_IMRL_INT_MASK23 | MCF_INTC1_IMRL_INT_MASK22 | MCF_INTC1_IMRL_INT_MASK21 | MCF_INTC1_IMRL_INT_MASK20 |
-        MCF_INTC1_IMRL_INT_MASK19 | MCF_INTC1_IMRL_INT_MASK18 | MCF_INTC1_IMRL_INT_MASK17 | MCF_INTC1_IMRL_INT_MASK16 |
-        MCF_INTC1_IMRL_INT_MASK15 | MCF_INTC1_IMRL_INT_MASK14 | MCF_INTC1_IMRL_INT_MASK13 | MCF_INTC1_IMRL_INT_MASK12 |
-        MCF_INTC1_IMRL_INT_MASK11 | MCF_INTC1_IMRL_INT_MASK10 | MCF_INTC1_IMRL_INT_MASK9 | MCF_INTC1_IMRL_INT_MASK8 |
-        MCF_INTC1_IMRL_INT_MASK7 | MCF_INTC1_IMRL_INT_MASK6 | MCF_INTC1_IMRL_INT_MASK5 | MCF_INTC1_IMRL_INT_MASK4 |
-        MCF_INTC1_IMRL_INT_MASK3 | MCF_INTC1_IMRL_INT_MASK2 | MCF_INTC1_IMRL_INT_MASK1;
+        MCF_INTC1_IMRL_INT_MASK31 | MCF_INTC1_IMRL_INT_MASK30 | MCF_INTC1_IMRL_INT_MASK29 | MCF_INTC1_IMRL_INT_MASK28
+        | MCF_INTC1_IMRL_INT_MASK27 | MCF_INTC1_IMRL_INT_MASK26 | MCF_INTC1_IMRL_INT_MASK25 | MCF_INTC1_IMRL_INT_MASK24
+        | MCF_INTC1_IMRL_INT_MASK23 | MCF_INTC1_IMRL_INT_MASK22 | MCF_INTC1_IMRL_INT_MASK21 | MCF_INTC1_IMRL_INT_MASK20
+        | MCF_INTC1_IMRL_INT_MASK19 | MCF_INTC1_IMRL_INT_MASK18 | MCF_INTC1_IMRL_INT_MASK17 | MCF_INTC1_IMRL_INT_MASK16
+        | MCF_INTC1_IMRL_INT_MASK15 | MCF_INTC1_IMRL_INT_MASK14 | MCF_INTC1_IMRL_INT_MASK13 | MCF_INTC1_IMRL_INT_MASK12
+        | MCF_INTC1_IMRL_INT_MASK11 | MCF_INTC1_IMRL_INT_MASK10 | MCF_INTC1_IMRL_INT_MASK9 | MCF_INTC1_IMRL_INT_MASK8
+        | MCF_INTC1_IMRL_INT_MASK7 | MCF_INTC1_IMRL_INT_MASK6 | MCF_INTC1_IMRL_INT_MASK5 | MCF_INTC1_IMRL_INT_MASK4
+        | MCF_INTC1_IMRL_INT_MASK3 | MCF_INTC1_IMRL_INT_MASK2 | MCF_INTC1_IMRL_INT_MASK1;
 }
 
 /*********************************************************************
-* init_pin_assignments - Pin Assignment and General Purpose I/O      *
-**********************************************************************/
+ * init_pin_assignments - Pin Assignment and General Purpose I/O      *
+ **********************************************************************/
 static void
 init_pin_assignments( void )
 {
@@ -528,7 +526,7 @@ init_pin_assignments( void )
        Pins are all GPIO inputs
      */
     MCF_GPIO_PDDR_APDDR = 0;
-    MCF_GPIO_PAR_AD = 0;
+    MCF_GPIO_PAR_AD     = 0;
 
     /* Pin assignments for ports DATAH and DATAL
        Pins are all GPIO inputs
@@ -547,10 +545,9 @@ init_pin_assignments( void )
        Pin /TIP       : External bus transfer in progess, /TIP
      */
     MCF_GPIO_PDDR_BUSCTL = 0;
-    MCF_GPIO_PAR_BUSCTL =
-        MCF_GPIO_PAR_BUSCTL_PAR_OE | MCF_GPIO_PAR_BUSCTL_PAR_TA | MCF_GPIO_PAR_BUSCTL_PAR_TEA( 0x3 ) |
-        MCF_GPIO_PAR_BUSCTL_PAR_RWB | MCF_GPIO_PAR_BUSCTL_PAR_TSIZ1 | MCF_GPIO_PAR_BUSCTL_PAR_TSIZ0 |
-        MCF_GPIO_PAR_BUSCTL_PAR_TS( 0x3 ) | MCF_GPIO_PAR_BUSCTL_PAR_TIP( 0x3 );
+    MCF_GPIO_PAR_BUSCTL  = MCF_GPIO_PAR_BUSCTL_PAR_OE | MCF_GPIO_PAR_BUSCTL_PAR_TA | MCF_GPIO_PAR_BUSCTL_PAR_TEA( 0x3 )
+                          | MCF_GPIO_PAR_BUSCTL_PAR_RWB | MCF_GPIO_PAR_BUSCTL_PAR_TSIZ1 | MCF_GPIO_PAR_BUSCTL_PAR_TSIZ0
+                          | MCF_GPIO_PAR_BUSCTL_PAR_TS( 0x3 ) | MCF_GPIO_PAR_BUSCTL_PAR_TIP( 0x3 );
 
     /* Pin assignments for port BS
        Pin /BS3       : External byte strobe /BS3
@@ -572,9 +569,9 @@ init_pin_assignments( void )
        Pin /CS1       : Chip select /CS1
      */
     MCF_GPIO_PDDR_CS = 0;
-    MCF_GPIO_PAR_CS =
-        MCF_GPIO_PAR_CS_PAR_CS7 | MCF_GPIO_PAR_CS_PAR_CS6 | MCF_GPIO_PAR_CS_PAR_CS5 | MCF_GPIO_PAR_CS_PAR_CS4 |
-        MCF_GPIO_PAR_CS_PAR_CS3 | MCF_GPIO_PAR_CS_PAR_CS2 | MCF_GPIO_PAR_CS_PAR_CS1;
+    MCF_GPIO_PAR_CS  = MCF_GPIO_PAR_CS_PAR_CS7 | MCF_GPIO_PAR_CS_PAR_CS6 | MCF_GPIO_PAR_CS_PAR_CS5
+                      | MCF_GPIO_PAR_CS_PAR_CS4 | MCF_GPIO_PAR_CS_PAR_CS3 | MCF_GPIO_PAR_CS_PAR_CS2
+                      | MCF_GPIO_PAR_CS_PAR_CS1;
 
     /* Pin assignments for port SDRAM
        Pin /SD_WE     : SDRAM controller /SD_WE
@@ -585,21 +582,20 @@ init_pin_assignments( void )
        Pin /SD_CS0    : SDRAM controller /SD_CS0
      */
     MCF_GPIO_PDDR_SDRAM = 0;
-    MCF_GPIO_PAR_SDRAM =
-        MCF_GPIO_PAR_SDRAM_PAR_SDWE | MCF_GPIO_PAR_SDRAM_PAR_SCAS | MCF_GPIO_PAR_SDRAM_PAR_SRAS |
-        MCF_GPIO_PAR_SDRAM_PAR_SCKE | MCF_GPIO_PAR_SDRAM_PAR_SDCS1 | MCF_GPIO_PAR_SDRAM_PAR_SDCS0;
+    MCF_GPIO_PAR_SDRAM  = MCF_GPIO_PAR_SDRAM_PAR_SDWE | MCF_GPIO_PAR_SDRAM_PAR_SCAS | MCF_GPIO_PAR_SDRAM_PAR_SRAS
+                         | MCF_GPIO_PAR_SDRAM_PAR_SCKE | MCF_GPIO_PAR_SDRAM_PAR_SDCS1 | MCF_GPIO_PAR_SDRAM_PAR_SDCS0;
 
     /* Pin assignments for port FECI2C
        Pins are all GPIO inputs
      */
     MCF_GPIO_PDDR_FECI2C = 0;
-    MCF_GPIO_PAR_FECI2C = 0;
+    MCF_GPIO_PAR_FECI2C  = 0;
 
     /* Pin assignments for port UARTL
        Pins are all GPIO inputs
      */
     MCF_GPIO_PDDR_UARTL = 0;
-    MCF_GPIO_PAR_UART = 0;
+    MCF_GPIO_PAR_UART   = 0;
 
     /* Pin assignments for port UARTH
        Pin U2TXD      : GPIO input
@@ -612,17 +608,17 @@ init_pin_assignments( void )
        Pins are all GPIO inputs
      */
     MCF_GPIO_PDDR_QSPI = 0;
-    MCF_GPIO_PAR_QSPI = 0;
+    MCF_GPIO_PAR_QSPI  = 0;
 
     /* Pin assignments for port TIMER
        Pins are all GPIO inputs
      */
     MCF_GPIO_PDDR_TIMER = 0;
-    MCF_GPIO_PAR_TIMER = 0;
+    MCF_GPIO_PAR_TIMER  = 0;
 
     /* Pin assignments for port ETPU
        Pins are all GPIO inputs
      */
     MCF_GPIO_PDDR_ETPU = 0;
-    MCF_GPIO_PAR_ETPU = 0;
+    MCF_GPIO_PAR_ETPU  = 0;
 }

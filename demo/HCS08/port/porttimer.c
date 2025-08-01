@@ -28,14 +28,14 @@
 #include "mbport.h"
 
 /* ----------------------- Persistent variable ------------------------------*/
-static USHORT   usDelta;
+static USHORT usDelta;
 
 /* ----------------------- Start implementation -----------------------------*/
 
 USHORT
 usMBMulDiv( USHORT a, USHORT b, USHORT c )
 {
-    ULONG           x;
+    ULONG x;
 
     x = a;
     x *= b;
@@ -44,16 +44,15 @@ usMBMulDiv( USHORT a, USHORT b, USHORT c )
     return ( USHORT ) x;
 }
 
-
 /* Initialize Timer 1 as free running, and Channel 0 as output compare (with no pin)
  */
 BOOL
 xMBPortTimersInit( USHORT usTim1Timerout50us )
 {
     /* We assume 4194304 Hz bus clock and let the timer run at 1/128 of this frequency, ie. 32768 Hz */
-    ( void )assert( BM_BUS_CLOCK == 4194304 );
-    TPM1SC = 0x0F;              // TOF=0,TOIE=0,CPWMS=0,CLKS=0:1,PS=1:1:1
-    TPM1C0SC = 0x10;            // CH0F=0,CH0IE=0,MS0=0:1,ELS0=0:0;??=0:0
+    ( void ) assert( BM_BUS_CLOCK == 4194304 );
+    TPM1SC   = 0x0F; // TOF=0,TOIE=0,CPWMS=0,CLKS=0:1,PS=1:1:1
+    TPM1C0SC = 0x10; // CH0F=0,CH0IE=0,MS0=0:1,ELS0=0:0;??=0:0
 
     /* Compute numer of timer tics corresponding to the given timeout periode */
     usDelta = usMBMulDiv( usTim1Timerout50us, 1024, 625 );
@@ -64,12 +63,12 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
 /* Set the output compare register value and enable timer interrupt
  */
 INLINE void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable( )
 {
     /* Enable the timer with the timeout passed to xMBPortTimersInit( ) */
-    SaveStatusReg(  );
+    SaveStatusReg( );
     TPM1C0V = TPM1CNT + usDelta;
-    RestoreStatusReg(  );
+    RestoreStatusReg( );
     if( TPM1C0SC_CH0F )
         TPM1C0SC_CH0F = FALSE;
     TPM1C0SC_CH0IE = TRUE;
@@ -78,7 +77,7 @@ vMBPortTimersEnable(  )
 /* Disable timer interrupts
  */
 INLINE void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable( )
 {
     TPM1C0SC_CH0IE = FALSE;
 }
@@ -89,5 +88,5 @@ interrupt VectorNumber_Vtpm1ch0 void
 prvvTIMERExpiredISR( void )
 {
     TPM1C0SC_CH0IE = FALSE;
-    ( void )pxMBPortCBTimerExpired(  );
+    ( void ) pxMBPortCBTimerExpired( );
 }

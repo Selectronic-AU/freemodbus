@@ -32,13 +32,13 @@
 #include "mbport.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_TIMER_PRESCALER      ( 1024UL )
-#define MB_TIMER_TICKS          ( F_CPU / MB_TIMER_PRESCALER )
-#define MB_50US_TICKS           ( 20000UL )
+#define MB_TIMER_PRESCALER ( 1024UL )
+#define MB_TIMER_TICKS     ( F_CPU / MB_TIMER_PRESCALER )
+#define MB_50US_TICKS      ( 20000UL )
 
 /* ----------------------- Static variables ---------------------------------*/
-static USHORT   usTimerOCRADelta;
-static USHORT   usTimerOCRBDelta;
+static USHORT usTimerOCRADelta;
+static USHORT usTimerOCRBDelta;
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
@@ -47,18 +47,17 @@ xMBPortTimersInit( USHORT usTim1Timerout50us )
     /* Calculate overflow counter an OCR values for Timer1. */
     usTimerOCRADelta = ( MB_TIMER_TICKS * usTim1Timerout50us ) / ( MB_50US_TICKS );
 
-    TCCR1A = 0x00;
-    TCCR1B = 0x00;
-    TCCR1C = 0x00;
+    TCCR1A           = 0x00;
+    TCCR1B           = 0x00;
+    TCCR1C           = 0x00;
 
-    vMBPortTimersDisable(  );
+    vMBPortTimersDisable( );
 
     return TRUE;
 }
 
-
 inline void
-vMBPortTimersEnable(  )
+vMBPortTimersEnable( )
 {
     TCNT1 = 0x0000;
     if( usTimerOCRADelta > 0 )
@@ -71,7 +70,7 @@ vMBPortTimersEnable(  )
 }
 
 inline void
-vMBPortTimersDisable(  )
+vMBPortTimersDisable( )
 {
     /* Disable the timer. */
     TCCR1B &= ~( _BV( CS12 ) | _BV( CS10 ) );
@@ -81,7 +80,4 @@ vMBPortTimersDisable(  )
     TIFR1 |= _BV( OCF1A );
 }
 
-SIGNAL( SIG_OUTPUT_COMPARE1A )
-{
-    ( void )pxMBPortCBTimerExpired(  );
-}
+SIGNAL( SIG_OUTPUT_COMPARE1A ) { ( void ) pxMBPortCBTimerExpired( ); }

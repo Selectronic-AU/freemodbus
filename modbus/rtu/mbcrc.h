@@ -30,6 +30,16 @@
 #ifndef _MB_CRC_H
 #define _MB_CRC_H
 
-USHORT          usMBCRC16( UCHAR * pucFrame, USHORT usLen );
+/* ----------------------- Platform includes --------------------------------*/
+#include "port.h"
 
+#ifdef __cplusplus
+PR_BEGIN_EXTERN_C
+#endif
+
+USHORT usMBCRC16( const UCHAR * pucFrame, USHORT usLen );
+
+#ifdef __cplusplus
+PR_END_EXTERN_C
+#endif
 #endif

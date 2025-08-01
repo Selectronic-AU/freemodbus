@@ -30,7 +30,7 @@
  * processing.
  */
 
- /**********************************************************
+/**********************************************************
  *  Linux TCP support.
  *  Based on Walter's project.
  *  Modified by Steven Guo <gotop167@163.com>
@@ -51,20 +51,18 @@
 #include "mb.h"
 #include "mbport.h"
 
-
-
 /* ----------------------- MBAP Header --------------------------------------*/
-#define MB_TCP_UID          6
-#define MB_TCP_LEN          4
-#define MB_TCP_FUNC         7
+#define MB_TCP_UID  6
+#define MB_TCP_LEN  4
+#define MB_TCP_FUNC 7
 
 /* ----------------------- Defines  -----------------------------------------*/
-#define MB_TCP_DEFAULT_PORT 502 /* TCP listening port. */
-#define MB_TCP_POOL_TIMEOUT 50  /* pool timeout for event waiting. */
-#define MB_TCP_READ_TIMEOUT 1000        /* Maximum timeout to wait for packets. */
-#define MB_TCP_READ_CYCLE   100 /* Time between checking for new data. */
+#define MB_TCP_DEFAULT_PORT 502  /* TCP listening port. */
+#define MB_TCP_POOL_TIMEOUT 50   /* pool timeout for event waiting. */
+#define MB_TCP_READ_TIMEOUT 1000 /* Maximum timeout to wait for packets. */
+#define MB_TCP_READ_CYCLE   100  /* Time between checking for new data. */
 
-#define MB_TCP_DEBUG        1   /* Set to 1 for additional debug output. */
+#define MB_TCP_DEBUG        1 /* Set to 1 for additional debug output. */
 
 #define MB_TCP_BUF_SIZE     ( 256 + 7 ) /* Must hold a complete Modbus TCP frame. */
 
@@ -73,30 +71,29 @@
 #define EV_NEVENTS          EV_CLIENT + 1
 
 /* ----------------------- Static variables ---------------------------------*/
-SOCKET          xListenSocket;
-SOCKET          xClientSocket = INVALID_SOCKET;
-static fd_set   allset;
+SOCKET        xListenSocket;
+SOCKET        xClientSocket = INVALID_SOCKET;
+static fd_set allset;
 
-static UCHAR    aucTCPBuf[MB_TCP_BUF_SIZE];
-static USHORT   usTCPBufPos;
-static USHORT   usTCPFrameBytesLeft;
+static UCHAR  aucTCPBuf[MB_TCP_BUF_SIZE];
+static USHORT usTCPBufPos;
+static USHORT usTCPFrameBytesLeft;
 
 /* ----------------------- External functions -------------------------------*/
-CHAR           *WsaError2String( int dwError );
+CHAR * WsaError2String( int dwError );
 
 /* ----------------------- Static functions ---------------------------------*/
-BOOL            prvMBTCPPortAddressToString( SOCKET xSocket, CHAR * szAddr, USHORT usBufSize );
-CHAR           *prvMBTCPPortFrameToString( UCHAR * pucFrame, USHORT usFrameLen );
-static BOOL     prvbMBPortAcceptClient( void );
-static void     prvvMBPortReleaseClient( void );
-
+BOOL        prvMBTCPPortAddressToString( SOCKET xSocket, CHAR * szAddr, USHORT usBufSize );
+CHAR *      prvMBTCPPortFrameToString( UCHAR * pucFrame, USHORT usFrameLen );
+static BOOL prvbMBPortAcceptClient( void );
+static void prvvMBPortReleaseClient( void );
 
 /* ----------------------- Begin implementation -----------------------------*/
 
 BOOL
 xMBTCPPortInit( USHORT usTCPPort )
 {
-    USHORT          usPort;
+    USHORT             usPort;
     struct sockaddr_in serveraddr;
 
     if( usTCPPort == 0 )
@@ -108,15 +105,15 @@ xMBTCPPortInit( USHORT usTCPPort )
         usPort = ( USHORT ) usTCPPort;
     }
     memset( &serveraddr, 0, sizeof( serveraddr ) );
-    serveraddr.sin_family = AF_INET;
+    serveraddr.sin_family      = AF_INET;
     serveraddr.sin_addr.s_addr = htonl( INADDR_ANY );
-    serveraddr.sin_port = htons( usPort );
+    serveraddr.sin_port        = htons( usPort );
     if( ( xListenSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) == -1 )
     {
         fprintf( stderr, "Create socket failed.\r\n" );
         return FALSE;
     }
-    else if( bind( xListenSocket, ( struct sockaddr * )&serveraddr, sizeof( serveraddr ) ) == -1 )
+    else if( bind( xListenSocket, ( struct sockaddr * ) &serveraddr, sizeof( serveraddr ) ) == -1 )
     {
         fprintf( stderr, "Bind socket failed.\r\n" );
         return FALSE;
@@ -132,12 +129,12 @@ xMBTCPPortInit( USHORT usTCPPort )
 }
 
 void
-vMBTCPPortClose(  )
+vMBTCPPortClose( )
 {
     // Close all client sockets.
     if( xClientSocket != SOCKET_ERROR )
     {
-        prvvMBPortReleaseClient(  );
+        prvvMBPortReleaseClient( );
     }
     // Close the listener socket.
     if( xListenSocket != SOCKET_ERROR )
@@ -152,7 +149,7 @@ vMBTCPPortDisable( void )
     /* Close all client sockets. */
     if( xClientSocket != SOCKET_ERROR )
     {
-        prvvMBPortReleaseClient(  );
+        prvvMBPortReleaseClient( );
     }
 }
 
@@ -179,14 +176,14 @@ vMBTCPPortDisable( void )
 BOOL
 xMBPortTCPPool( void )
 {
-    int             n;
-    fd_set          fread;
-    struct timeval  tval;
+    int            n;
+    fd_set         fread;
+    struct timeval tval;
 
-    tval.tv_sec = 0;
+    tval.tv_sec  = 0;
     tval.tv_usec = 5000;
-    int             ret;
-    USHORT          usLength;
+    int    ret;
+    USHORT usLength;
 
     if( xClientSocket == INVALID_SOCKET )
     {
@@ -204,7 +201,7 @@ xMBPortTCPPool( void )
         }
         if( FD_ISSET( xListenSocket, &allset ) )
         {
-            ( void )prvbMBPortAcceptClient(  );
+            ( void ) prvbMBPortAcceptClient( );
         }
     }
     while( TRUE )
@@ -243,7 +240,7 @@ xMBPortTCPPool( void )
                     /* The frame is complete. */
                     else if( usTCPBufPos == ( MB_TCP_UID + usLength ) )
                     {
-                        ( void )xMBPortEventPost( EV_FRAME_RECEIVED );
+                        ( void ) xMBPortEventPost( EV_FRAME_RECEIVED );
                         return TRUE;
                     }
                     /* This can not happend because we always calculate the number of bytes
@@ -276,30 +273,30 @@ xMBPortTCPPool( void )
  */
 
 BOOL
-xMBTCPPortGetRequest( UCHAR **ppucMBTCPFrame, USHORT *usTCPLength )
+xMBTCPPortGetRequest( UCHAR ** ppucMBTCPFrame, USHORT * usTCPLength )
 {
     *ppucMBTCPFrame = &aucTCPBuf[0];
-    *usTCPLength = usTCPBufPos;
+    *usTCPLength    = usTCPBufPos;
 
     /* Reset the buffer. */
-    usTCPBufPos = 0;
+    usTCPBufPos         = 0;
     usTCPFrameBytesLeft = MB_TCP_FUNC;
     return TRUE;
 }
 
 BOOL
-xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength )
+xMBTCPPortSendResponse( const UCHAR * pucMBTCPFrame, USHORT usTCPLength )
 {
-    BOOL            bFrameSent = FALSE;
-    BOOL            bAbort = FALSE;
-    int             res;
-    int             iBytesSent = 0;
-    int             iTimeOut = MB_TCP_READ_TIMEOUT;
+    BOOL bFrameSent = FALSE;
+    BOOL bAbort     = FALSE;
+    int  res;
+    int  iBytesSent = 0;
+    int  iTimeOut   = MB_TCP_READ_TIMEOUT;
 
     do
     {
         res = send( xClientSocket, &pucMBTCPFrame[iBytesSent], usTCPLength - iBytesSent, 0 );
-        switch ( res )
+        switch( res )
         {
         case -1:
             if( iTimeOut > 0 )
@@ -313,7 +310,7 @@ xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength )
             }
             break;
         case 0:
-            prvvMBPortReleaseClient(  );
+            prvvMBPortReleaseClient( );
             bAbort = TRUE;
             break;
         default:
@@ -329,19 +326,19 @@ xMBTCPPortSendResponse( const UCHAR *pucMBTCPFrame, USHORT usTCPLength )
 }
 
 void
-prvvMBPortReleaseClient(  )
+prvvMBPortReleaseClient( )
 {
-    ( void )recv( xClientSocket, &aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
+    ( void ) recv( xClientSocket, &aucTCPBuf[0], MB_TCP_BUF_SIZE, 0 );
 
-    ( void )close( xClientSocket );
+    ( void ) close( xClientSocket );
     xClientSocket = INVALID_SOCKET;
 }
 
 BOOL
-prvbMBPortAcceptClient(  )
+prvbMBPortAcceptClient( )
 {
-    SOCKET          xNewSocket;
-    BOOL            bOkay;
+    SOCKET xNewSocket;
+    BOOL   bOkay;
 
     /* Check if we can handle a new connection. */
 
@@ -356,10 +353,10 @@ prvbMBPortAcceptClient(  )
     }
     else
     {
-        xClientSocket = xNewSocket;
-        usTCPBufPos = 0;
+        xClientSocket       = xNewSocket;
+        usTCPBufPos         = 0;
         usTCPFrameBytesLeft = MB_TCP_FUNC;
-        bOkay = TRUE;
+        bOkay               = TRUE;
     }
     return bOkay;
 }

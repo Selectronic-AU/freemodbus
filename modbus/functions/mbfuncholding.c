@@ -28,56 +28,53 @@
  */
 
 /* ----------------------- System includes ----------------------------------*/
-#include "stdlib.h"
-#include "string.h"
 
-/* ----------------------- Platform includes --------------------------------*/
-#include "port.h"
+#include <stdlib.h>
+#include <string.h>
 
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
 #include "mbframe.h"
-#include "mbproto.h"
-#include "mbconfig.h"
+#include "mbfunc.h"
 
 /* ----------------------- Defines ------------------------------------------*/
-#define MB_PDU_FUNC_READ_ADDR_OFF               ( MB_PDU_DATA_OFF + 0)
-#define MB_PDU_FUNC_READ_REGCNT_OFF             ( MB_PDU_DATA_OFF + 2 )
-#define MB_PDU_FUNC_READ_SIZE                   ( 4 )
-#define MB_PDU_FUNC_READ_REGCNT_MAX             ( 0x007D )
+#define MB_PDU_FUNC_READ_ADDR_OFF              ( MB_PDU_DATA_OFF + 0 )
+#define MB_PDU_FUNC_READ_REGCNT_OFF            ( MB_PDU_DATA_OFF + 2 )
+#define MB_PDU_FUNC_READ_SIZE                  ( 4 )
+#define MB_PDU_FUNC_READ_REGCNT_MAX            ( 0x007D )
 
-#define MB_PDU_FUNC_WRITE_ADDR_OFF              ( MB_PDU_DATA_OFF + 0)
-#define MB_PDU_FUNC_WRITE_VALUE_OFF             ( MB_PDU_DATA_OFF + 2 )
-#define MB_PDU_FUNC_WRITE_SIZE                  ( 4 )
+#define MB_PDU_FUNC_WRITE_ADDR_OFF             ( MB_PDU_DATA_OFF + 0 )
+#define MB_PDU_FUNC_WRITE_VALUE_OFF            ( MB_PDU_DATA_OFF + 2 )
+#define MB_PDU_FUNC_WRITE_SIZE                 ( 4 )
 
-#define MB_PDU_FUNC_WRITE_MUL_ADDR_OFF          ( MB_PDU_DATA_OFF + 0 )
-#define MB_PDU_FUNC_WRITE_MUL_REGCNT_OFF        ( MB_PDU_DATA_OFF + 2 )
-#define MB_PDU_FUNC_WRITE_MUL_BYTECNT_OFF       ( MB_PDU_DATA_OFF + 4 )
-#define MB_PDU_FUNC_WRITE_MUL_VALUES_OFF        ( MB_PDU_DATA_OFF + 5 )
-#define MB_PDU_FUNC_WRITE_MUL_SIZE_MIN          ( 5 )
-#define MB_PDU_FUNC_WRITE_MUL_REGCNT_MAX        ( 0x0078 )
+#define MB_PDU_FUNC_WRITE_MUL_ADDR_OFF         ( MB_PDU_DATA_OFF + 0 )
+#define MB_PDU_FUNC_WRITE_MUL_REGCNT_OFF       ( MB_PDU_DATA_OFF + 2 )
+#define MB_PDU_FUNC_WRITE_MUL_BYTECNT_OFF      ( MB_PDU_DATA_OFF + 4 )
+#define MB_PDU_FUNC_WRITE_MUL_VALUES_OFF       ( MB_PDU_DATA_OFF + 5 )
+#define MB_PDU_FUNC_WRITE_MUL_SIZE_MIN         ( 5 )
+#define MB_PDU_FUNC_WRITE_MUL_REGCNT_MAX       ( 0x0078 )
 
-#define MB_PDU_FUNC_READWRITE_READ_ADDR_OFF     ( MB_PDU_DATA_OFF + 0 )
-#define MB_PDU_FUNC_READWRITE_READ_REGCNT_OFF   ( MB_PDU_DATA_OFF + 2 )
-#define MB_PDU_FUNC_READWRITE_WRITE_ADDR_OFF    ( MB_PDU_DATA_OFF + 4 )
-#define MB_PDU_FUNC_READWRITE_WRITE_REGCNT_OFF  ( MB_PDU_DATA_OFF + 6 )
-#define MB_PDU_FUNC_READWRITE_BYTECNT_OFF       ( MB_PDU_DATA_OFF + 8 )
-#define MB_PDU_FUNC_READWRITE_WRITE_VALUES_OFF  ( MB_PDU_DATA_OFF + 9 )
-#define MB_PDU_FUNC_READWRITE_SIZE_MIN          ( 9 )
+#define MB_PDU_FUNC_READWRITE_READ_ADDR_OFF    ( MB_PDU_DATA_OFF + 0 )
+#define MB_PDU_FUNC_READWRITE_READ_REGCNT_OFF  ( MB_PDU_DATA_OFF + 2 )
+#define MB_PDU_FUNC_READWRITE_WRITE_ADDR_OFF   ( MB_PDU_DATA_OFF + 4 )
+#define MB_PDU_FUNC_READWRITE_WRITE_REGCNT_OFF ( MB_PDU_DATA_OFF + 6 )
+#define MB_PDU_FUNC_READWRITE_BYTECNT_OFF      ( MB_PDU_DATA_OFF + 8 )
+#define MB_PDU_FUNC_READWRITE_WRITE_VALUES_OFF ( MB_PDU_DATA_OFF + 9 )
+#define MB_PDU_FUNC_READWRITE_SIZE_MIN         ( 9 )
 
 /* ----------------------- Static functions ---------------------------------*/
-eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
+eMBException prveMBError2Exception( eMBErrorCode eErrorCode );
 
 /* ----------------------- Start implementation -----------------------------*/
 
 #if MB_FUNC_WRITE_HOLDING_ENABLED > 0
 
 eMBException
-eMBFuncWriteHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
+eMBFuncWriteHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
 {
-    USHORT          usRegAddress;
-    eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    USHORT       usRegAddress;
+    eMBException eStatus = MB_EX_NONE;
+    eMBErrorCode eRegStatus;
 
     if( *usLen == ( MB_PDU_FUNC_WRITE_SIZE + MB_PDU_SIZE_MIN ) )
     {
@@ -105,14 +102,14 @@ eMBFuncWriteHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
 
 #if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED > 0
 eMBException
-eMBFuncWriteMultipleHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
+eMBFuncWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
 {
-    USHORT          usRegAddress;
-    USHORT          usRegCount;
-    UCHAR           ucRegByteCount;
+    USHORT       usRegAddress;
+    USHORT       usRegCount;
+    UCHAR        ucRegByteCount;
 
-    eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    eMBException eStatus = MB_EX_NONE;
+    eMBErrorCode eRegStatus;
 
     if( *usLen >= ( MB_PDU_FUNC_WRITE_MUL_SIZE_MIN + MB_PDU_SIZE_MIN ) )
     {
@@ -163,14 +160,14 @@ eMBFuncWriteMultipleHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
 #if MB_FUNC_READ_HOLDING_ENABLED > 0
 
 eMBException
-eMBFuncReadHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
+eMBFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
 {
-    USHORT          usRegAddress;
-    USHORT          usRegCount;
-    UCHAR          *pucFrameCur;
+    USHORT       usRegAddress;
+    USHORT       usRegCount;
+    UCHAR *      pucFrameCur;
 
-    eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    eMBException eStatus = MB_EX_NONE;
+    eMBErrorCode eRegStatus;
 
     if( *usLen == ( MB_PDU_FUNC_READ_SIZE + MB_PDU_SIZE_MIN ) )
     {
@@ -188,7 +185,7 @@ eMBFuncReadHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
         {
             /* Set the current PDU data pointer to the beginning. */
             pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
-            *usLen = MB_PDU_FUNC_OFF;
+            *usLen      = MB_PDU_FUNC_OFF;
 
             /* First byte contains the function code. */
             *pucFrameCur++ = MB_FUNC_READ_HOLDING_REGISTER;
@@ -228,17 +225,17 @@ eMBFuncReadHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
 #if MB_FUNC_READWRITE_HOLDING_ENABLED > 0
 
 eMBException
-eMBFuncReadWriteMultipleHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
+eMBFuncReadWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
 {
-    USHORT          usRegReadAddress;
-    USHORT          usRegReadCount;
-    USHORT          usRegWriteAddress;
-    USHORT          usRegWriteCount;
-    UCHAR           ucRegWriteByteCount;
-    UCHAR          *pucFrameCur;
+    USHORT       usRegReadAddress;
+    USHORT       usRegReadCount;
+    USHORT       usRegWriteAddress;
+    USHORT       usRegWriteCount;
+    UCHAR        ucRegWriteByteCount;
+    UCHAR *      pucFrameCur;
 
-    eMBException    eStatus = MB_EX_NONE;
-    eMBErrorCode    eRegStatus;
+    eMBException eStatus = MB_EX_NONE;
+    eMBErrorCode eRegStatus;
 
     if( *usLen >= ( MB_PDU_FUNC_READWRITE_SIZE_MIN + MB_PDU_SIZE_MIN ) )
     {
@@ -262,15 +259,14 @@ eMBFuncReadWriteMultipleHoldingRegister( UCHAR *pucFrame, USHORT *usLen )
             && ( usRegWriteCount <= 0x79 ) && ( ( 2 * usRegWriteCount ) == ucRegWriteByteCount ) )
         {
             /* Make callback to update the register values. */
-            eRegStatus =
-                eMBRegHoldingCB( &pucFrame[MB_PDU_FUNC_READWRITE_WRITE_VALUES_OFF], usRegWriteAddress, usRegWriteCount,
-                                 MB_REG_WRITE );
+            eRegStatus = eMBRegHoldingCB( &pucFrame[MB_PDU_FUNC_READWRITE_WRITE_VALUES_OFF], usRegWriteAddress,
+                                          usRegWriteCount, MB_REG_WRITE );
 
             if( eRegStatus == MB_ENOERR )
             {
                 /* Set the current PDU data pointer to the beginning. */
                 pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
-                *usLen = MB_PDU_FUNC_OFF;
+                *usLen      = MB_PDU_FUNC_OFF;
 
                 /* First byte contains the function code. */
                 *pucFrameCur++ = MB_FUNC_READWRITE_MULTIPLE_REGISTERS;

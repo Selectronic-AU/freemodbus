@@ -1,0 +1,21 @@
+--declaration-indentation 16
+--procnames-start-lines
+--blank-lines-after-declarations
+--blank-lines-after-procedures
+--blank-lines-before-block-comments
+--break-before-boolean-operator
+--braces-after-if-line
+--braces-after-struct-decl-line
+--brace-indent 0
+--case-indentation 0
+--no-space-after-function-call-names
+--no-space-after-for
+--no-space-after-if
+--no-space-after-while
+--no-space-after-casts
+--space-after-parentheses
+--dont-format-comments
+--indent-level 4
+--ignore-newlines
+--no-tabs
+--line-length 120

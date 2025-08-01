@@ -30,12 +30,14 @@
 
 /* ----------------------- Defines ------------------------------------------*/
 #undef INLINE
-#define INLINE                  inline
+#define INLINE      inline
 
-#define assert( x )             LWIP_ASSERT( #x, x );
+#define assert( x ) LWIP_ASSERT( #x, x );
 
-#define PR_BEGIN_EXTERN_C       extern "C" {
-#define PR_END_EXTERN_C         }
+#define PR_BEGIN_EXTERN_C                                                                                              \
+    extern "C"                                                                                                         \
+    {
+#define PR_END_EXTERN_C }
 
 /*
 #ifndef TRUE
@@ -52,19 +54,19 @@ PR_BEGIN_EXTERN_C
 /* *INDENT-ON* */
 #endif
 
-#define MB_TCP_DEBUG            1       /* Debug output in TCP module. */
+#define MB_TCP_DEBUG 1 /* Debug output in TCP module. */
 
 /* ----------------------- Type definitions ---------------------------------*/
-typedef char    BOOL;
+typedef char           BOOL;
 
-typedef unsigned char UCHAR;
-typedef char    CHAR;
+typedef unsigned char  UCHAR;
+typedef char           CHAR;
 
 typedef unsigned short USHORT;
-typedef short   SHORT;
+typedef short          SHORT;
 
-typedef unsigned long ULONG;
-typedef long    LONG;
+typedef unsigned long  ULONG;
+typedef long           LONG;
 
 #ifdef MB_TCP_DEBUG
 typedef enum
@@ -78,8 +80,8 @@ typedef enum
 
 /* ----------------------- Function prototypes ------------------------------*/
 #ifdef MB_TCP_DEBUG
-void            vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule, const CHAR * szFmt, ... );
-void            prvvMBTCPLogFrame( UCHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen );
+void vMBPortLog( eMBPortLogLevel eLevel, const CHAR * szModule, const CHAR * szFmt, ... );
+void prvvMBTCPLogFrame( UCHAR * pucMsg, UCHAR * pucFrame, USHORT usFrameLen );
 #endif
 
 #ifdef __cplusplus

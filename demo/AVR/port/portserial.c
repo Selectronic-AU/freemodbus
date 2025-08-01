@@ -33,9 +33,8 @@
 #include "mb.h"
 #include "mbport.h"
 
-#define UART_BAUD_RATE          9600
-#define UART_BAUD_CALC(UART_BAUD_RATE,F_OSC) \
-    ( ( F_OSC ) / ( ( UART_BAUD_RATE ) * 16UL ) - 1 )
+#define UART_BAUD_RATE                          9600
+#define UART_BAUD_CALC( UART_BAUD_RATE, F_OSC ) ( ( F_OSC ) / ( ( UART_BAUD_RATE ) *16UL ) - 1 )
 
 //#define UART_UCSRB  UCSR0B
 
@@ -73,14 +72,14 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 BOOL
 xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
-    UCHAR           ucUCSRC = 0;
+    UCHAR ucUCSRC = 0;
 
     /* prevent compiler warning. */
-    ( void )ucPORT;
+    ( void ) ucPORT;
 
     UBRR = UART_BAUD_CALC( ulBaudRate, F_CPU );
 
-    switch ( eParity )
+    switch( eParity )
     {
     case MB_PAR_EVEN:
         ucUCSRC |= _BV( UPM1 );
@@ -92,7 +91,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         break;
     }
 
-    switch ( ucDataBits )
+    switch( ucDataBits )
     {
     case 8:
         ucUCSRC |= _BV( UCSZ0 ) | _BV( UCSZ1 );
@@ -102,17 +101,17 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
         break;
     }
 
-#if defined (__AVR_ATmega168__)
+#if defined( __AVR_ATmega168__ )
     UCSRC |= ucUCSRC;
-#elif defined (__AVR_ATmega169__)
+#elif defined( __AVR_ATmega169__ )
     UCSRC |= ucUCSRC;
-#elif defined (__AVR_ATmega8__)
+#elif defined( __AVR_ATmega8__ )
     UCSRC = _BV( URSEL ) | ucUCSRC;
-#elif defined (__AVR_ATmega16__)
+#elif defined( __AVR_ATmega16__ )
     UCSRC = _BV( URSEL ) | ucUCSRC;
-#elif defined (__AVR_ATmega32__)
+#elif defined( __AVR_ATmega32__ )
     UCSRC = _BV( URSEL ) | ucUCSRC;
-#elif defined (__AVR_ATmega128__)
+#elif defined( __AVR_ATmega128__ )
     UCSRC |= ucUCSRC;
 #endif
 
@@ -132,25 +131,16 @@ xMBPortSerialPutByte( CHAR ucByte )
 }
 
 BOOL
-xMBPortSerialGetByte( CHAR *pucByte )
+xMBPortSerialGetByte( CHAR * pucByte )
 {
     *pucByte = UDR;
     return TRUE;
 }
 
-SIGNAL( SIG_USART_DATA )
-{
-    pxMBFrameCBTransmitterEmpty(  );
-}
+SIGNAL( SIG_USART_DATA ) { pxMBFrameCBTransmitterEmpty( ); }
 
-SIGNAL( SIG_USART_RECV )
-{
-    pxMBFrameCBByteReceived(  );
-}
+SIGNAL( SIG_USART_RECV ) { pxMBFrameCBByteReceived( ); }
 
 #ifdef RTS_ENABLE
-SIGNAL( SIG_UART_TRANS )
-{
-    RTS_LOW;
-}
+SIGNAL( SIG_UART_TRANS ) { RTS_LOW; }
 #endif

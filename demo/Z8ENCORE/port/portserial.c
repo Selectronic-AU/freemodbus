@@ -25,25 +25,24 @@
 #include "mb.h"
 #include "mbport.h"
 
-#define PORTA_UART_RXD          0x10
-#define PORTA_UART_TXD          0x20
+#define PORTA_UART_RXD        0x10
+#define PORTA_UART_TXD        0x20
 
-#define RX_ENABLE               0x40
-#define TX_ENABLE               0x80
+#define RX_ENABLE             0x40
+#define TX_ENABLE             0x80
 
-#define UART0_RXD_INT_PENDING   0x10
-#define UART0_TXD_INT_PENDING   0x08
+#define UART0_RXD_INT_PENDING 0x10
+#define UART0_TXD_INT_PENDING 0x08
 
-#define UART0_RXD_INT_EN_H      0x10
-#define UART0_RXD_INT_EN_L      0x10
-#define UART0_TXD_INT_EN_H      0x08
-#define UART0_TXD_INT_EN_L      0x08
+#define UART0_RXD_INT_EN_H    0x10
+#define UART0_RXD_INT_EN_L    0x10
+#define UART0_TXD_INT_EN_H    0x08
+#define UART0_TXD_INT_EN_L    0x08
 
-#define UART_PARITY_ODD         0x18
-#define UART_PARITY_EVEN        0x10
+#define UART_PARITY_ODD       0x18
+#define UART_PARITY_EVEN      0x10
 
-#define UART_ERRORS             0x70
-
+#define UART_ERRORS           0x70
 
 /* ----------------------- static functions ---------------------------------*/
 static void interrupt prvvUARTTxReadyISR( void );
@@ -79,14 +78,14 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 BOOL
 xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
-    UCHAR           cfg = 0;
+    UCHAR cfg = 0;
 
     if( ucDataBits != 8 )
     {
         return FALSE;
     }
 
-    switch ( eParity )
+    switch( eParity )
     {
     case MB_PAR_NONE:
         break;
@@ -111,7 +110,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     PAAF |= PORTA_UART_RXD | PORTA_UART_TXD;
 
     /* Disable Interrupts */
-    DI(  );
+    DI( );
 
     /* Configure Stop Bits, Parity and Enable Rx/Tx */
     U0CTL0 = cfg | RX_ENABLE | TX_ENABLE;
@@ -127,7 +126,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
     SET_VECTOR( UART0_TX, prvvUARTTxReadyISR );
 
     /* Enable Interrupts */
-    EI(  );
+    EI( );
 
     return TRUE;
 }
@@ -148,7 +147,7 @@ xMBPortSerialPutByte( CHAR ucByte )
 }
 
 BOOL
-xMBPortSerialGetByte( CHAR *pucByte )
+xMBPortSerialGetByte( CHAR * pucByte )
 {
     /* Return the byte in the UARTs receive buffer. This function is called
      * by the protocol stack after pxMBFrameCBByteReceived( ) has been called.
@@ -171,14 +170,13 @@ xMBPortSerialGetByte( CHAR *pucByte )
  */
 static unsigned int uiCnt = 0;
 
-static void     interrupt
+static void interrupt
 prvvUARTTxReadyISR( void )
 {
-    pxMBFrameCBTransmitterEmpty(  );
+    pxMBFrameCBTransmitterEmpty( );
 
     IRQ0 &= ~UART0_TXD_INT_PENDING;
 }
-
 
 /*
  * Create an interrupt handler for the receive interrupt for your target
@@ -186,10 +184,10 @@ prvvUARTTxReadyISR( void )
  * protocol stack will then call xMBPortSerialGetByte( ) to retrieve the
  * character.
  */
-static void     interrupt
+static void interrupt
 prvvUARTRxISR( void )
 {
-    UCHAR           tmp;
+    UCHAR tmp;
 
     /* Verify UART error flags */
     if( U0STAT0 & UART_ERRORS )
@@ -198,7 +196,7 @@ prvvUARTRxISR( void )
     }
     else
     {
-        pxMBFrameCBByteReceived(  );
+        pxMBFrameCBByteReceived( );
     }
 
     IRQ0 &= ~UART0_RXD_INT_PENDING;
