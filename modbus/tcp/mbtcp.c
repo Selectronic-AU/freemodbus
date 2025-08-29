@@ -31,6 +31,7 @@
 
 /* ----------------------- System includes ----------------------------------*/
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -39,12 +40,10 @@
 
 /* ----------------------- Modbus includes ----------------------------------*/
 #include "mb.h"
-#include "mbconfig.h"
 #include "mbframe.h"
-#include "mbport.h"
 #include "mbtcp.h"
 
-#if MB_TCP_ENABLED > 0
+#if MB_SLAVE_TCP_ENABLED > 0
 
 /* ----------------------- Defines ------------------------------------------*/
 

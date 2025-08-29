@@ -36,9 +36,9 @@ export MB_PORT_FREERTOS_TIMERS ?= ${MB_PORT_FREERTOS}
 # endif
 
 # Enable FreeMODBUS protocols.
-# export MB_ASCII_ENABLED ?= 1
-export MB_RTU_ENABLED ?= 1
-# export MB_TCP_ENABLED ?= 1
+# export MB_SLAVE_ASCII_ENABLED ?= 1
+export MB_SLAVE_RTU_ENABLED ?= 1
+# export MB_SLAVE_TCP_ENABLED ?= 1
 
 # Create a list of all FreeMODBUS (MB_*) variables.
 FREEMODBUS.VARS = $(sort $(filter MB_%,${.VARIABLES}))

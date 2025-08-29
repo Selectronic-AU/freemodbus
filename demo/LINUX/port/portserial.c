@@ -16,7 +16,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * File: $Id$
  */
 
 /* ----------------------- Standard includes --------------------------------*/
@@ -39,7 +38,7 @@
 #include "mbconfig.h"
 
 /* ----------------------- Defines  -----------------------------------------*/
-#if MB_ASCII_ENABLED == 1
+#if MB_SLAVE_ASCII_ENABLED == 1
 #define BUF_SIZE 513 /* must hold a complete ASCII frame. */
 #else
 #define BUF_SIZE 256 /* must hold a complete RTU frame. */

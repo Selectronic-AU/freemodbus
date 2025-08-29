@@ -77,5 +77,3 @@ where the 0xFF at the end of line is the actual value.
 [3] AVRDUDE AVR Downloader/UploaDEr:  http://www.nongnu.org/avrdude/
 [4] WinAVR: http://winavr.sourceforge.net/
 [5] FieldTalk Modpoll: http://www.focus-sw.com/fieldtalk/modpoll.html
-
-Version: $Id: README.txt,v 1.1 2006/05/08 21:07:01 wolti Exp $

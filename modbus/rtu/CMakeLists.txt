@@ -3,6 +3,7 @@
 add_library(freemodbus-rtu STATIC
     mbcrc.c
     mbrtu.c
+    mbrtu_m.c
 )
 
 target_include_directories(freemodbus-rtu PUBLIC
