@@ -54,7 +54,4 @@ satisfied for the port to work.
    Please also note that the vector table must be in  RAM  such  that  the
    FreeRTOS port can install a traphandler for the portYIELD() call.
 
-$Id: README.txt,v 1.1 2006/08/30 23:18:06 wolti Exp $
-
 MCF5235 + lwIP port - Copyright (c) 2006 Christian Walter.
-

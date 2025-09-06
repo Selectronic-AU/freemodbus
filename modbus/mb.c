@@ -29,6 +29,7 @@
 
 /* ----------------------- System includes ----------------------------------*/
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -36,17 +37,18 @@
 #include "port.h"
 
 /* ----------------------- Modbus includes ----------------------------------*/
+
 #include "mb.h"
 #include "mbframe.h"
 #include "mbfunc.h"
 
-#if MB_RTU_ENABLED == 1
+#if MB_SLAVE_RTU_ENABLED == 1
 #include "mbrtu.h"
 #endif
-#if MB_ASCII_ENABLED == 1
+#if MB_SLAVE_ASCII_ENABLED == 1
 #include "mbascii.h"
 #endif
-#if MB_TCP_ENABLED == 1
+#if MB_SLAVE_TCP_ENABLED == 1
 #include "mbtcp.h"
 #endif
 
@@ -68,6 +70,7 @@ static enum
 
 /* Functions pointer which are initialized in eMBInit( ). Depending on the
  * mode (RTU or ASCII) the are set to the correct implementations.
+ * Using for Modbus Slave
  */
 static peMBFrameSend    peMBFrameSendCur;
 static pvMBFrameStart   pvMBFrameStartCur;
@@ -78,6 +81,7 @@ static pvMBFrameClose   pvMBFrameCloseCur;
 /* Callback functions required by the porting layer. They are called when
  * an external event has happend which includes a timeout or the reception
  * or transmission of a character.
+ * Using for Modbus Slave
  */
 BOOL ( *pxMBFrameCBByteReceived )( void );
 BOOL ( *pxMBFrameCBTransmitterEmpty )( void );
@@ -137,8 +141,8 @@ eMBInit( eMBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eM
 
         switch( eMode )
         {
-#if MB_RTU_ENABLED > 0
         case MB_RTU:
+#if MB_SLAVE_RTU_ENABLED > 0
             pvMBFrameStartCur           = eMBRTUStart;
             pvMBFrameStopCur            = eMBRTUStop;
             peMBFrameSendCur            = eMBRTUSend;
@@ -149,10 +153,13 @@ eMBInit( eMBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eM
             pxMBPortCBTimerExpired      = xMBRTUTimerT35Expired;
 
             eStatus                     = eMBRTUInit( ucMBAddress, ucPort, ulBaudRate, eParity );
-            break;
+#else
+            eStatus = MB_EINVAL;
 #endif
-#if MB_ASCII_ENABLED > 0
+            break;
+
         case MB_ASCII:
+#if MB_SLAVE_ASCII_ENABLED > 0
             pvMBFrameStartCur           = eMBASCIIStart;
             pvMBFrameStopCur            = eMBASCIIStop;
             peMBFrameSendCur            = eMBASCIISend;
@@ -163,11 +170,15 @@ eMBInit( eMBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eM
             pxMBPortCBTimerExpired      = xMBASCIITimerT1SExpired;
 
             eStatus                     = eMBASCIIInit( ucMBAddress, ucPort, ulBaudRate, eParity );
-            break;
+#else
+            eStatus = MB_EINVAL;
 #endif
+            break;
+
         case MB_TCP:
         default:
             eStatus = MB_EINVAL;
+            break;
         }
 
         if( eStatus == MB_ENOERR )
@@ -187,7 +198,7 @@ eMBInit( eMBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, eM
     return eStatus;
 }
 
-#if MB_TCP_ENABLED > 0
+#if MB_SLAVE_TCP_ENABLED > 0
 eMBErrorCode
 eMBTCPInit( USHORT ucTCPPort )
 {
