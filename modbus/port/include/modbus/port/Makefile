@@ -10,7 +10,7 @@ export PROJECT ?= freemodbus
 language = c
 subdir = modbus/port
 
-H_SRC = config.h freertos.h types.h
+H_SRC = config.h defaults.h freertos.h types.h
 
 # Relative path to top of freeMODBUS sources.
 top_mbdir = ../../../..
