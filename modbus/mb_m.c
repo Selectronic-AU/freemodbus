@@ -94,8 +94,8 @@ BOOL ( *pxMBMasterPortCBTimerExpired )( void );
 BOOL ( *pxMBMasterFrameCBReceiveFSMCur )( void );
 BOOL ( *pxMBMasterFrameCBTransmitFSMCur )( void );
 
-/* An array of Modbus functions handlers which associates Modbus function
- * codes with implementing functions.
+/* An array of Modbus function handlers which associate Modbus function
+ * codes with their implementing functions.
  */
 static xMBFunctionHandler xMasterFuncHandlers[MB_FUNC_HANDLERS_MAX] = {
 #if MB_FUNC_OTHER_REP_SLAVEID_ENABLED > 0

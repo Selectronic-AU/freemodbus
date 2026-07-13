@@ -39,7 +39,7 @@ PR_BEGIN_EXTERN_C
 /* *INDENT-ON* */
 #endif
 
-#if MB_FUNC_OTHER_REP_SLAVEID_BUF > 0
+#if MB_FUNC_OTHER_REP_SLAVEID_ENABLED > 0
 eMBException eMBFuncReportSlaveID( UCHAR * pucFrame, USHORT * usLen );
 #endif
 

@@ -1,10 +1,14 @@
-# freemodbus/modbus/tcp/CMakeLists.txt
+#
+# CMAKELIST.TXT -- CMake configuration for the freemodbus_tcp library
+#
 
-add_library(freemodbus-tcp STATIC
+add_library(freemodbus_tcp OBJECT
     mbtcp.c
 )
 
-target_include_directories(freemodbus-tcp PUBLIC
+target_link_libraries(freemodbus_tcp PUBLIC freemodbus_port)
+
+target_include_directories(freemodbus_tcp PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/..
     ${CMAKE_CURRENT_SOURCE_DIR}/../include

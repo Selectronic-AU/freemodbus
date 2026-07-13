@@ -8,9 +8,7 @@
 #ifndef MODBUS_PORT_FREERTOS_H
 #define MODBUS_PORT_FREERTOS_H
 
-#if !defined( __freertos__ )
-#error "This file should only be included in a FreeRTOS build"
-#endif
+#if defined( MB_PORT_FREERTOS ) && ( MB_PORT_FREERTOS != 0 )
 
 #include <FreeRTOS.h>
 #include <queue.h>  /* <freertos/queue.h> */
@@ -19,5 +17,7 @@
 
 #define ENTER_CRITICAL_SECTION( ) taskENTER_CRITICAL( )
 #define EXIT_CRITICAL_SECTION( )  taskEXIT_CRITICAL( )
+
+#endif /* MB_PORT_FREERTOS */
 
 #endif /* MODBUS_PORT_FREERTOS_H */
