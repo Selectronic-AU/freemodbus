@@ -10,8 +10,10 @@
 
 #include <modbus/port/types.h>
 
-#if defined( __freertos__ )
+#if defined( MB_PORT_FREERTOS ) && ( MB_PORT_FREERTOS != 0 )
 #include <modbus/port/freertos.h>
-#endif
+#endif /* MB_PORT_FREERTOS */
+
+#include <modbus/port/defaults.h>
 
 #endif /* MODBUS_PORT_H */

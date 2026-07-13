@@ -1,10 +1,11 @@
-# freemodbus/modbus/ascii/CMakeLists.txt
+#
+# CMAKELIST.TXT -- CMake configuration for the freemodbus-ascii library
+#
 
-set(ASCII_SRC
+add_library(freemodbus-ascii OBJECT
     mbascii.c
 )
-
-add_library(freemodbus-ascii STATIC ${ASCII_SRC})
+target_link_libraries(freemodbus-ascii PUBLIC freemodbus_config)
 
 target_include_directories(freemodbus-ascii PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
