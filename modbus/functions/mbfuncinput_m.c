@@ -54,7 +54,7 @@
 eMBException prveMBError2Exception( eMBErrorCode eErrorCode );
 
 /* ----------------------- Start implementation -----------------------------*/
-#if MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_TCP_ENABLED > 0
+#if MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0
 #if MB_FUNC_READ_INPUT_ENABLED > 0
 
 /**
@@ -145,4 +145,4 @@ eMBMasterFuncReadInputRegister( UCHAR * pucFrame, USHORT * usLen )
 }
 
 #endif
-#endif // MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_TCP_ENABLED > 0
+#endif // MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0
