@@ -67,11 +67,6 @@ PR_BEGIN_EXTERN_C
 #define MB_MASTER_RTU_ENABLED ( 1 )
 #endif
 
-/*! \brief If Modbus Master TCP support is enabled. */
-#ifndef MB_MASTER_TCP_ENABLED
-#define MB_MASTER_TCP_ENABLED ( 0 )
-#endif
-
 /*! \brief If Modbus Slave ASCII support is enabled. */
 #ifndef MB_SLAVE_ASCII_ENABLED
 #define MB_SLAVE_ASCII_ENABLED ( 0 )
@@ -135,7 +130,7 @@ PR_BEGIN_EXTERN_C
 
 /*! \brief If the <em>Report Slave ID</em> function should be enabled. */
 #ifndef MB_FUNC_OTHER_REP_SLAVEID_ENABLED
-#define MB_FUNC_OTHER_REP_SLAVEID_ENABLED ( 1 )
+#define MB_FUNC_OTHER_REP_SLAVEID_ENABLED ( 0 )
 #endif
 
 /*! \brief If the <em>Read Input Registers</em> function should be enabled. */

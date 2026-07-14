@@ -39,11 +39,20 @@
 
 #if MB_FUNC_OTHER_REP_SLAVEID_ENABLED > 0
 
-#if MB_FUNC_OTHER_REP_SLAVEID_BUF < 2
-#error "Define at least 2 bytes for MB_FUNC_OTHER_REP_SLAVEID_BUF"
+/* ----------------------- Defines ------------------------------------------*/
+
+#define MB_REPORT_MIN            3
+#define MB_REPORT_BYTECNT_OFF    ( 0 )
+#define MB_REPORT_SLAVEID_OFF    ( 1 )
+#define MB_REPORT_STATUS_OFF     ( 2 )
+#define MB_REPORT_ADDITIONAL_OFF ( 3 )
+
+#if MB_FUNC_OTHER_REP_SLAVEID_BUF < MB_REPORT_MIN
+#error "Define at least 3 bytes for MB_FUNC_OTHER_REP_SLAVEID_BUF"
 #endif
 
 /* ----------------------- Static variables ---------------------------------*/
+
 static UCHAR  ucMBSlaveID[MB_FUNC_OTHER_REP_SLAVEID_BUF];
 static USHORT usMBSlaveIDLen;
 
@@ -54,19 +63,22 @@ eMBSetSlaveID( UCHAR ucSlaveID, BOOL xIsRunning, UCHAR const * pucAdditional, US
 {
     eMBErrorCode eStatus = MB_ENOERR;
 
-    /* the first byte and second byte in the buffer is reserved for
-     * the parameter ucSlaveID and the running flag. The rest of
-     * the buffer is available for additional data. */
-    if( usAdditionalLen < ( MB_FUNC_OTHER_REP_SLAVEID_BUF - 2 ) )
+    /* The first three bytes are reserved for the Modbus response layout:
+     * byte count, slave ID, and run indicator status. The remaining bytes
+     * are available for additional identification data. */
+
+    if( usAdditionalLen <= ( MB_FUNC_OTHER_REP_SLAVEID_BUF - MB_REPORT_MIN )
+        && usAdditionalLen <= ( MB_PDU_SIZE_MAX - MB_PDU_DATA_OFF - MB_REPORT_MIN ) )
     {
-        usMBSlaveIDLen                = 0;
-        ucMBSlaveID[usMBSlaveIDLen++] = ucSlaveID;
-        ucMBSlaveID[usMBSlaveIDLen++] = ( UCHAR ) ( xIsRunning ? 0xFF : 0x00 );
+        ucMBSlaveID[MB_REPORT_BYTECNT_OFF] = 2;
+        ucMBSlaveID[MB_REPORT_SLAVEID_OFF] = ucSlaveID;
+        ucMBSlaveID[MB_REPORT_STATUS_OFF]  = ( UCHAR ) ( xIsRunning ? 0xFF : 0x00 );
         if( usAdditionalLen > 0 )
         {
-            memcpy( &ucMBSlaveID[usMBSlaveIDLen], pucAdditional, ( size_t ) usAdditionalLen );
-            usMBSlaveIDLen += usAdditionalLen;
+            memcpy( &ucMBSlaveID[MB_REPORT_ADDITIONAL_OFF], pucAdditional, ( size_t ) usAdditionalLen );
+            ucMBSlaveID[MB_REPORT_BYTECNT_OFF] += ( UCHAR ) usAdditionalLen;
         }
+        usMBSlaveIDLen = MB_REPORT_MIN + usAdditionalLen;
     }
     else
     {
