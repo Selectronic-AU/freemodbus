@@ -17,6 +17,7 @@ add_library(freemodbus-functions OBJECT
     mbfuncdisc_m.c
     mbfuncholding_m.c
     mbfuncinput_m.c
+    mbfuncother_m.c
 )
 
 target_link_libraries(freemodbus-functions PUBLIC freemodbus_config)
