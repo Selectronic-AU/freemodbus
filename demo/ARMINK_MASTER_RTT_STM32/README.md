@@ -93,7 +93,7 @@ The following interfaces in this file need to be ported by the user:
 | vMBMasterErrorCBRespondTimeout  | Master response timeout callback              |
 | vMBMasterErrorCBReceiveData     | Master receive data error callback            |
 | vMBMasterErrorCBExecuteFunction | Master execute Modbus function error callback |
-| vMBMasterCBRequestScuuess       | Master request success callback               |
+| vMBMasterCBRequestSuccess       | Master request success callback               |
 | eMBMasterWaitRequestFinish      | Master wait for request completion callback   |
 
 **For RTOS porting**, mainly use OS thread synchronization techniques.
