@@ -193,7 +193,7 @@ vMBMasterErrorCBExecuteFunction( UCHAR ucDestAddress, const UCHAR * pucPDUData, 
  *
  */
 void
-vMBMasterCBRequestScuuess( void )
+vMBMasterCBRequestSuccess( void )
 {
 
     /**

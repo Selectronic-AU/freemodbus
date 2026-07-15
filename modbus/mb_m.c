@@ -368,7 +368,7 @@ eMBMasterHandleEvent( eMBMasterEventType eEvent )
         }
         else
         {
-            vMBMasterCBRequestScuuess( );
+            vMBMasterCBRequestSuccess( );
             vMBMasterRunResRelease( );
         }
         break;
