@@ -173,7 +173,7 @@ extern void vMBMasterErrorCBReceiveData( UCHAR ucDestAddress, const UCHAR * pucP
 
 extern void vMBMasterErrorCBExecuteFunction( UCHAR ucDestAddress, const UCHAR * pucPDUData, USHORT ucPDULength );
 
-extern void vMBMasterCBRequestScuuess( void );
+extern void vMBMasterCBRequestSuccess( void );
 
 /* ----------------------- Callback for the protocol stack ------------------*/
 
