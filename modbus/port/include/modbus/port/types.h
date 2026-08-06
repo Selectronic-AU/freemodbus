@@ -12,13 +12,18 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#if defined( USE_FULL_ASSERT )
+#if defined( __has_include )
 #if __has_include( <stm32_assert.h> )
 #include <stm32_assert.h>
 #endif
-#define assert_param( expr ) ( ( expr ) ? ( void ) 0U : assert_failed( ( uint8_t * ) __FILE__, __LINE__ ) )
-/* Exported functions ------------------------------------------------------- */
-extern void assert_failed( uint8_t * file, uint32_t line );
+#endif
+
+#ifndef assert_param
+#if defined(USE_FULL_ASSERT) && !defined(NDEBUG)
+#define assert_param(expr) assert(expr)
+#else
+#define assert_param(expr) ((void)0)
+#endif
 #endif
 
 #ifndef __unused
