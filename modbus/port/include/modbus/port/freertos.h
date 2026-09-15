@@ -8,7 +8,7 @@
 #ifndef MODBUS_PORT_FREERTOS_H
 #define MODBUS_PORT_FREERTOS_H
 
-#if defined( MB_PORT_FREERTOS ) && ( MB_PORT_FREERTOS != 0 )
+#if MB_PORT_FREERTOS
 
 #include <FreeRTOS.h>
 #include <queue.h>  /* <freertos/queue.h> */
@@ -17,6 +17,12 @@
 
 #define ENTER_CRITICAL_SECTION( ) taskENTER_CRITICAL( )
 #define EXIT_CRITICAL_SECTION( )  taskEXIT_CRITICAL( )
+
+#if defined(__linux__) || defined(_WIN32)
+#define IS_ISR_CONTEXT( ) ( 0 )
+#else
+#define IS_ISR_CONTEXT( ) xPortIsInsideInterrupt( )
+#endif
 
 #endif /* MB_PORT_FREERTOS */
 

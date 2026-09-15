@@ -6,10 +6,14 @@
  */
 
 #include <modbus/mb.h>
+#include <modbus/mb_m.h>
+
 #include <modbus/port/freertos.h>
 #include <modbus/port/types.h>
 
-#if defined( MB_PORT_FREERTOS_EVENT_QUEUE ) && MB_PORT_FREERTOS_EVENT_QUEUE
+#if MB_PORT_FREERTOS_EVENT_QUEUE
+
+#if MB_SLAVE_ASCII_ENABLED > 0 || MB_SLAVE_RTU_ENABLED > 0 || MB_SLAVE_TCP_ENABLED > 0
 
 static const UBaseType_t mb_event_queue_length = 2;
 static const UBaseType_t mb_event_queue_size   = sizeof( eMBEventType );
@@ -34,6 +38,17 @@ xMBPortEventInit( void )
 BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
+    if( IS_ISR_CONTEXT( ) )
+    {
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        const BOOL xEventPosted = xQueueSendFromISR( mb_event_queue_handle, &eEvent, &xHigherPriorityTaskWoken ) == pdPASS;
+
+        if( xEventPosted && xHigherPriorityTaskWoken != pdFALSE )
+        {
+            portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+        }
+        return xEventPosted;
+    }
     return xQueueSend( mb_event_queue_handle, &eEvent, portMAX_DELAY ) == pdPASS;
 }
 
@@ -44,5 +59,59 @@ xMBPortEventGet( eMBEventType * eEvent )
 {
     return xQueueReceive( mb_event_queue_handle, eEvent, portMAX_DELAY ) == pdPASS;
 }
+
+#endif
+
+#if MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0
+
+static const UBaseType_t mb_master_event_queue_length = 2;
+static const UBaseType_t mb_master_event_queue_size   = sizeof( eMBMasterEventType );
+static QueueHandle_t     mb_master_event_queue_handle;
+static StaticQueue_t     mb_master_event_queue;
+
+// static uint8_t           mb_master_event_queue_data[mb_master_event_queue_length * mb_master_event_queue_size];
+static uint8_t mb_master_event_queue_data[2 * sizeof( eMBMasterEventType )];
+
+/// @brief Initialize the event queue for the FreeModbus master stack.
+/// @param  None.
+/// @return TRUE if the event queue was successfully initialized, FALSE otherwise.
+BOOL
+xMBMasterPortEventInit( void )
+{
+    mb_master_event_queue_handle = xQueueCreateStatic( mb_master_event_queue_length, mb_master_event_queue_size,
+                                                       mb_master_event_queue_data, &mb_master_event_queue );
+    return mb_master_event_queue_handle != NULL;
+}
+
+/// @brief Post an event to the FreeModbus master stack.
+/// @param eEvent The event to post.
+/// @return TRUE if the event was successfully posted, FALSE otherwise.
+BOOL
+xMBMasterPortEventPost( eMBMasterEventType eEvent )
+{
+    if( IS_ISR_CONTEXT( ) )
+    {
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        const BOOL xEventPosted = xQueueSendFromISR( mb_master_event_queue_handle, &eEvent, &xHigherPriorityTaskWoken ) == pdPASS;
+
+        if( xEventPosted && xHigherPriorityTaskWoken != pdFALSE )
+        {
+            portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+        }
+        return xEventPosted;
+    }
+    return xQueueSend( mb_master_event_queue_handle, &eEvent, portMAX_DELAY ) == pdPASS;
+}
+
+/// @brief Get an event from the FreeModbus master stack.
+/// @param eEvent Pointer to location to store the event.
+/// @return TRUE if an event was successfully retrieved, FALSE otherwise.
+BOOL
+xMBMasterPortEventGet( eMBMasterEventType * eEvent )
+{
+    return xQueueReceive( mb_master_event_queue_handle, eEvent, portMAX_DELAY ) == pdPASS;
+}
+
+#endif
 
 #endif /* MB_PORT_FREERTOS_EVENT_QUEUE */
