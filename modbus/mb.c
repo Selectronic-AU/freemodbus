@@ -56,6 +56,8 @@
 #define MB_PORT_HAS_CLOSE 0
 #endif
 
+#if MB_SLAVE_ASCII_ENABLED > 0 || MB_SLAVE_RTU_ENABLED > 0 || MB_SLAVE_TCP_ENABLED > 0
+
 /* ----------------------- Static variables ---------------------------------*/
 
 static UCHAR   ucMBAddress;
@@ -422,3 +424,5 @@ eMBHandleEvent( eMBEventType eEvent )
 
     return MB_ENOERR;
 }
+
+#endif /* MB_SLAVE_ASCII_ENABLED > 0 || MB_SLAVE_RTU_ENABLED > 0 || MB_SLAVE_TCP_ENABLED > 0 */
