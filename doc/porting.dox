@@ -103,7 +103,7 @@ for( ;; )
    \endcode
    See the STR71x port for an FreeRTOS example.
 
- - Change the function <code>xMBPortEventPost</code> to post an event to a queue. Note that this function will be called from an ISR so check your RTOS documentation for that.
+ - Change the function <code>xMBPortEventPost</code> to post an event to a queue. Note that this function may be called from an ISR so check your RTOS documentation for that.
 
  - Change the <code>xMBPortEventGet</code> to retrieve an event from that queue. The function <code>eMBPoll</code> periodically calls it. The function should block until an event has been posted to the queue.
 

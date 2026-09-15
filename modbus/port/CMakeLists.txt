@@ -1,15 +1,28 @@
-# freemodbus/modbus/port/CMakeLists.txt
+#
+# CMAKELIST.TXT -- CMake configuration for the freemodbus-port library
+#
 
-# Choose the correct port implementation here.
-# You can make this configurable with a CMake option if needed.
-set(PORT_IMPL freertos)
+add_library(freemodbus-port OBJECT)
 
-add_subdirectory(${PORT_IMPL})
+if(MB_PORT_FREERTOS)
+    if(NOT DEFINED MB_PORT_FREERTOS_EVENT_QUEUE)
+        message(FATAL_ERROR "MB_PORT_FREERTOS_EVENT_QUEUE has not been defined")
+    endif()
+    if(NOT DEFINED MB_PORT_FREERTOS_TIMERS)
+        message(FATAL_ERROR "MB_PORT_FREERTOS_TIMERS has not been defined")
+    endif()
+    target_sources(freemodbus-port PRIVATE
+        freertos/freertos_event.c
+        freertos/freertos_timer.c
+    )
+    if(TARGET freertos_config)
+        target_link_libraries(freemodbus_config INTERFACE freertos_config)
+    endif()
+endif()
 
-add_library(freemodbus-port INTERFACE)
+target_link_libraries(freemodbus-port PUBLIC freemodbus_config)
 
-target_include_directories(freemodbus-port INTERFACE
+target_include_directories(freemodbus-port PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/${PORT_IMPL}
+    ${CMAKE_CURRENT_SOURCE_DIR}/freertos
 )
-target_link_libraries(freemodbus-port INTERFACE freemodbus-port-${PORT_IMPL}) 

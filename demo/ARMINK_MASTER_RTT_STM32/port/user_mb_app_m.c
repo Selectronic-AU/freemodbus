@@ -17,10 +17,19 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  */
+
 #include "user_mb_app.h"
+
+#include <string.h>
 
 /*-----------------------Master mode use these variables----------------------*/
 #if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
+// Master mode:ReportSlaveID variables
+USHORT ucReportSlaveID;
+USHORT ucReportRunIndicatorStatus;
+UCHAR  ucReportAdditionalData[MB_FUNC_OTHER_REP_SLAVEID_BUF];
+BOOL   ucReportTruncated;
+
 // Master mode:DiscreteInputs variables
 USHORT usMDiscInStart = M_DISCRETE_INPUT_START;
 
@@ -44,6 +53,36 @@ USHORT usMRegInBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_INPUT_NREGS];
 // Master mode:HoldingRegister variables
 USHORT usMRegHoldStart = M_REG_HOLDING_START;
 USHORT usMRegHoldBuf[MB_MASTER_TOTAL_SLAVE_NUM][M_REG_HOLDING_NREGS];
+
+/**
+ * Modbus master report slave ID callback function.
+ *
+ * @param usSlaveID slave ID
+ * @param usRunIndicatorStatus run indicator status
+ * @param pucAdditionalData buffer containing additional data
+ * @param usLen length of the buffer
+ *
+ * @return result
+ */
+eMBErrorCode
+eMBMasterReportSlaveIDCB( USHORT usSlaveID, USHORT usRunIndicatorStatus, UCHAR * pucAdditionalData, USHORT usLen )
+{
+    ucReportSlaveID            = ( USHORT ) usSlaveID;
+    ucReportRunIndicatorStatus = ( USHORT ) usRunIndicatorStatus;
+    size_t len                 = ( size_t ) usLen;
+    if( len > sizeof( ucReportAdditionalData ) )
+    {
+        /* Truncate the length to the size of the buffer if it exceeds. */
+        len               = sizeof( ucReportAdditionalData );
+        ucReportTruncated = TRUE;
+    }
+    else
+    {
+        ucReportTruncated = FALSE;
+    }
+    memcpy( ucReportAdditionalData, pucAdditionalData, len );
+    return MB_ENOERR;
+}
 
 /**
  * Modbus master input register callback function.
