@@ -19,4 +19,8 @@
 #define EXIT_CRITICAL_SECTION( )
 #endif
 
+#ifndef portCHECK_IF_IN_ISR
+#define portCHECK_IF_IN_ISR( ) ( 0 )
+#endif
+
 #endif /* MODBUS_PORT_DEFAULTS_H */

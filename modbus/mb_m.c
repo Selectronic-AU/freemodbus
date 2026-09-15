@@ -42,18 +42,18 @@
 #include "mbframe.h"
 #include "mbfunc.h"
 
-#if MB_MASTER_RTU_ENABLED == 1
+#if MB_MASTER_RTU_ENABLED > 0
 #include "mbrtu.h"
 #endif
-#if MB_MASTER_ASCII_ENABLED == 1
+#if MB_MASTER_ASCII_ENABLED > 0
 #include "mbascii.h"
 #endif
-
-#if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
 
 #ifndef MB_PORT_HAS_CLOSE
 #define MB_PORT_HAS_CLOSE 0
 #endif
+
+#if MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0
 
 /* ----------------------- Static variables ---------------------------------*/
 
@@ -446,4 +446,4 @@ vMBMasterSetErrorType( eMBMasterErrorEventType errorType )
     eMBMasterCurErrorType = errorType;
 }
 
-#endif
+#endif /* MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0 */
