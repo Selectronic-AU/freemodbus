@@ -425,4 +425,4 @@ PR_END_EXTERN_C
 /* *INDENT-ON* */
 #endif
 
-#endif
+#endif /* _MB_M_H */

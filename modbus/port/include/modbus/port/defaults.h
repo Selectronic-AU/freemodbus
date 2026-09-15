@@ -19,4 +19,8 @@
 #define EXIT_CRITICAL_SECTION( )
 #endif
 
+#ifndef IS_ISR_CONTEXT
+#define IS_ISR_CONTEXT( ) ( 0 )
+#endif
+
 #endif /* MODBUS_PORT_DEFAULTS_H */

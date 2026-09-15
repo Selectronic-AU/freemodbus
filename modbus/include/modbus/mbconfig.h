@@ -183,7 +183,7 @@ PR_BEGIN_EXTERN_C
 #define MB_FUNC_DIAG_ENABLED ( 0 )
 #endif
 
-#if MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_ASCII_ENABLED > 0
+#if MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0
 
 /*! \brief If master send a broadcast frame,the master will wait time of convert to delay,
  * then master can send other frame */
