@@ -26,7 +26,7 @@ xMBPortEventInit( void )
 {
     mb_event_queue_handle =
         xQueueCreateStatic( mb_event_queue_length, mb_event_queue_size, mb_event_queue_data, &mb_event_queue );
-    return mb_event_queue_handle;
+    return mb_event_queue_handle != NULL;
 }
 
 /// @brief Post an event to the FreeModbus stack.
@@ -34,7 +34,7 @@ xMBPortEventInit( void )
 BOOL
 xMBPortEventPost( eMBEventType eEvent )
 {
-    return xQueueSend( mb_event_queue_handle, &eEvent, portMAX_DELAY ) != pdTRUE;
+    return xQueueSend( mb_event_queue_handle, &eEvent, portMAX_DELAY ) == pdPASS;
 }
 
 /// @brief Get an event from the FreeModbus stack.
@@ -42,7 +42,7 @@ xMBPortEventPost( eMBEventType eEvent )
 BOOL
 xMBPortEventGet( eMBEventType * eEvent )
 {
-    return xQueueReceive( mb_event_queue_handle, eEvent, portMAX_DELAY ) != pdTRUE;
+    return xQueueReceive( mb_event_queue_handle, eEvent, portMAX_DELAY ) == pdPASS;
 }
 
 #endif /* MB_PORT_FREERTOS_EVENT_QUEUE */
