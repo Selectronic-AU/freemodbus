@@ -32,7 +32,8 @@ number is updated to V1.6, with the following features:
 | FreeModbus\modbus\functions\mbfuncholding_m.c | Master holding register-related functions                                     |
 | FreeModbus\modbus\functions\mbfuncinput.c     | Slave input register-related functions                                        |
 | FreeModbus\modbus\functions\mbfuncinput_m.c   | Master input register-related functions                                       |
-| FreeModbus\modbus\functions\mbfuncother.c     | Other Modbus functions                                                        |
+| FreeModbus\modbus\functions\mbfuncother.c     | Other slave Modbus functions                                                  |
+| FreeModbus\modbus\functions\mbfuncother_m.c   | Other master Modbus functions                                                 |
 | FreeModbus\modbus\functions\mbutils.c         | Utility functions used in the protocol stack                                  |
 | FreeModbus\modbus\rtu\mbcrc.c                 | CRC check functions                                                           |
 | FreeModbus\modbus\rtu\mbrtu.c                 | Slave RTU mode setup and state machine                                        |
@@ -92,7 +93,7 @@ The following interfaces in this file need to be ported by the user:
 | vMBMasterErrorCBRespondTimeout  | Master response timeout callback              |
 | vMBMasterErrorCBReceiveData     | Master receive data error callback            |
 | vMBMasterErrorCBExecuteFunction | Master execute Modbus function error callback |
-| vMBMasterCBRequestScuuess       | Master request success callback               |
+| vMBMasterCBRequestSuccess       | Master request success callback               |
 | eMBMasterWaitRequestFinish      | Master wait for request completion callback   |
 
 **For RTOS porting**, mainly use OS thread synchronization techniques.
@@ -132,12 +133,13 @@ buffer structure.
 
 All Modbus data processing callback interfaces are as follows:
 
-| Interface              | Description               |
-|:-----------------------|:--------------------------|
-| eMBMasterRegInputCB    | Input register callback   |
-| eMBMasterRegHoldingCB  | Holding register callback |
-| eMBMasterRegCoilsCB    | Coil callback             |
-| eMBMasterRegDiscreteCB | Discrete input callback   |
+| Interface                | Description               |
+|:-------------------------|:--------------------------|
+| eMBMasterReportSlaveIDCB | Report Slave ID callback  |
+| eMBMasterRegInputCB      | Input register callback   |
+| eMBMasterRegHoldingCB    | Holding register callback |
+| eMBMasterRegCoilsCB      | Coil callback             |
+| eMBMasterRegDiscreteCB   | Discrete input callback   |
 
 > For array-based buffer structures, the source code is already ported
 > and can be used directly. You can also use the
@@ -395,6 +397,28 @@ eMBMasterReqErrCode eMBMasterReqReadDiscreteInputs( UCHAR ucSndAddr,
 | usDiscreteAddr | Discrete input address          |
 | usNDiscreteIn  | Number of discrete inputs       |
 | lTimeOut       | Timeout; supports infinite wait |
+
+### 3.10 Report Slave ID
+
+Read the slave identification and additional device
+information from a target slave.
+
+```C
+eMBMasterReqErrCode eMBMasterReqReportSlaveID( UCHAR
+                                              ucSndAddr,
+                                              LONG lTimeOut )
+```
+
+| Parameter | Description                     |
+|:----------|:--------------------------------|
+| ucSndAddr | Slave address to query          |
+| lTimeOut  | Timeout; supports infinite wait |
+
+When the request completes successfully, the protocol stack invokes
+`eMBMasterReportSlaveIDCB( usSlaveID, usRunIndicatorStatus,
+pucAdditionalData, usLen )` with the received slave ID, run indicator
+status, and the additional identification bytes. The application should
+copy or consume the payload before returning from the callback.
 
 ## 4. Workflow
 

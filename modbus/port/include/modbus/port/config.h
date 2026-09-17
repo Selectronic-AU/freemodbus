@@ -8,6 +8,10 @@
 #ifndef MODBUS_PORT_CONFIG_H
 #define MODBUS_PORT_CONFIG_H
 
+#ifndef MB_PORT_POSIX
+#define MB_PORT_POSIX ( 0 )
+#endif
+
 #ifndef MB_PORT_POSIX_TIMERS
 #define MB_PORT_POSIX_TIMERS ( 0 )
 #endif
@@ -22,6 +26,10 @@
 
 #ifndef MB_PORT_POSIX_SOCKETS
 #define MB_PORT_POSIX_SOCKETS ( 0 )
+#endif
+
+#ifndef MB_PORT_FREERTOS
+#define MB_PORT_FREERTOS ( 0 )
 #endif
 
 #ifndef MB_PORT_FREERTOS_TIMERS

@@ -12,7 +12,8 @@ subdir = modbus
 
 C_SRC = mbfunccoils.c mbfunccoils_m.c mbfuncdiag.c mbfuncdisc.c \
     mbfuncdisc_m.c mbfuncholding.c mbfuncholding_m.c \
-    mbfuncinput.c mbfuncinput_m.c mbfuncother.c mbutils.c
+    mbfuncinput.c mbfuncinput_m.c mbfuncother.c mbfuncother_m.c \
+	mbutils.c
 
 # Relative path to top of freeMODBUS sources.
 top_mbdir = ..
