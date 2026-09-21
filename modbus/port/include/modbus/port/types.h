@@ -16,11 +16,12 @@
 #if __has_include( <stm32_assert.h> )
 #include <stm32_assert.h>
 #endif
+#ifndef assert_param
 #define assert_param( expr ) ( ( expr ) ? ( void ) 0U : assert_failed( ( uint8_t * ) __FILE__, __LINE__ ) )
+#endif
 /* Exported functions ------------------------------------------------------- */
 extern void assert_failed( uint8_t * file, uint32_t line );
-#endif
-
+#endif /* USE_FULL_ASSERT */
 #ifndef __unused
 #define __unused __attribute__( ( unused ) )
 #endif
