@@ -249,6 +249,27 @@ eMBErrorCode eMBMasterRegisterCB( UCHAR ucFunctionCode, pxMBFunctionHandler pxHa
  */
 
 /*! \ingroup modbus_registers
+ * \brief Callback used to provide the Modbus <em>Report Slave ID</em> payload.
+ *
+ * This callback is invoked when the master receives the slave identification
+ * data. The application should consume or copy the received bytes from
+ * \c pucAdditionalData; it must not treat this buffer as output storage.
+ *
+ * \param usSlaveID The slave ID.
+ * \param usRunIndicatorStatus The run indicator status.
+ * \param pucAdditionalData The additional slave ID bytes.
+ * \param usLen The number of received slave ID bytes.
+ *
+ * \return The function must return one of the following error codes:
+ *   - eMBErrorCode::MB_ENOERR If no error occurred and the slave ID payload
+ *       has been successfully processed.
+ *   - eMBErrorCode::MB_EINVAL If the application was unable to successfully
+ *       process the slave ID payload.
+ */
+eMBErrorCode eMBMasterReportSlaveIDCB( USHORT usSlaveID, USHORT usRunIndicatorStatus, UCHAR * pucAdditionalData,
+                                       USHORT usLen );
+
+/*! \ingroup modbus_registers
  * \brief Callback function used if the value of a <em>Input Register</em>
  *   is required by the protocol stack. The starting register address is given
  *   by \c usAddress and the last register is given by <tt>usAddress +
@@ -350,6 +371,7 @@ eMBErrorCode eMBMasterRegDiscreteCB( UCHAR * pucRegBuffer, USHORT usAddress, USH
 /*! \ingroup modbus
  *\brief These Modbus functions are called for user when Modbus run in Master Mode.
  */
+eMBMasterReqErrCode eMBMasterReqReportSlaveID( UCHAR ucSndAddr, LONG lTimeOut );
 eMBMasterReqErrCode eMBMasterReqReadInputRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usNRegs, LONG lTimeOut );
 eMBMasterReqErrCode eMBMasterReqWriteHoldingRegister( UCHAR ucSndAddr, USHORT usRegAddr, USHORT usRegData,
                                                       LONG lTimeOut );
@@ -403,4 +425,4 @@ PR_END_EXTERN_C
 /* *INDENT-ON* */
 #endif
 
-#endif
+#endif /* _MB_M_H */

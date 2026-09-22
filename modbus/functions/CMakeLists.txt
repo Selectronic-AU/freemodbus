@@ -1,6 +1,9 @@
-# freemodbus/modbus/functions/CMakeLists.txt
+#
+# CMAKELIST.TXT -- CMake configuration for the freemodbus_functions library
+#
 
-set(FUNCTIONS_SRC
+add_library(freemodbus_functions OBJECT
+    # Modbus slave/server support functions.
     mbfunccoils.c
     mbfuncdiag.c
     mbfuncdisc.c
@@ -8,18 +11,18 @@ set(FUNCTIONS_SRC
     mbfuncinput.c
     mbfuncother.c
     mbutils.c
-)
 
-set(MASTER_FUNCTIONS_SRC
+    # Modbus master/client support functions.
     mbfunccoils_m.c
     mbfuncdisc_m.c
     mbfuncholding_m.c
     mbfuncinput_m.c
+    mbfuncother_m.c
 )
 
-add_library(freemodbus-functions STATIC ${FUNCTIONS_SRC} ${MASTER_FUNCTIONS_SRC})
+target_link_libraries(freemodbus_functions PRIVATE freemodbus_port)
 
-target_include_directories(freemodbus-functions PUBLIC
+target_include_directories(freemodbus_functions PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${CMAKE_CURRENT_SOURCE_DIR}/../port/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../include/modbus

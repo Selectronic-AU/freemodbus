@@ -81,7 +81,7 @@
 eMBException prveMBError2Exception( eMBErrorCode eErrorCode );
 
 /* ----------------------- Start implementation -----------------------------*/
-#if MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_TCP_ENABLED > 0
+#if MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0
 #if MB_FUNC_WRITE_HOLDING_ENABLED > 0
 
 /**
@@ -457,4 +457,4 @@ eMBMasterFuncReadWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen 
 }
 
 #endif
-#endif // MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0 || MB_MASTER_TCP_ENABLED > 0
+#endif // MB_MASTER_ASCII_ENABLED > 0 || MB_MASTER_RTU_ENABLED > 0
